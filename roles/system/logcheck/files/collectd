@@ -1,0 +1,2 @@
+.* .*collectd.*: processes plugin: read_file_contents: Reading file \"/proc/.*/stat\" failed.*$
+.* .*collectd.*: processes plugin: Failed to read from .*: No such process\.$

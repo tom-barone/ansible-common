@@ -1,0 +1,32 @@
+# Tests to confirm working:
+#   `sudo fail2ban-client status sshd`
+#   `sudo tail -n 100 /var/log/auth.log`
+#   `sudo tail -n 100 /var/log/fail2ban.log`
+#
+# Unban an IP (if needed):
+#   `sudo fail2ban-client set sshd unbanip <IP_ADDRESS>`
+
+- name: Install fail2ban and dependencies
+  ansible.builtin.apt:
+    pkg:
+      - fail2ban
+      - whois
+    state: latest
+
+- name: Configure jail for sshd
+  ansible.builtin.template:
+    src: files/jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    backup: true
+
+- name: Restart fail2ban
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: restarted
+
+- name: Test fail2ban configuration
+  ansible.builtin.command:
+    argv:
+      - fail2ban-client
+      - -d
+      - --test

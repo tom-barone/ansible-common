@@ -1,0 +1,58 @@
+---
+- name: Create github user
+  become: true
+  ansible.builtin.user:
+    name: "github"
+    password: "*"
+    comment: ""
+    shell: "/bin/bash"
+    create_home: true
+    state: present
+
+- name: Add github user to dokku group
+  ansible.builtin.include_role:
+    name: "user/add_user_to_groups"
+  vars:
+    username: "github"
+    groupnames: ["dokku"]
+
+- name: Ensure github user .ssh directory exists
+  become: true
+  ansible.builtin.file:
+    path: /home/github/.ssh
+    state: directory
+    owner: github
+    group: github
+    mode: "0700"
+
+- name: Create GitHub deploy key for github user (if missing)
+  become: true
+  ansible.builtin.openssh_keypair:
+    path: /home/github/.ssh/github_deploy_key
+    type: ed25519
+    comment: "Github Deploy Key"
+    owner: github
+    group: github
+    mode: "0600"
+    state: present
+  register: github_deploy_key
+
+- name: Authorize the github deploy key for github user
+  become: true
+  ansible.builtin.authorized_key:
+    user: github
+    state: present
+    key: "{{ github_deploy_key.public_key }}"
+  when: github_deploy_key.public_key is defined
+
+- name: Check existing dokku ssh keys
+  become: true
+  ansible.builtin.command: dokku ssh-keys:list
+  failed_when: false
+  register: dokku_keys
+  changed_when: false
+
+- name: Add deploy key to dokku
+  become: true
+  ansible.builtin.command: dokku ssh-keys:add github /home/github/.ssh/github_deploy_key.pub
+  when: dokku_keys.stdout is not search('NAME="github"')

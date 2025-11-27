@@ -1,0 +1,75 @@
+---
+- ansible.builtin.assert:
+    that:
+      - vpn_hostname is defined
+      - backup_tgz is defined
+      - dns_server is defined
+    msg: "Missing a required variable"
+
+- name: Check if the wireguard service exists
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    state: started
+  register: wireguard_service
+  ignore_errors: yes
+
+- name: Set wireguard_installed fact
+  ansible.builtin.set_fact:
+    wireguard_installed: "{{ wireguard_service.failed == false }}"
+
+- ansible.builtin.template:
+    src: files/wireguard.conf.j2
+    dest: /tmp/pivpn_wireguard.conf
+  when: not wireguard_installed
+
+- ansible.builtin.shell: |
+    curl -L https://install.pivpn.io > /tmp/pi_vpn_install.sh
+    chmod +x /tmp/pi_vpn_install.sh
+    /tmp/pi_vpn_install.sh  --unattended /tmp/pivpn_wireguard.conf
+  args:
+    executable: /bin/bash
+  when: not wireguard_installed
+
+- ansible.builtin.reboot:
+  when: not wireguard_installed
+
+- ansible.builtin.include_role:
+    name: router_port_forward
+  vars:
+    description: "PiVPN Wireguard"
+    internal_port: "51820"
+    external_port: "51820"
+    protocol: "UDP"
+  when: not wireguard_installed
+
+- name: Create the backup tgz file
+  ansible.builtin.copy:
+    content: "{{ backup_tgz | b64decode }}"
+    dest: /tmp/pivpn_backup.tgz
+  when: not wireguard_installed
+
+- ansible.builtin.file:
+    path: /tmp/pivpn_restore
+    state: directory
+  when: not wireguard_installed
+
+- name: Extract the PiVPN backup
+  ansible.builtin.unarchive:
+    src: /tmp/pivpn_backup.tgz
+    dest: /tmp/pivpn_restore
+    remote_src: yes
+  when: not wireguard_installed
+
+- name: Restore PiVPN wireguard config
+  ansible.builtin.copy:
+    src: /tmp/pivpn_restore/etc/wireguard
+    dest: /etc
+    remote_src: yes
+  when: not wireguard_installed
+
+- name: Restart wireguard
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    state: restarted
+    enabled: yes
+  when: not wireguard_installed

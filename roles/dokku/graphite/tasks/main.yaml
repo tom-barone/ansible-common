@@ -1,0 +1,165 @@
+---
+# If there's an issue with starting / stopping / restarting the graphite or graphite.ambassador images
+# you can try removing the docker images and starting again
+#
+# $ docker ps -a
+# $ docker rm <container_id>
+
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - monitoring_domain is defined
+      - monitoring_username is defined
+      - monitoring_password is defined
+      - gmail_app_username is defined
+      - gmail_app_password is defined
+    msg: "Missing a required variable"
+
+- name: Ensure graphite service exists
+  ansible.builtin.shell: |
+    dokku graphite:info graphite >/dev/null 2>&1 || \
+    dokku graphite:create graphite \
+      --image tombarone/docker-grafana-graphite \
+      --image-version latest \
+      --custom-env "GF_SECURITY_ADMIN_USER={{ monitoring_username }};GF_SECURITY_ADMIN_PASSWORD={{ monitoring_password }};GF_SMTP_ENABLED=true;GF_SMTP_HOST=smtp.gmail.com:587;GF_SMTP_USER={{ gmail_app_username }};GF_SMTP_PASSWORD={{ gmail_app_password }};GF_SMTP_FROM_NAME=GrafanaAlerts"
+  args:
+    executable: /bin/bash
+
+- name: Expose graphite ports
+  ansible.builtin.shell: |
+    dokku graphite:info graphite | grep -q "8125.*8126.*8084.*8081.*2003" || \
+    dokku graphite:expose graphite 8125 8126 8084 8081 2003
+  args:
+    executable: /bin/bash
+
+- name: Ensure monitoring app exists
+  ansible.builtin.shell: |
+    dokku apps:report "{{ monitoring_domain }}" >/dev/null 2>&1 || \
+    dokku apps:create "{{ monitoring_domain }}"
+  args:
+    executable: /bin/bash
+
+- name: Set monitoring app config
+  ansible.builtin.command:
+    cmd: >
+      dokku config:set --no-restart "{{ monitoring_domain }}"
+      SERVICE_NAME=graphite
+      SERVICE_TYPE=graphite
+      SERVICE_PORT=80
+
+- name: Link graphite to monitoring app
+  ansible.builtin.shell: |
+    dokku graphite:links graphite | grep -q "{{ monitoring_domain }}" || \
+    dokku graphite:link graphite "{{ monitoring_domain }}"
+  args:
+    executable: /bin/bash
+
+- name: Deploy service-proxy image to monitoring app
+  ansible.builtin.shell: |
+    dokku git:from-image "{{ monitoring_domain }}" dokku/service-proxy:latest
+  failed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Get LetsEncrypt status
+  ansible.builtin.shell: |
+    dokku letsencrypt:active "{{ monitoring_domain }}"
+  args:
+    executable: /bin/bash
+  # returns "true" or "false" strings
+  register: letsencrypt_status
+
+- name: Enable letsencrypt
+  ansible.builtin.command:
+    cmd: dokku letsencrypt:enable "{{ monitoring_domain }}"
+  when: letsencrypt_status.stdout == "false"
+
+- name: Show graphite storage schema
+  ansible.builtin.shell: |
+    dokku graphite:enter graphite cat /opt/graphite/conf/storage-schemas.conf
+  args:
+    executable: /bin/bash
+  register: graphite_storage_schema
+
+- name: Print graphite storage schema
+  ansible.builtin.debug:
+    msg: "{{ graphite_storage_schema.stdout }}"
+
+- name: Install collectd
+  ansible.builtin.apt:
+    name: collectd
+    state: present
+
+- name: Configure collectd for Graphite
+  ansible.builtin.template:
+    src: files/graphite.conf.j2
+    dest: /etc/collectd/collectd.conf.d/graphite.conf
+
+- name: Restart collectd
+  ansible.builtin.systemd:
+    name: collectd
+    state: restarted
+    enabled: yes
+
+- name: List datasources in Grafana
+  ansible.builtin.shell: |
+    curl https://{{ monitoring_domain }}/api/datasources \
+      -H "Accept: application/json" \
+      -u "{{ monitoring_username }}:{{ monitoring_password }}"
+  register: grafana_datasources
+
+- name: Create the graphite datasource in Grafana
+  ansible.builtin.shell: |
+    curl https://{{ monitoring_domain }}/api/datasources \
+      --fail \
+      -X POST \
+      -H "Accept: application/json" \
+      -H "Content-Type: application/json" \
+      -u "{{ monitoring_username }}:{{ monitoring_password }}" \
+      -d '{"name":"Graphite","type":"graphite","url":"http://localhost:81","access":"proxy","isDefault":true}'
+  when: '"Graphite" not in grafana_datasources.stdout'
+
+- name: Create cadvisor app in Dokku if it doesn't exist
+  ansible.builtin.shell: |
+    dokku apps:report cadvisor >/dev/null 2>&1 || \
+    dokku apps:create cadvisor
+  args:
+    executable: /bin/bash
+
+- name: Link to graphite if not already linked
+  ansible.builtin.shell: |
+    dokku graphite:links graphite | grep -q "cadvisor" || \
+    dokku graphite:link graphite cadvisor
+  args:
+    executable: /bin/bash
+
+- name: Check if cadvisor is already set up
+  ansible.builtin.shell: |
+    dokku ps:report cadvisor
+  args:
+    executable: /bin/bash
+  register: cadvisor_check
+  failed_when: false
+
+- name: Setup cadvisor
+  ansible.builtin.shell: |
+    dokku docker-options:add cadvisor deploy "--privileged"
+    dokku docker-options:add cadvisor deploy "--device=/dev/kmsg"
+    dokku config:set --no-restart cadvisor DOKKU_DOCKERFILE_START_CMD="--storage_driver=statsd --storage_driver_host=dokku-graphite-graphite:8125 --port 8082"
+    dokku storage:mount cadvisor /:/rootfs:ro
+    dokku storage:mount cadvisor /var/run:/var/run:ro
+    dokku storage:mount cadvisor /sys:/sys:ro
+    dokku storage:mount cadvisor /var/lib/docker:/var/lib/docker:ro
+    dokku storage:mount cadvisor /dev/disk:/dev/disk:ro
+    docker image pull gcr.io/cadvisor/cadvisor:v0.49.1
+    dokku git:from-image cadvisor gcr.io/cadvisor/cadvisor:v0.49.1
+  when: cadvisor_check.rc != 0
+
+# When a Dokku app is deployed, cadvisor loses track of the container metrics and needs to be restarted
+# This cron job will restart cadvisor every day at 3am, which is a bit of a hack.
+# A better solution is to have cadvisor restart automatically when a new container is deployed.
+# Can also do it manually with:
+# $ dokku ps:restart cadvisor
+- name: Set up cadvisor cron restart
+  ansible.builtin.shell: |
+    dokku cron-restart:set cadvisor schedule '0 3 * * *'

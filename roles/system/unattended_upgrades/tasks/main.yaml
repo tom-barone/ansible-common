@@ -1,0 +1,29 @@
+---
+# Ansible role to setup unattended-upgrades
+#
+# Check recent upgrades with
+# $ sudo tail -n 100 /var/log/dpkg.log
+# Confirm the next upgrade with
+# $ sudo unattended-upgrades --dry-run --debug
+# Check the settings are set
+# $ sudo cat /etc/apt/apt.conf.d/20auto-upgrades
+
+- name: Install required packages for unattended-upgrades
+  ansible.builtin.apt:
+    name:
+      - unattended-upgrades
+      - apt-listchanges
+    state: present
+    update_cache: yes
+
+- name: Configure unattended-upgrades
+  ansible.builtin.command: "echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections"
+
+- name: Reconfigure unattended-upgrades
+  ansible.builtin.command: "dpkg-reconfigure -f noninteractive unattended-upgrades"
+
+- name: Ensure unattended-upgrades is enabled and started
+  ansible.builtin.systemd:
+    name: unattended-upgrades
+    enabled: yes
+    state: started

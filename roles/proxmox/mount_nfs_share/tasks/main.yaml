@@ -1,0 +1,32 @@
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - source_ip is defined
+      - source_dir is defined
+      - mount_dir is defined
+    msg: "Missing a required variable"
+
+- name: Install nfs-common package to mount NFS shares
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+    update_cache: yes
+
+- name: Create mount point for NFS share
+  ansible.builtin.file:
+    path: "{{ mount_dir }}"
+    state: directory
+
+- name: Add NFS mount to /etc/fstab for persistence
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: "{{ source_ip }}:{{ source_dir }} {{ nfs.mount_dir }} nfs defaults,_netdev 0 0"
+    state: present
+
+- name: Mount the NFS share from the Proxmox host
+  ansible.builtin.mount:
+    path: "{{ mount_dir }}"
+    src: "{{ source_ip }}:{{ source_dir }}"
+    fstype: nfs
+    opts: defaults,_netdev
+    state: mounted

@@ -1,0 +1,20 @@
+LoadPlugin write_graphite
+<Plugin write_graphite>
+  <Node "local">
+    Host "localhost"
+    Port "2003"
+    Prefix "collectd-"
+  </Node>
+</Plugin>
+LoadPlugin cpu
+<Plugin cpu>
+  ReportByCpu true
+  ReportByState false
+  ValuesPercentage true
+  ReportNumCpu true
+</Plugin>
+LoadPlugin memory
+<Plugin memory>
+  ValuesPercentage true
+  ValuesAbsolute true
+</Plugin>

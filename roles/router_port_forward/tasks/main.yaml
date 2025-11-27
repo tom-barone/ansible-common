@@ -1,0 +1,34 @@
+---
+# Ansible role to setup a port forward on the router
+#
+# Print all current port forwards:
+# upnpc -l
+
+- name: Validate required variables for VM provisioning
+  ansible.builtin.assert:
+    that:
+      - description is defined
+      - internal_port is defined
+      - external_port is defined
+      - protocol is defined
+    msg: "Missing a required variable"
+
+- name: Install miniupnpc package to manage router port forwards
+  ansible.builtin.apt:
+    name: miniupnpc
+    state: present
+
+# Note that machines can only create port forwards for themselves
+# on compatible routers that support UPnP. Can't create port forwards
+# for other machines on the network :(
+- name: Add port redirect to router
+  ansible.builtin.command:
+    argv:
+      - upnpc
+      - -e
+      - "{{ description }}"
+      - -a
+      - "@"
+      - "{{ internal_port }}"
+      - "{{ external_port }}"
+      - "{{ protocol }}"

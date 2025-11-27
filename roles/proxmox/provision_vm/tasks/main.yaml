@@ -1,0 +1,113 @@
+---
+# Ansible role to create a new VM from a template in Proxmox
+#  1. Clone the template into a new VM
+#  2. Set a static IP address for the new VM
+#  3. Start the new VM
+#  4. Set up a port forward on the router to allow external SSH access to the new VM
+#
+#  After running, should now be able to SSH to the new VM with:
+#   ssh cloudinit@<public_ipv4_address> -p <external_ssh_port>
+
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - vm_id is defined
+      - template_id is defined
+      - vm_name is defined
+      # Internal static IP address to assign to the new VM
+      - vm_ip_address is defined
+      # Port on the router to forward to the new VM for external SSH access
+      - external_ssh_port is defined
+      # Gateway internal address (usually the router IP so we can get to the internet)
+      # do `ip route show` on the proxmox host to find out
+      - gateway_ip_address is defined
+      - disk_size is defined
+      - cpu_cores is defined
+      - ram is defined
+    msg: "Missing a required variable"
+
+- name: Clone the cloud-init template into a new VM
+  ansible.builtin.command:
+    argv:
+      - qm
+      - clone
+      - "{{ template_id }}"
+      - "{{ vm_id }}"
+      - --name
+      - "{{ vm_name }}"
+      - --description
+      - "{{ vm_ip_address }}:{{ external_ssh_port }}"
+      - --full
+      - "true"
+  args:
+    creates: "/etc/pve/qemu-server/{{ vm_id }}.conf"
+
+- name: Set VM CPU and RAM
+  ansible.builtin.command:
+    argv:
+      - qm
+      - set
+      - "{{ vm_id }}"
+      - --sockets
+      - "1"
+      - --cores
+      - "{{ cpu_cores }}"
+      - --memory
+      - "{{ ram }}"
+
+- name: Resize the VM disk
+  ansible.builtin.include_role:
+    name: proxmox/resize_disk
+
+- name: Update cloudinit settings
+  ansible.builtin.command:
+    argv:
+      - qm
+      - set
+      - "{{ vm_id }}"
+      - --ipconfig0
+      - "ip={{ vm_ip_address }}/24,gw={{ gateway_ip_address }},ip6=dhcp"
+
+# Required for debian 12 images
+- name: Add serial port socket
+  ansible.builtin.command:
+    argv:
+      - qm
+      - set
+      - "{{ vm_id }}"
+      - --serial0
+      - "socket"
+
+- name: Check VM status
+  ansible.builtin.command:
+    argv:
+      - qm
+      - status
+      - "{{ vm_id }}"
+  register: vm_status
+  changed_when: false
+
+- name: Start the new VM
+  ansible.builtin.command:
+    argv:
+      - qm
+      - start
+      - "{{ vm_id }}"
+  when:
+    - "'stopped' in vm_status.stdout"
+
+#- name: Forward port to allow external SSH access to the new VM
+#  ansible.builtin.include_role:
+#    name: "router_port_forward"
+#  vars:
+#    description: "Proxmox-VM-{{ vm_id }} SSH"
+#    internal_port: 22
+#    external_port: "{{ external_ssh_port }}"
+#    protocol: "TCP"
+
+# Let's the VM have some time to boot and fetch a DHCP lease
+- name: Wait for 30 seconds for the VM to boot
+  ansible.builtin.pause:
+    seconds: 30
+  when:
+    - "'stopped' in vm_status.stdout"

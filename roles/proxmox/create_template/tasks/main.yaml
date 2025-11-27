@@ -1,0 +1,67 @@
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - template_id is defined
+      - image_url is defined
+      - template_name is defined
+    msg: "Missing a required variable"
+
+- name: Check if VM exists and is a template
+  ansible.builtin.shell: >
+    qm config {{ template_id }} --current 2>/dev/null || echo "NOT_FOUND"
+  register: vm_config
+  changed_when: false
+  failed_when: false
+
+- name: Parse template status
+  ansible.builtin.set_fact:
+    is_template: "{{ 'template: 1' in vm_config.stdout }}"
+    vm_exists: "{{ 'NOT_FOUND' not in vm_config.stdout }}"
+
+- name: Download cloud image
+  ansible.builtin.get_url:
+    url: "{{ image_url }}"
+    dest: /root/{{ image_url | basename }}
+  when:
+    not vm_exists
+
+    #--scsi0 local-lvm:0,format=raw,import-from=/root/debian-13-generic-amd64-{{ debian_version }}.raw
+- name: Create a new VM for the template
+  ansible.builtin.command: >
+    qm create {{ template_id }}
+    --name {{ template_name }}
+    --net0 virtio,bridge=vmbr0
+    --scsihw virtio-scsi-pci
+    --balloon 0
+    --agent enabled=1
+    --memory 2048
+    --scsi0 local-lvm:0,format=raw,import-from=/root/{{ image_url | basename }}
+    --ide2 local-lvm:cloudinit
+    --cpu cputype=host
+    --boot order=scsi0
+  args:
+    creates: /etc/pve/qemu-server/{{ template_id }}.conf
+  when: not vm_exists
+
+- ansible.builtin.include_role:
+    name: "proxmox/resize_disk"
+  vars:
+    vm_id: "{{ template_id }}"
+    # Can increase this later if needed
+    disk_size: "5G"
+  when: not is_template
+
+- name: "Set cloudinit settings"
+  # These will probably need to be customized at some point
+  # Use same authorized_keys as the Proxmox host root user
+  ansible.builtin.command: >
+    qm set {{ template_id }}
+    --ciuser cloudinit
+    --ipconfig0 ip=dhcp,ip6=dhcp
+    --sshkey /root/.ssh/authorized_keys
+  when: not is_template
+
+- name: Convert VM to a template
+  ansible.builtin.command: >
+    qm template {{ template_id }}
+  when: not is_template

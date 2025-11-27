@@ -1,0 +1,10 @@
+{{ logrotate_path }} {
+				su root dokku
+				daily
+				missingok
+				rotate 7
+				compress
+				delaycompress
+				notifempty
+				copytruncate
+}

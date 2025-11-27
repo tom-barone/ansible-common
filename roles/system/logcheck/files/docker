@@ -1,0 +1,12 @@
+.* .*docker.*: Total.*$
+.* .*kernel.*: .*docker0: port.*$
+.* .*dockerd.*: .*level=info.*$
+.* .*dockerd.*: .*level=warning.*$
+.* .*dockerd.*: .*connection reset by peer$
+.* .*docker.*: ID.*RECLAIMABLE.*SIZE.*LAST ACCESSED$
+.* .*docker.*: [0-9A-Za-z].*true.* ago$
+.* .*systemd.*: Started docker.*container.*$
+.* .*systemd.*: .*docker.*: Deactivated successfully.*$
+.* .*docker.*: [0-9A-Za-z].*true.* ago$
+.* .*docker.*: .*level.error.*failed to query external DNS.*grafana.*$
+.* .*docker.*: .*level.error.*failed to query external DNS.*api\.ipify\.org.*$

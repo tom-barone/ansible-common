@@ -1,0 +1,12 @@
+.* .*chronyd.*: Source .* replaced with .*$
+.* .*rsyslog.*: .*rsyslogd was HUPed$
+.* .*fstrim.*: .*\([0-9]+ bytes\) trimmed on.*$
+.* .*systemd.*: Starting sysstat-collect\.service - system activity accounting tool.*$
+.* .*systemd.*: sysstat-collect\.service: Deactivated successfully.*$
+.* .*systemd.*: Finished sysstat-collect\.service - system activity accounting tool.*$
+.* .*systemd.*: session-.*\.scope: Deactivated successfully.*$
+.* .*systemd.*: .*: Consumed.* CPU time.*$
+.* .*systemd.*: Start.* .* - .*\.$
+.* .*systemd.*: Finish.* .* - .*\.$
+.* .*systemd.*: .*: Deactivated successfully\.$
+.* .*wpa_supplicant.*: .*: CTRL-EVENT-BEACON-LOSS.*$

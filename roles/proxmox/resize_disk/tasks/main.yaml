@@ -1,0 +1,10 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - vm_id is defined
+      - disk_size is defined
+    msg: "Missing a required variable"
+
+- ansible.builtin.command: >
+    qm disk resize {{ vm_id }} scsi0 {{ disk_size }}

@@ -1,0 +1,34 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - vm_id is defined
+    msg: "Missing a required variable"
+
+- name: Check if VM exists
+  ansible.builtin.shell: >
+    qm config {{ vm_id }} --current 2>/dev/null || echo "NOT_FOUND"
+  register: vm_config
+  changed_when: false
+  failed_when: false
+
+- name: Parse template status
+  ansible.builtin.set_fact:
+    vm_exists: "{{ 'NOT_FOUND' not in vm_config.stdout }}"
+
+- name: Shutdown the VM
+  ansible.builtin.command:
+    argv:
+      - qm
+      - stop
+      - "{{ vm_id }}"
+  when: vm_exists
+
+- name: Remove the VM
+  ansible.builtin.command:
+    argv:
+      - qm
+      - destroy
+      - "{{ vm_id }}"
+      - --purge
+  when: vm_exists

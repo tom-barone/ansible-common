@@ -1,0 +1,36 @@
+.* .*sshd.*: Connection closed by .* port .*$
+.* .*sshd.*: Connection closed by authenticating user.*\[preauth\]$
+.* .*sshd.*: Connection closed by invalid user.*\[preauth\]$
+.* .*sshd.*: .*Connection reset by .*$
+.* .*sshd.*: Corrupted MAC on input.*$
+.* .*sshd.*: Disconnected from .*$
+.* .*sshd.*: Disconnecting .* user.*$
+.* .*sshd.*: Invalid user .* from .* port .*$
+.* .*sshd.*: Received disconnect from .*$
+.* .*sshd.*: Received signal.*$
+.* .*sshd.*: Unable to negotiate with.*\[preauth\]$
+.* .*sshd.*: banner exchange: Connection from .* port .*$
+.* .*sshd.*: drop connection .* past MaxStartups.*$
+.* .*sshd.*: error: Bad remote protocol version.*$
+.* .*sshd.*: error: Protocol major versions differ.*$
+.* .*sshd.*: error: beginning MaxStartups throttling.*$
+.* .*sshd.*: error: kex_exchange_identification: .*$
+.* .*sshd.*: error: kex_protocol_error.*$
+.* .*sshd.*: error: maximum authentication attempts.*$
+.* .*sshd.*: error: maximum authentication attempts.*$
+.* .*sshd.*: error: send_error: write: Broken pipe.*$
+.* .*sshd.*: exited MaxStartups throttling.*$
+.* .*sshd.*: fatal: userauth_pubkey.*$
+.* .*sshd.*: padding error: need.*block.*mod.*$
+.* .*sshd.*: pam_env.*deprecated reading of user.*$
+.* .*sshd.*: userauth_pubkey: signature algorithm .* not in PubkeyAcceptedAlgorithms \[preauth\]$
+.* .*sshd.*: ssh_dispatch_run_fatal: Connection from.*$
+.* .*: pam_unix.*session .* for user.*$
+.* .*sshd.*: Accepted publickey for tbone from.*$
+.* .*sshd.*: Accepted publickey for root from.*$
+.* .*sshd.*: Bad packet length.*$
+.* .*sshd.*: dispatch_protocol_error:.*$
+.* .*sshd.*: syslogin_perform_logout: logout.* returned an error
+.* .*systemd.*: Stopping ssh-agent.socket - OpenSSH Agent socket.*$
+.* .*systemd.*: Closed ssh-agent.socket - OpenSSH Agent socket.*$
+.* .*systemd.*: Listening on ssh-agent.socket - OpenSSH Agent socket.*$

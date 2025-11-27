@@ -1,0 +1,34 @@
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - export_dir is defined
+      # IP range for who can access the NFS share
+      - ip_range is defined
+    msg: "Missing a required variable"
+
+- name: Create directory on Proxmox host to share
+  ansible.builtin.file:
+    path: "{{ export_dir }}"
+    state: directory
+    owner: root
+    group: root
+
+- name: Install NFS server
+  ansible.builtin.apt:
+    name: nfs-kernel-server
+    state: present
+    update_cache: yes
+
+- name: Set NFS export
+  ansible.builtin.template:
+    src: files/exports.j2
+    dest: /etc/exports
+
+- name: Start and enable NFS
+  ansible.builtin.systemd:
+    name: nfs-kernel-server
+    state: started
+    enabled: yes
+
+- name: Restart nfs
+  ansible.builtin.command: exportfs -ra

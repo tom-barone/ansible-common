@@ -1,0 +1,98 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - dokku_version is defined
+      - domain is defined
+      - lets_encrypt_email is defined
+      - admin_ssh_key is defined
+    msg: "Missing a required variable"
+
+- name: Download bootstrap script
+  ansible.builtin.get_url:
+    url: https://dokku.com/install/{{ dokku_version }}/bootstrap.sh
+    dest: /tmp/dokku_bootstrap_{{ dokku_version }}.sh
+    mode: "0755"
+
+- name: Install dokku
+  ansible.builtin.command:
+    argv:
+      - /bin/bash
+      - /tmp/dokku_bootstrap_{{ dokku_version }}.sh
+      - DOKKU_TAG={{ dokku_version }}
+    creates: /usr/bin/dokku
+  become: true
+
+- name: Check existing dokku ssh keys
+  become: true
+  ansible.builtin.command: dokku ssh-keys:list
+  failed_when: false
+  register: dokku_keys
+  changed_when: false
+
+- name: Add deploy key to dokku
+  become: true
+  ansible.builtin.shell:
+    cmd: echo "{{ admin_ssh_key }}" | dokku ssh-keys:add admin
+  when: dokku_keys.stdout is not search('NAME="admin"')
+
+- name: Set global domain
+  ansible.builtin.shell:
+    cmd: "dokku domains:set-global {{ domain }}"
+
+- name: Install dokku plugins
+  loop:
+    - postgres
+    - redis
+    - letsencrypt
+    - http-auth
+    - graphite
+    - cron-restart
+  ansible.builtin.command:
+    cmd: "dokku plugin:install https://github.com/dokku/dokku-{{ item }}.git"
+    creates: "/var/lib/dokku/plugins/enabled/{{ item }}"
+
+- name: Install dokku graphite
+  ansible.builtin.command:
+    cmd: "dokku plugin:install https://github.com/dokku/dokku-graphite.git --name graphite"
+    creates: /var/lib/dokku/plugins/enabled/graphite
+
+- name: Set up LetsEncrypt
+  ansible.builtin.command:
+    cmd: "dokku letsencrypt:set --global email {{ lets_encrypt_email }}"
+
+- name: Enable LetsEncrypt cron job
+  ansible.builtin.command:
+    cmd: "dokku letsencrypt:cron-job --add"
+
+- name: Setup logrotate for dokku
+  become: true
+  vars:
+    logrotate_path: "/var/log/dokku/*.log"
+  ansible.builtin.template:
+    src: files/logrotate.j2
+    dest: /etc/logrotate.d/dokku
+
+- name: Setup logrotate for dokku apps
+  become: true
+  vars:
+    logrotate_path: "/var/log/dokku/apps/*.log"
+  ansible.builtin.template:
+    src: files/logrotate.j2
+    dest: /etc/logrotate.d/dokku-apps
+
+- name: Allow all users in the dokku group to run dokku without password
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/dokku-users
+    owner: root
+    group: root
+    mode: "0440"
+    content: |
+      %dokku ALL=(ALL:ALL) NOPASSWD:SETENV: /usr/bin/dokku
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Start vector logs
+  become: true
+  ansible.builtin.command:
+    cmd: "dokku logs:vector-start"

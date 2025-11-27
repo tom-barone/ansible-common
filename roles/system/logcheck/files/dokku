@@ -1,0 +1,14 @@
+.* .*systemd.*: pam_unix.*dokku.*$
+.* .*sd-pam.*: pam_unix.*dokku.*$
+.* .*sshd.*: Accepted publickey for dokku
+.* .*dokku.*: .*Retiring old containers.*$
+.* .*dokku.*: .*Attempting to retire.*$
+.* .*crontab.*: .*dokku.*REPLACE.*$
+.* .*dokku.*: .*has children images and is untagged.*$
+.* .*dokku.*: .*has running containers.*$
+.* .*dokku.*: [0-9A-Za-z]+$
+.* .*systemd.*: Starting dokku-retire\.service - Dokku retire service.*$
+.* .*systemd.*: dokku-retire\.service: Deactivated successfully.*$
+.* .*systemd.*: Finished dokku-retire\.service - Dokku retire service.*$
+.* .*dokku.*: .*"level":"info".*$
+.* .*dokku-event.*: INVOKED: .*$

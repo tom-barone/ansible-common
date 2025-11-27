@@ -1,0 +1,43 @@
+---
+# The default logcheck should send emails to root, which we've aliased to our email address
+# $ sudo cat /etc/logcheck/logcheck.conf
+# Print recent logs to stdout with and don't update the pointer
+# $ sudo -u logcheck logcheck -o -t
+# Send email to root user (and therefore us) with:
+# $ sudo -u logcheck logcheck
+# To add a test log that will flag
+# $ logger -p kern.error This is a test
+
+- ansible.builtin.apt:
+    name: logcheck
+    state: present
+
+- name: Add logcheck ingore rules
+  loop:
+    - ansible
+    - collectd
+    - containerd
+    - docker
+    - dokku
+    - general
+    - gpg
+    - kernel
+    - nginx
+    - packagekit
+    - polkit
+    - postfix
+    - ssh
+    - systemd
+  ansible.builtin.template:
+    src: files/{{ item }}
+    dest: /etc/logcheck/ignore.d.server/{{ item }}
+
+- name: Restart logcheck service
+  ansible.builtin.systemd:
+    name: logcheck
+    state: restarted
+    enabled: yes
+
+- name: Run and test
+  ansible.builtin.command: >
+    su -s /bin/bash -c "/usr/sbin/logcheck" logcheck

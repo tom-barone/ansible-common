@@ -1,0 +1,51 @@
+---
+# Setup postfix as a relay through Gmail SMTP
+
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - relay_host is defined
+      - relay_port is defined
+      - relay_username is defined
+      - relay_password is defined
+      - postfix_hostname is defined
+      - root_alias is defined
+    msg: "Missing a required variable"
+
+- name: Install postfix and dependencies
+  ansible.builtin.apt:
+    pkg:
+      - postfix
+      - libsasl2-modules
+      - mailutils
+    state: present
+
+- name: Create sasl_passwd file
+  ansible.builtin.template:
+    src: files/postfix_sasl_passwd.j2
+    dest: /etc/postfix/sasl/sasl_passwd
+    backup: true
+    mode: "0600"
+
+- name: Reload sasl_passwd db
+  ansible.builtin.command: postmap /etc/postfix/sasl/sasl_passwd
+
+- name: Configure postfix main.cf
+  ansible.builtin.template:
+    src: files/postfix_main.cf.j2
+    dest: /etc/postfix/main.cf
+    backup: true
+
+- name: Add new root mail alias
+  ansible.builtin.template:
+    src: files/aliases.j2
+    dest: /etc/aliases
+    backup: true
+
+- name: Update aliases db
+  ansible.builtin.command: newaliases
+
+- name: Restart postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: restarted

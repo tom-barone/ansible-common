@@ -1,0 +1,5 @@
+.* .*kernel.*: .*entered promiscuous mode.*$
+.* .*kernel.*: .*left promiscuous mode.*$
+.* .*kernel.*: .*renamed from.*$
+.* .*kernel.*: .*becomes ready.*$
+.* .*kernel.*:.*perf: interrupt took too long.*$

@@ -1,0 +1,28 @@
+.* .*systemd.*: .* user.*User Manager.*$
+.* .*systemd.*: .* user.*User Runtime Directory.*$
+.* .*systemd.*: Activating special unit.*$
+.* .*systemd.*: Stop.* target .*$
+.* .*systemd.*: Reac.* target.*$
+.* .*systemd.*: Close.* dbus\.socket.*$
+.* .*systemd.*: Start.* dbus\.socket.*$
+.* .*systemd.*: Liste.* dbus\.socket.*$
+.* .*systemd.*: Closed.* gpg-agent.*$
+.* .*systemd.*: Listen.* gpg-agent.*$
+.* .*systemd.*: Close.* pk-debconf.*$
+.* .*systemd.*: Listen.* pk-debconf.*$
+.* .*systemd.*: Removed slice.*$
+.* .*systemd.*: Reached target shutdown\.target.*$
+.* .*systemd.*: .*Exit the Session\.$
+.* .*systemd.*: .*user.*Deactivated successfully.*$
+.* .*systemd.*: Created slice.*$
+.* .*systemd.*: Queued start job.*$
+.* .*systemd.*: Reached target.*$
+.* .*systemd.*: Started .* Session .* of User.*$
+.* .*systemd.*: Startup finished in.*
+.* .*systemd.*: Start.* .* - .*\.$
+.* .*systemd.*: Finish.* .* - .*\.$
+.* .*systemd.*: .*: Deactivated successfully\.$
+.* .*systemd.*: .*: Sent signal .* on client request\.$
+.* .*systemd.*: Data hash table of .* suggesting rotation.*$
+.* .*systemd.*: .* limits reached .* rotating\.$
+.* .*systemd.*: Reloading.*$

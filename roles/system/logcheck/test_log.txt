@@ -1,0 +1,190 @@
+I should always show up
+# Lines with a leading '#' are ignored
+# Empty lines are ignored
+
+# Dokku
+2025-02-19T03:24:09.808383+00:00 jqc-production (systemd): pam_unix(systemd-user:session): session opened for user dokku(uid=1002) by (uid=0)
+2025-02-19T03:25:09.664759+00:00 jqc-production (sd-pam): pam_unix(systemd-user:session): session closed for user dokku
+2025-02-19T05:50:40.371755+00:00 jqc-production dokku[906603]:        Attempting to retire jqc-kdcertifiers.au container 20b572f15b1dc4acfb243b5ae1722465e50e9c4d001a797f25fffe3f804937a8
+2025-02-19T05:05:40.266159+00:00 jqc-production dokku[867655]: -----> Retiring old containers and images
+2025-02-19T05:45:54.153797+00:00 jqc-production crontab[905092]: (dokku) REPLACE (dokku)
+Feb 19 05:45:54 jqc-production crontab[905092]: (dokku) REPLACE (dokku)
+2025-02-19T05:50:41.770849+00:00 jqc-production dokku[906603]:  !     Image 5b0ca5a465b76f9d639c08a091b8d086a0383e8d2747982186a97dd585384efa has children images and is untagged, skipping rm and marking dead
+2025-02-19T06:25:02.853489+00:00 jqc-production dokku[947019]: 8b58c18d2a98dcc60c5c70844f0066e633bfed44e11482ba3f1991fd71cce394
+2025-02-19T06:25:03.267914+00:00 jqc-production dokku[947019]:  !     Image 647b71ca7859440d31b7c047366f1ea9e373869e6b924ece0fa2611e08ba642f has running containers, skipping rm
+2025-02-19T13:08:06.559622+00:00 jqc-production sshd[980260]: Accepted publickey for dokku from 144.6.17.85 port 52285 ssh2: ED25519 SHA256:PX+zAk6kynIQtfFsKtjKAQ+JE1kM6VEpebqLHxkBVqQ
+2025-03-06T13:09:57.563059+10:30 au-adelaide dokku-event-listener.service[677]: {"level":"info","container_id":"ebd2bd278","time":1741228797,"message":"dead_container"}
+2025-03-06T13:14:26.146478+10:30 au-adelaide dokku-event-listener.service[677]: {"level":"info","container_id":"3b6b6544e","app":"panel.tombarone.net","ip_address":"172.17.0.6","time":1741229066,"message":"new_container"}
+2025-03-14T10:26:19.829641+10:30 au-adelaide dokku-event[1916791]: INVOKED: scheduler-logs( docker-local staging.jqc-kdcertifiers.au  true false 100 ) NAME=admin FINGERPRINT=SHA256:BVqQ DOKKU_PID=1916380
+2025-03-14T10:05:04.472939+10:30 au-adelaide dokku-event[1914955]: INVOKED: scheduler-detect( --global ) NAME= FINGERPRINT= DOKKU_PID=1914839
+2025-03-14T10:05:04.509870+10:30 au-adelaide dokku-event[1915071]: INVOKED: scheduler-retire( docker-local  ) NAME= FINGERPRINT= DOKKU_PID=1914839
+
+# nginx
+2025-03-06T12:35:03.964963+10:30 au-adelaide systemd[1]: Reloading nginx.service - A high performance web server and a reverse proxy server...
+2025-03-06T12:35:03.986552+10:30 au-adelaide systemd[1]: Reloaded nginx.service - A high performance web server and a reverse proxy server.
+
+# Docker
+2025-02-19T04:05:40.377451+00:00 jqc-production docker[791697]: Total:#0111.079MB
+2025-02-19T05:04:41.662333+00:00 jqc-production kernel: [526407.286555] docker0: port 3(veth301e9c6) entered blocking state
+Feb 19 05:04:41 jqc-production kernel: docker0: port 3(veth301e9c6) entered blocking state
+2025-02-19T05:04:43.418402+00:00 jqc-production dockerd[16165]: time="2025-02-19T05:04:43.418050567Z" level=info msg="ignoring event" container=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+2025-02-19T06:22:33.200698+00:00 jqc-production dockerd[16165]: 2025/02/19 06:22:33 http2: server: error reading preface from client @: read unix /run/docker.sock->@: read: connection reset by peer
+2025-02-20T04:05:40.356178+00:00 jqc-production docker[1119384]: ID#011#011#011#011#011#011RECLAIMABLE#011SIZE#011#011LAST ACCESSED
+2025-02-20T04:05:40.356279+00:00 jqc-production docker[1119384]: 5ozlyla4ohgy04x8aggllwq9c*              #011true #011#0110B        #01123 hours ago
+Feb 20 04:05:40 jqc-production docker[1119384]: ID                                                RECLAIMABLE        SIZE                LAST ACCESSED
+Feb 20 04:05:40 jqc-production docker[1119384]: 5ozlyla4ohgy04x8aggllwq9c*                      true                 0B                23 hours ago
+2025-02-24T04:05:43.034966+00:00 jqc-production docker[1806506]: n98hmnql1ixeacx97edc96ebx               #011true #0110B        #0113 days ago
+Feb 24 04:05:40 jqc-production docker[1806506]: sx33amszgfwp7wwlrxm4dn5xr*                      true                 600B              40 minutes ago
+2025-03-05T01:05:14.321012+00:00 au-melbourne systemd[1]: Starting dokku-retire.service - Dokku retire service...
+2025-03-05T01:05:14.447332+00:00 au-melbourne systemd[1]: dokku-retire.service: Deactivated successfully.
+2025-03-05T01:05:14.447545+00:00 au-melbourne systemd[1]: Finished dokku-retire.service - Dokku retire service.
+Mar 06 02:57:42 eu-central dockerd[1053]: time="2025-03-06T02:57:42.785524143Z" level=error msg="[resolver] failed to query external DNS server" client-addr="udp:[2a01:4f8:c2c:411e::1]:39229" dns-server="udp:[2a01:4ff:ff00::add:1]:53" error="read udp [2a01:4f8:c2c:411e::1]:39229->[2a01:4ff:ff00::add:1]:53: i/o timeout" question=";grafana.com.\tIN\t A" spanID=853348240ec88829 traceID=20ce7dcb6987f11bf81d172d23f64c66
+Mar 06 12:54:30 eu-central dockerd[1053]: time="2025-03-06T12:54:30.846694363Z" level=error msg="[resolver] failed to query external DNS server" client-addr="udp:[2a01:4f8:c2c:411e::1]:42409" dns-server="udp:[2a01:4ff:ff00::add:1]:53" error="read udp [2a01:4f8:c2c:411e::1]:42409->[2a01:4ff:ff00::add:1]:53: i/o timeout" question=";api.ipify.org.\tIN\t A" spanID=3b0abea3e8618f6d traceID=35bcae32df1aa531024e87341bc06d5d
+2025-03-05T13:00:02.904770+00:00 au-melbourne systemd[1]: var-lib-docker-overlay2-a8f548cb61b62baad08839e4fdf636776b29d64e2099a572f81e61b0acfba0c7\x2dinit-merged.mount: Deactivated successfully.
+2025-03-05T13:00:03.007841+00:00 au-melbourne systemd[1]: Started docker-3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.scope - libcontainer container 3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.
+2025-03-05T13:00:08.941065+00:00 au-melbourne systemd[1]: docker-3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.scope: Deactivated successfully.
+2025-03-05T13:00:09.041842+00:00 au-melbourne systemd[1]: run-docker-netns-63e3fc07fccc.mount: Deactivated successfully.
+
+# Postfix
+2025-02-19T05:02:08.422772+00:00 jqc-production postfix/qmgr[639199]: 77C2465FE1: removed
+Feb 19 05:02:03 jqc-production postfix/qmgr[639199]: 73FDC65FE7: removed
+
+# Kernel
+2025-02-19T05:04:41.662344+00:00 jqc-production kernel: [526407.289681] device veth301e9c6 entered promiscuous mode
+2025-02-19T05:04:41.809138+00:00 jqc-production kernel: [526407.434910] eth0: renamed from veth6da1c53
+2025-02-19T05:04:43.446062+00:00 jqc-production kernel: [526409.073607] veth6da1c53: renamed from eth0
+2025-02-19T05:04:41.826017+00:00 jqc-production kernel: [526407.450523] IPv6: ADDRCONF(NETDEV_CHANGE): veth301e9c6: link becomes ready
+2025-02-19T05:44:59.069255+00:00 jqc-production kernel: [528824.671587] device veth8995f1b left promiscuous mode
+Mar 07 21:45:07 au-adelaide kernel: perf: interrupt took too long (3134 > 3128), lowering kernel.perf_event_max_sample_rate to 63750
+2025-03-10T13:01:02.655403+10:30 au-adelaide kernel: [399592.532630] perf: interrupt took too long (4921 > 4918), lowering kernel.perf_event_max_sample_rate to 40500
+
+# Containerd
+2025-02-19T05:04:43.419981+00:00 jqc-production containerd[16080]: time="2025-02-19T05:04:43.419578510Z" level=info msg="shim disconnected" id=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db namespace=moby
+2025-02-19T05:04:43.420054+00:00 jqc-production containerd[16080]: time="2025-02-19T05:04:43.419636700Z" level=warning msg="cleaning up after shim disconnected" id=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db namespace=moby
+
+# SSH
+2025-03-05T01:02:27.318069+00:00 au-melbourne sshd[2151289]: Received disconnect from 218.92.0.171 port 59225:11:  [preauth]
+2025-03-05T01:02:27.318308+00:00 au-melbourne sshd[2151289]: Disconnected from authenticating user root 218.92.0.171 port 59225 [preauth]
+2025-03-05T01:03:56.818664+00:00 au-melbourne sshd[2151301]: Disconnected from invalid user zabbix 80.94.95.112 port 14272 [preauth]
+2025-03-05T03:16:12.352684+00:00 au-melbourne sshd[2161981]: Disconnected from 14.103.120.75 port 58708 [preauth]
+2025-03-05T13:53:53.973832+00:00 jqc-production sshd[3067839]: Disconnected from user root 144.6.17.85 port 53685
+2025-03-05T18:48:39.109293+00:00 au-melbourne sshd[2266668]: Disconnecting authenticating user root 180.225.193.142 port 38207: Too many authentication failures [preauth]
+2025-03-05T01:04:03.285043+00:00 au-melbourne sshd[2151299]: Connection closed by authenticating user root 139.19.117.129 port 38716 [preauth]
+2025-03-05T01:06:01.440062+00:00 au-melbourne sshd[2151554]: Connection closed by invalid user admin 92.255.57.132 port 33262 [preauth]
+2025-03-05T03:02:26.514853+00:00 au-melbourne sshd[2160976]: Connection closed by 205.210.31.200 port 55613
+2025-03-05T03:12:29.836080+00:00 au-melbourne sshd[2161669]: Connection closed by 14.103.120.75 port 47146 [preauth]
+2025-03-05T12:08:37.752142+00:00 au-melbourne sshd[2228758]: Connection reset by 8.221.136.6 port 55728
+2025-03-05T01:02:43.828520+00:00 au-melbourne sshd[2151292]: Unable to negotiate with 218.92.0.201 port 48650: no matching key exchange method found. Their offer: diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1 [preauth]
+2025-03-05T01:03:54.598986+00:00 au-melbourne sshd[2151299]: userauth_pubkey: signature algorithm ssh-rsa not in PubkeyAcceptedAlgorithms [preauth]
+2025-03-05T01:03:55.257675+00:00 au-melbourne sshd[2151301]: Invalid user zabbix from 80.94.95.112 port 14272
+2025-03-05T01:21:38.110491+00:00 au-melbourne sshd[2152355]: error: kex_exchange_identification: Connection closed by remote host
+2025-03-05T03:21:42.884136+00:00 au-melbourne sshd[2162357]: error: kex_exchange_identification: client sent invalid protocol identifier "GET / HTTP/1.1"
+2025-03-05T18:48:39.108962+00:00 au-melbourne sshd[2266668]: error: maximum authentication attempts exceeded for root from 180.225.193.142 port 38207 ssh2 [preauth]
+2025-03-06T12:26:03.126819+00:00 eu-central sshd[594927]: error: kex_protocol_error: type 20 seq 4 [preauth]
+2025-03-08T09:38:18.491215+10:30 au-adelaide sshd[1033077]: error: Protocol major versions differ: 2 vs. 1
+2025-03-05T03:21:42.884372+00:00 au-melbourne sshd[2162357]: banner exchange: Connection from 65.49.1.111 port 42023: invalid format
+2025-03-08T09:38:18.491315+10:30 au-adelaide sshd[1033077]: banner exchange: Connection from 165.154.179.204 port 44264: could not read protocol version
+2025-02-19T06:16:44.315529+00:00 jqc-production sshd[52563]: Received signal 15; terminating.
+Feb 22 03:14:03 au-melbourne sshd[966352]: error: send_error: write: Broken pipe
+2025-03-04T21:28:19.748994+00:00 jqc-production sshd[2915253]: padding error: need 1580 block 8 mod 4 [preauth]
+2025-03-05T13:54:04.151142+00:00 jqc-production (sd-pam): pam_unix(systemd-user:session): session closed for user root
+2025-03-05T13:53:49.869038+00:00 au-melbourne sshd[2239092]: Received disconnect from 144.6.17.85 port 53677:11: disconnected by user
+2025-03-06T00:43:17.306483+10:30 au-adelaide sshd[409166]: pam_env(sshd:session): deprecated reading of user environment enabled
+2025-03-06T01:33:45.867143+10:30 au-adelaide sshd[417578]: fatal: userauth_pubkey: parse publickey packet: incomplete message [preauth]
+2025-03-07T01:27:52.920291+10:30 au-adelaide sshd[675669]: error: Bad remote protocol version identification: 'SSH-2.0_CoreLab-1.0'
+2025-03-07T06:08:25.825786+10:30 au-adelaide sshd[1811]: error: beginning MaxStartups throttling
+2025-03-07T06:08:25.826274+10:30 au-adelaide sshd[1811]: drop connection #11 from [128.14.227.10]:41130 on [192.168.0.12]:22 past MaxStartups
+2025-03-07T06:11:58.658440+10:30 au-adelaide sshd[1811]: exited MaxStartups throttling after 00:03:33, 116 connections dropped
+2025-03-11T09:39:29.978356+00:00 jqc-production sshd[3758125]: Corrupted MAC on input. [preauth]
+2025-03-18T12:09:34.520114+10:30 au-adelaide sshd[619201]: Accepted publickey for tbone from 192.168.0.1 port 64930 ssh2: ED25519 SHA256:PX+zAk6kynIQtfFsKtjKAQ+JE1kM6VEpebqLHxkBVqQ
+2025-03-19T08:10:40.807493+00:00 au-melbourne sshd[3785778]: ssh_dispatch_run_fatal: Connection from 81.230.83.162 port 60399: message authentication code incorrect [preauth]
+2025-03-21T06:47:11.776235+00:00 au-melbourne sshd[3991334]: error: send_error: write: Connection reset by peer
+2025-04-25T01:50:32.194569+09:30 au-adelaide sshd[1474641]: Bad packet length 869520175. [preauth]
+2025-08-03T14:01:03.449389+09:30 au-adelaide sshd[3884932]: dispatch_protocol_error: type 90 seq 2 [preauth]
+2025-11-15T13:16:27.459586+00:00 dokku-sandbox systemd[255653]: Stopping ssh-agent.socket - OpenSSH Agent socket...
+2025-11-15T13:16:27.491028+00:00 dokku-sandbox systemd[255653]: Closed ssh-agent.socket - OpenSSH Agent socket.
+2025-11-15T13:22:58.290841+00:00 dokku-sandbox systemd[261922]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+
+# Systemd
+2025-03-05T13:54:00.087664+00:00 au-melbourne systemd[1]: Stopping user@0.service - User Manager for UID 0...
+2025-03-05T13:54:00.088115+00:00 au-melbourne systemd[2239057]: Activating special unit exit.target...
+2025-03-05T13:54:00.088180+00:00 au-melbourne systemd[2239057]: Stopped target default.target - Main User Target.
+2025-03-05T13:54:00.088523+00:00 au-melbourne systemd[2239057]: Closed dbus.socket - D-Bus User Message Bus Socket.
+2025-03-05T13:54:00.090180+00:00 au-melbourne systemd[2239057]: Removed slice app.slice - User Application Slice.
+2025-03-05T13:54:00.090242+00:00 au-melbourne systemd[2239057]: Reached target shutdown.target - Shutdown.
+2025-03-05T13:54:00.090289+00:00 au-melbourne systemd[2239057]: Finished systemd-exit.service - Exit the Session.
+2025-03-05T13:54:00.090324+00:00 au-melbourne systemd[2239057]: Reached target exit.target - Exit the Session.
+2025-03-05T13:54:00.097763+00:00 au-melbourne systemd[1]: user@0.service: Deactivated successfully.
+2025-03-05T13:54:00.098060+00:00 au-melbourne systemd[1]: Stopped user@0.service - User Manager for UID 0.
+2025-03-05T13:54:00.108569+00:00 au-melbourne systemd[1]: Stopping user-ru@0.service: Deactivated successfully.
+2025-03-05T13:54:00.115248+00:00 au-melbourne systemd[1]: Stopped user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+2025-03-05T13:54:00.116172+00:00 au-melbourne systemd[1]: Removed slice user-0.slice - User Slice of UID 0.
+2025-03-05T13:54:00.116231+00:00 au-melbourne systemd[1]: user-0.slice: Consumed 2.068s CPU time.
+2025-03-05T14:13:55.207259+00:00 au-melbourne systemd[2243400]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+2025-03-05T14:13:55.207316+00:00 au-melbourne systemd[2243400]: Reached target sockets.target - Sockets.
+2025-03-05T14:13:55.207365+00:00 au-melbourne systemd[2243400]: Reached target basic.target - Basic System.
+2025-03-05T14:13:55.207403+00:00 au-melbourne systemd[1]: Started user@0.service - User Manager for UID 0.
+2025-03-05T14:13:55.208018+00:00 au-melbourne systemd[2243400]: Reached target default.target - Main User Target.
+2025-03-05T14:13:55.208427+00:00 au-melbourne systemd[1]: Started session-11487.scope - Session 11487 of User root.
+2025-03-05T14:13:55.208634+00:00 au-melbourne systemd[2243400]: Startup finished in 92ms.
+2025-03-05T17:45:13.908955+00:00 au-melbourne systemd[1]: Starting packagekit.service - PackageKit Daemon...
+2025-03-05T17:45:13.936328+00:00 au-melbourne systemd[1]: Started packagekit.service - PackageKit Daemon.
+2025-03-05T17:50:19.044880+00:00 au-melbourne systemd[1]: packagekit.service: Deactivated successfully.
+2025-03-09T00:00:04.284660+10:30 au-adelaide systemd[1]: rsyslog.service: Sent signal SIGHUP to main process 680 (rsyslogd) on client request.
+Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: Data hash table of /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal has a fill level at 75.0 (174764 of 233016 items, 50331648 file size, 287 bytes per hash table item), suggesting rotation.
+Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal: Journal header limits reached or header out-of-date, rotating.
+2025-07-02T06:53:54.069858+00:00 au-melbourne systemd[1]: Reloading.
+
+# PackageKit
+ 2025-02-19T06:16:45.742606+00:00 jqc-production dbus-daemon[557]: [system] Activating via systemd: service name='org.freedesktop.PackageKit' unit='packagekit.service' requested by ':1.656' (uid=0 pid=912195 comm="/usr/bin/gdbus call --system --dest org.freedeskto")
+2025-02-19T06:16:45.760481+00:00 jqc-production PackageKit: daemon start
+2025-02-19T06:16:45.797789+00:00 jqc-production dbus-daemon[557]: [system] Successfully activated service 'org.freedesktop.PackageKit'
+2025-02-19T06:21:55.734637+00:00 jqc-production PackageKit: daemon quit
+
+# General
+Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2606:4700:f1::1 (2.debian.pool.ntp.org)
+2025-02-23T00:00:09.290326+00:00 jqc-production rsyslogd: [origin software="rsyslogd" swVersion="8.2302.0" x-pid="637974" x-info="https://www.rsyslog.com"] rsyslogd was HUPed
+2025-02-24T01:29:50.302800+00:00 jqc-production fstrim[1757955]: /: 8.9 GiB (9510797312 bytes) trimmed on /dev/sda
+2025-03-05T01:10:12.825004+00:00 au-melbourne systemd[1]: Starting sysstat-collect.service - system activity accounting tool...
+2025-03-05T01:10:12.825154+00:00 au-melbourne systemd[1]: sysstat-collect.service: Deactivated successfully.
+2025-03-05T01:10:12.825323+00:00 au-melbourne systemd[1]: Finished sysstat-collect.service - system activity accounting tool.
+2025-03-05T00:45:21.324405+00:00 au-melbourne systemd[1]: session-11333.scope: Deactivated successfully.
+2025-03-05T00:45:21.324483+00:00 au-melbourne systemd[1]: session-11333.scope: Consumed 3.362s CPU time.
+2025-03-05T13:00:08.941173+00:00 au-melbourne systemd[1]: docker-3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.scope: Consumed 1.860s CPU time.
+2025-03-06T02:32:34.141371+10:30 au-adelaide systemd[1]: Starting man-db.service - Daily man-db regeneration...
+2025-03-06T02:32:34.376352+10:30 au-adelaide systemd[1]: man-db.service: Deactivated successfully.
+2025-03-06T02:32:34.376457+10:30 au-adelaide systemd[1]: Finished man-db.service - Daily man-db regeneration.
+2025-03-05T17:45:11.356276+00:00 au-melbourne systemd[1]: Starting apt-daily.service - Daily apt download activities...
+2025-03-05T17:45:15.415234+00:00 au-melbourne systemd[1]: apt-daily.service: Deactivated successfully.
+2025-03-05T17:45:15.416836+00:00 au-melbourne systemd[1]: Finished apt-daily.service - Daily apt download activities.
+2025-03-27T01:11:42.560576+10:30 au-adelaide wpa_supplicant[1341]: wlp0s20f3: CTRL-EVENT-BEACON-LOSS
+
+# GPG
+2025-03-18T13:08:11.987212+10:30 au-adelaide systemd[613761]: Closed dirmngr.socket - GnuPG network certificate management daemon.
+2025-03-18T11:39:23.397122+10:30 au-adelaide systemd[613761]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
+2025-11-15T13:16:27.459101+00:00 dokku-sandbox systemd[255653]: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+2025-11-15T13:16:27.459357+00:00 dokku-sandbox systemd[255653]: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+
+# Polkit
+2025-03-06T06:56:26.288271+10:30 au-adelaide polkitd[444192]: Started polkitd version 122
+2025-03-06T06:56:26.290363+10:30 au-adelaide polkitd[444192]: Loading rules from directory /etc/polkit-1/rules.d
+2025-03-06T06:56:26.290417+10:30 au-adelaide polkitd[444192]: Loading rules from directory /usr/share/polkit-1/rules.d
+2025-03-06T06:56:26.291514+10:30 au-adelaide polkitd[444192]: Finished loading, compiling and executing 3 rules
+Mar 06 06:56:26 au-adelaide polkitd[444192]: Acquired the name org.freedesktop.PolicyKit1 on the system bus
+2025-04-10T03:50:40.336249+00:00 au-melbourne dbus-daemon[539]: [system] Activating via systemd: service name='org.freedesktop.hostname1' unit='dbus-org.freedesktop.hostname1.service' requested by ':1.1732' (uid=1000 pid=2175983 comm="hostnamectl")
+2025-04-10T03:50:40.443813+00:00 au-melbourne dbus-daemon[539]: [system] Successfully activated service 'org.freedesktop.hostname1'
+
+# Collectd
+2025-03-24T19:11:48.684979+10:30 au-adelaide collectd[807525]: processes plugin: read_file_contents: Reading file "/proc/2369663/stat" failed.
+2025-04-21T03:00:25.210251+00:00 au-melbourne collectd[2280106]: processes plugin: Failed to read from `/proc/587385/cmdline': No such process.
+
+# Ansible
+2025-11-15T13:14:40.194316+00:00 dokku-sandbox python3[258556]: ansible-ansible.legacy.setup Invoked with gather_subset=['all'] gather_timeout=10 filter=[] fact_path=/etc/ansible/facts.d
+2025-11-15T13:14:41.576742+00:00 dokku-sandbox python3[258654]: ansible-ansible.builtin.apt Invoked with name=logcheck state=present package=['logcheck'] update_cache_retries=5 update_cache_retry_max_delay=12 cache_valid_time=0 purge=False force=False upgrade=no dpkg_options=force-confdef,force-confold autoremove=False autoclean=False fail_on_autoremove=False only_upgrade=False force_apt_get=False clean=False allow_unauthenticated=False allow_downgrade=False allow_change_held_packages=False lock_timeout=60 auto_install_module_deps=True update_cache=None deb=None default_release=None install_recommends=None policy_rc_d=None
+2025-11-15T13:14:42.615427+00:00 dokku-sandbox python3[258684]: ansible-ansible.legacy.stat Invoked with path=/etc/logcheck/ignore.d.server/collectd follow=False get_checksum=True get_size=False checksum_algorithm=sha1 get_mime=True get_attributes=True
+2025-11-15T13:15:01.895608+00:00 dokku-sandbox sshd-session[255648]: syslogin_perform_logout: logout() returned an error
+2025-11-15T13:15:03.227986+00:00 dokku-sandbox python3[259435]: ansible-ansible.builtin.systemd Invoked with enabled=True name=logcheck state=restarted daemon_reload=False daemon_reexec=False scope=system no_block=False force=None masked=None
+
+# Put in bulk output from the last report below to double check it filters everything
+
+

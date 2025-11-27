@@ -1,0 +1,6 @@
+.* .*polkitd.*: Started polkitd.*$
+.* .*polkitd.*: Loading rules from.*$
+.* .*polkitd.*: Finished loading.*$
+.* .*polkitd.*: Acquired the name.*$
+.* .*dbus-daemon.*: .*Activating via systemd.*org\.freedesktop\.hostname1.*$
+.* .*dbus-daemon.*: .*Successfully activated service.*org\.freedesktop\.hostname1.*$

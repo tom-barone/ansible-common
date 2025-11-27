@@ -1,0 +1,4 @@
+.* .*systemd.*: Closed dirmngr.socket.*$
+.* .*systemd.*: Listening on dirmngr.socket.*$
+.* .*systemd.*: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent .*ssh-agent emulation.*$
+.* .*systemd.*: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.*$

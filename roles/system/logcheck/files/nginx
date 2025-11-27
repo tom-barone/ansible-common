@@ -1,0 +1,2 @@
+.* .*nginx.*: .*signal process start.*$
+.* .*systemd.*: Reload.* nginx.service .*$
