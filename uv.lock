@@ -29,8 +29,16 @@ dependencies = [
     { name = "ansible-dev-tools" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "yamllint" },
+]
+
 [package.metadata]
 requires-dist = [{ name = "ansible-dev-tools", specifier = ">=25.10.0" }]
+
+[package.metadata.requires-dev]
+dev = [{ name = "yamllint", specifier = ">=1.37.1" }]
 
 [[package]]
 name = "ansible-compat"

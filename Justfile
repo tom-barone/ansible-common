@@ -4,7 +4,8 @@ default: help
 
 # Install dependencies
 install:
-    uv sync
+    @uv sync --quiet
+    @npm install --silent
 
 # Show this help message
 help:
@@ -12,14 +13,15 @@ help:
 
 # Run linters
 lint:
-    uv run ansible-lint
+    @uv run ansible-lint
     @# https://github.com/ansible/ansible-lint/issues/4533
-    rm -rf .ansible
+    @rm -rf .ansible
+    @uv run yamllint .
 
 # Run formatters
 format:
-    npx prettier --write '**/*.yaml'
-    just --fmt --unstable
+    @npx prettier --write 'roles/**/*.yaml' --list-different
+    @just --fmt --unstable
 
 # Run all pre-commit checks
 precommit: install format lint
