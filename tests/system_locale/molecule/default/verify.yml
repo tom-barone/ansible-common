@@ -1,0 +1,16 @@
+---
+# Purpose: assert that the locale was generated correctly.
+# Molecule calls this playbook with `molecule verify`.
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Get generated locales
+      ansible.builtin.command: locale -a
+      register: locale_list
+      changed_when: false
+
+    - name: Assert en_AU.UTF-8 locale is generated
+      ansible.builtin.assert:
+        that:
+          - "'en_AU.utf8' in locale_list.stdout"
+        msg: "en_AU.UTF-8 locale was not generated"

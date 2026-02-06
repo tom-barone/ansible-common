@@ -5,6 +5,12 @@ platforms:
   - name: "debian12-${TEST_NAME}"
     image: "geerlingguy/docker-debian12-ansible:latest"
     pre_build_image: true
+    # Necessary for systemd to work properly
+    privileged: true
+    cgroupns_mode: host
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
 provisioner:
   name: ansible
 

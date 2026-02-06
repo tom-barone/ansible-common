@@ -4,10 +4,16 @@
 - name: Validate required variables
   ansible.builtin.assert:
     that:
-      - locale is defined
+      - system_locale_name is defined
     msg: "Missing a required variable"
 
+- name: Install locales package
+  ansible.builtin.apt:
+    name: locales
+    state: present
+    update_cache: true
+
 - name: Ensure the correct locale is generated
-  ansible.builtin.locale_gen:
-    name: "{{ locale }}"
+  community.general.locale_gen:
+    name: "{{ system_locale_name }}"
     state: present

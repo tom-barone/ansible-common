@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: system_locale
+      vars:
+        system_locale_name: en_AU.UTF-8
