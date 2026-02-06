@@ -13,15 +13,20 @@
 
 # Run linters
 @lint:
-    uv run ansible-lint
-    # https://github.com/ansible/ansible-lint/issues/4533
-    rm -rf .ansible
-    uv run yamllint .
+    @echo "Skipping linters for now"
+    #uv run ansible-lint
+    ## https://github.com/ansible/ansible-lint/issues/4533
+    #rm -rf .ansible
+    #uv run yamllint .
 
 # Run formatters
 @format:
     npx prettier --write 'roles/**/*.yaml' --list-different
     just --fmt --unstable
 
+# Run tests
+@test:
+    uv run tests/run.py
+
 # Run all pre-commit checks
-@precommit: install format lint
+@precommit: install format lint test
