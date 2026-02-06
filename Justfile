@@ -25,8 +25,8 @@
     just --fmt --unstable
 
 # Run tests
-@test:
-    uv run tests/run.py
+@test *ARGS:
+    uv run tests/run.py {{ ARGS }}
 
 # Run all pre-commit checks
 @precommit: install format lint test

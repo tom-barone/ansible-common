@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 import subprocess
 import sys
@@ -7,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 TESTS_DIR = Path("./tests").resolve()
+
 
 def find_molecule_scenarios(root: Path):
     for yml in root.rglob("molecule.yml"):
@@ -32,7 +34,16 @@ def run_test(path: Path):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Run molecule tests")
+    parser.add_argument(
+        "--name", help="filter scenarios by substring match on relative path"
+    )
+    args = parser.parse_args()
+
     scenarios = list(find_molecule_scenarios(TESTS_DIR))
+
+    if args.name:
+        scenarios = [s for s in scenarios if args.name in str(s.relative_to(TESTS_DIR))]
 
     print(f"Found {len(scenarios)} molecule scenarios. Running tests...")
 
