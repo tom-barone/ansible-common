@@ -1,0 +1,65 @@
+---
+# Purpose: assert that the instance really ended up in the expected state.
+# Molecule calls this playbook with `molecule verify`.
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Get user passwd entry
+      ansible.builtin.command: getent passwd testadmin
+      register: passwd_entry
+      changed_when: false
+
+    - name: Assert user exists with bash shell and home directory
+      ansible.builtin.assert:
+        that:
+          - "'/bin/bash' in passwd_entry.stdout"
+          - "'/home/testadmin' in passwd_entry.stdout"
+        msg: "testadmin does not have expected shell or home directory"
+
+    - name: Get user group info
+      ansible.builtin.command: id testadmin
+      register: user_info
+      changed_when: false
+
+    - name: Assert user is in sudo group
+      ansible.builtin.assert:
+        that:
+          - "'sudo' in user_info.stdout"
+        msg: "testadmin is not in sudo group"
+
+    - name: Read authorized_keys file
+      ansible.builtin.slurp:
+        src: /home/testadmin/.ssh/authorized_keys
+      register: authorized_keys
+
+    - name: Assert authorized key is set
+      vars:
+        keys: "{{ authorized_keys.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'ssh-ed25519 AAAAC3' in keys"
+        msg: "authorized_keys missing expected SSH key"
+
+    - name: Read sudoers file
+      ansible.builtin.slurp:
+        src: /etc/sudoers.d/testadmin
+      register: sudoers_file
+
+    - name: Assert sudoers file has correct content
+      vars:
+        content: "{{ sudoers_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'testadmin ALL=(ALL) NOPASSWD:ALL' in content"
+        msg: "sudoers file missing NOPASSWD line"
+
+    - name: Get sudoers file permissions
+      ansible.builtin.stat:
+        path: /etc/sudoers.d/testadmin
+      register: sudoers_stat
+
+    - name: Assert sudoers file has correct permissions
+      ansible.builtin.assert:
+        that:
+          - "sudoers_stat.stat.mode == '0440'"
+        msg: "sudoers file does not have 0440 permissions"

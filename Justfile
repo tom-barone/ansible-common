@@ -24,7 +24,7 @@
 
 # Run formatters
 @format:
-    npx prettier --write 'roles/**/*.yaml' 'tests/**/*.yaml' --list-different
+    npx prettier --write 'roles/**/*.yml' 'tests/**/*.yml' --list-different
     just --fmt --unstable
 
 # Run tests

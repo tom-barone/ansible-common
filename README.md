@@ -7,6 +7,7 @@ Reusable ansible roles.
 | Testing Phase | Molecule Action | Purpose |
 | --- | --- | --- |
 | Environment provisioning | `create` | Provisions test infrastructure and environments |
+| Validates ansible syntax without execution | `syntax` | Checks for syntax errors in Ansible playbooks and roles |
 | Dependency resolution | `dependency` | Installs required roles, collections, and dependencies |
 | Environment preparation | `prepare` | Configures environments before applying automation logic |
 | Change application | `converge` | Executes the automation being tested |

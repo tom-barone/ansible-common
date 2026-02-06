@@ -12,10 +12,10 @@ ROLES_DIR = Path("./roles").resolve()
 
 
 def find_molecule_scenarios(root: Path):
-    for yml in root.rglob("molecule.yml"):
+    for yaml in root.rglob("molecule.yml"):
         # match */molecule/<scenario>/molecule.yml
-        if yml.parent.parent.name == "molecule":
-            yield yml.parent
+        if yaml.parent.parent.name == "molecule":
+            yield yaml.parent
 
 
 def run_test(path: Path):
