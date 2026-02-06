@@ -19,10 +19,10 @@ def find_molecule_scenarios(root: Path):
 
 
 def run_test(path: Path):
-    test_dir = path.parent.parent
+    test_dir = path.parent
     result = subprocess.run(
         ["uv", "run", "molecule", "--debug", "test"],
-        cwd=path.parent.parent,
+        cwd=test_dir.parent,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         env={

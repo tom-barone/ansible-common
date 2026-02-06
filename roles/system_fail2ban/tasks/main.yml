@@ -1,3 +1,4 @@
+---
 # Tests to confirm working:
 #   `sudo fail2ban-client status sshd`
 #   `sudo tail -n 100 /var/log/auth.log`
@@ -11,18 +12,16 @@
     pkg:
       - fail2ban
       - whois
-    state: latest
+    update_cache: true
+    state: present
 
 - name: Configure jail for sshd
   ansible.builtin.template:
     src: files/jail.local.j2
     dest: /etc/fail2ban/jail.local
+    mode: "0644"
     backup: true
-
-- name: Restart fail2ban
-  ansible.builtin.systemd:
-    name: fail2ban
-    state: restarted
+  notify: Restart fail2ban
 
 - name: Test fail2ban configuration
   ansible.builtin.command:
@@ -30,3 +29,10 @@
       - fail2ban-client
       - -d
       - --test
+  changed_when: false
+
+- name: Ensure fail2ban is enabled and started
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: started
+    enabled: true
