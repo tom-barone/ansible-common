@@ -3,11 +3,11 @@ name = "ansible-common"
 version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
- "ansible-dev-tools>=25.10.0",
-]
+dependencies = ["ansible>=13.3.0"]
 
 [dependency-groups]
 dev = [
-    "yamllint>=1.37.1",
+  "yamllint>=1.37.1",
+  "ansible-dev-tools>=25.10.0",
+  "molecule-plugins[docker]>=23.6.1",
 ]

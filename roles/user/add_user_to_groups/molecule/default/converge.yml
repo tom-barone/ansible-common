@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: user/add_user_to_groups
+      vars:
+        username: testuser
+        groupnames: ["group1", "group2"]

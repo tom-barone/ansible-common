@@ -1,0 +1,26 @@
+---
+driver:
+  name: docker
+platforms:
+  - name: molecule-debian12
+    image: "geerlingguy/docker-debian12-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../roles/
+
+scenario:
+  test_sequence:
+    #- dependency
+    #- cleanup
+    - destroy
+    - syntax
+    - create
+    #- prepare
+    - converge
+    - idempotence
+    #- side_effect
+    - verify
+    #- cleanup
+    - destroy
