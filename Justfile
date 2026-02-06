@@ -13,14 +13,14 @@
 
 # Run linters
 @lint:
-    uv run ansible-lint tests
-    ## https://github.com/ansible/ansible-lint/issues/4533
-    #rm -rf .ansible
-    #uv run yamllint .
+    uv run ansible-lint tests roles/user_add_to_groups
+    # https://github.com/ansible/ansible-lint/issues/4533
+    rm -rf .ansible
+    uv run yamllint --strict tests roles/user_add_to_groups
 
 # Run formatters
 @format:
-    npx prettier --write 'roles/**/*.yaml' --list-different
+    npx prettier --write 'roles/**/*.yaml' 'tests/**/*.yaml' --list-different
     just --fmt --unstable
 
 # Run tests
