@@ -16,6 +16,7 @@
     uv run ansible-lint tests \
       ./roles/system_fail2ban \
       ./roles/system_locale \
+      ./roles/system_logcheck \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
     # https://github.com/ansible/ansible-lint/issues/4533
@@ -23,6 +24,7 @@
     uv run yamllint --strict tests \
       roles/system_fail2ban \
       ./roles/system_locale \
+      ./roles/system_logcheck \
       roles/user_add_to_groups \
       roles/user_create_admin
 
@@ -34,6 +36,8 @@
 # Run tests
 @test *ARGS:
     uv run tests/run.py {{ ARGS }}
+    # Test logcheck matchers
+    ./roles/system_logcheck/test.sh
 
 # Run the Ansible docker container for testing (systemd enabled)
 @run-docker:

@@ -1,6 +1,6 @@
-I should always show up
 # Lines with a leading '#' are ignored
 # Empty lines are ignored
+# This is used to test log parsing and filtering
 
 # Dokku
 2025-02-19T03:24:09.808383+00:00 jqc-production (systemd): pam_unix(systemd-user:session): session opened for user dokku(uid=1002) by (uid=0)
