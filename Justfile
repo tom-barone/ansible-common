@@ -13,8 +13,7 @@
 
 # Run linters
 @lint:
-    @echo "Skipping linters for now"
-    #uv run ansible-lint
+    uv run ansible-lint tests
     ## https://github.com/ansible/ansible-lint/issues/4533
     #rm -rf .ansible
     #uv run yamllint .

@@ -7,20 +7,18 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: ../../../../../roles/
 
 scenario:
   test_sequence:
-    #- dependency
-    #- cleanup
+    # - dependency
+    # - cleanup
     - destroy
     - syntax
     - create
-    #- prepare
+    # - prepare
     - converge
     - idempotence
-    #- side_effect
+    # - side_effect
     - verify
-    #- cleanup
+    # - cleanup
     - destroy

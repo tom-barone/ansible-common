@@ -5,7 +5,7 @@
   tasks:
     - name: Apply role under test
       ansible.builtin.include_role:
-        name: user/add_user_to_groups
+        name: user_add_to_groups
       vars:
         username: testuser
         groupnames: ["group1", "group2"]

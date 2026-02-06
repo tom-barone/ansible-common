@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 TESTS_DIR = Path("./tests").resolve()
+ROLES_DIR = Path("./roles").resolve()
 
 
 def find_molecule_scenarios(root: Path):
@@ -20,13 +21,14 @@ def find_molecule_scenarios(root: Path):
 def run_test(path: Path):
     test_dir = path.parent.parent
     result = subprocess.run(
-        ["uv", "run", "molecule", "test"],
+        ["uv", "run", "molecule", "--debug", "test"],
         cwd=path.parent.parent,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         env={
             **os.environ.copy(),
             "TEST_NAME": str(test_dir.relative_to(TESTS_DIR)).replace(os.sep, "_"),
+            "ANSIBLE_ROLES_PATH": str(ROLES_DIR),
         },
         text=True,
     )
