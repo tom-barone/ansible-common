@@ -7,5 +7,5 @@
       ansible.builtin.include_role:
         name: user_add_to_groups
       vars:
-        username: testuser
-        groupnames: ["group1", "group2"]
+        user_add_to_groups_username: testuser
+        user_add_to_groups_groupnames: ["group1", "group2"]
