@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: system_harden_ssh
+      vars:
+        system_harden_ssh_public_key: "ssh-ed25519 AAAAC3 test@test"
+        system_harden_ssh_exclusive_access: true
+        system_harden_ssh_permit_root_login: "no"
