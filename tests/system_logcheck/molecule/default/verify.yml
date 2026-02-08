@@ -3,15 +3,21 @@
   hosts: all
   tasks:
     - name: Add a kernel error log entry for testing that should show up
-      ansible.builtin.command: logger -p kern.error "This is a test log entry for logcheck verification"
+      ansible.builtin.command: >
+        logger -p kern.error
+        "This is a test log entry for logcheck verification"
       changed_when: false
 
-    - name: Add a kernel error log entry for testing that should be ignored by logcheck
-      ansible.builtin.command: logger -p kern.error "I am a logcheck test that should be filtered out"
+    - name: Add a kernel error log entry for testing that be filtered
+      ansible.builtin.command: >
+        logger -p kern.error
+        "I am a logcheck test that should be filtered out"
       changed_when: false
 
     - name: Run logcheck and check for test log entry
-      ansible.builtin.command: su -s /bin/bash -c "/usr/sbin/logcheck -o -t" logcheck
+      ansible.builtin.command: >
+        su -s /bin/bash -c
+        "/usr/sbin/logcheck -o -t" logcheck
       register: logcheck_output
       changed_when: false
 
@@ -22,7 +28,13 @@
     - name: Assert logcheck output contains correct entries
       ansible.builtin.assert:
         that:
-          - "'This email is sent by logcheck.' in logcheck_output.stdout"
-          - "'This is a test log entry for logcheck verification' in logcheck_output.stdout"
-          - "'I am a logcheck test that should be filtered out' not in logcheck_output.stdout"
+          - >-
+            'This email is sent by logcheck.'
+            in logcheck_output.stdout
+          - >-
+            'This is a test log entry for logcheck verification'
+            in logcheck_output.stdout
+          - >-
+            'I am a logcheck test that should be filtered out'
+            not in logcheck_output.stdout
         msg: "Logcheck did not process the test log entry as expected"
