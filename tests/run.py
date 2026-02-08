@@ -18,21 +18,33 @@ def find_molecule_scenarios(root: Path):
             yield yaml.parent
 
 
-def run_test(path: Path):
+def run_test(path: Path, no_capture: bool):
     test_dir = path.parent
-    result = subprocess.run(
-        ["uv", "run", "molecule", "--debug", "test"],
-        cwd=test_dir.parent,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        env={
-            **os.environ.copy(),
-            "TEST_NAME": str(test_dir.relative_to(TESTS_DIR)).replace(os.sep, "_"),
-            "ANSIBLE_ROLES_PATH": str(ROLES_DIR),
-        },
-        text=True,
-    )
-    return path, result.returncode, result.stdout
+    cmd = ["uv", "run", "molecule", "--debug", "test"]
+    env = {
+        **os.environ.copy(),
+        "TEST_NAME": str(test_dir.relative_to(TESTS_DIR)).replace(os.sep, "_"),
+        "ANSIBLE_ROLES_PATH": str(ROLES_DIR),
+    }
+
+    if no_capture:
+        # Print output directly to console without capturing
+        result = subprocess.run(
+            cmd,
+            cwd=test_dir.parent,
+            env=env,
+            text=True,
+        )
+    else:
+        result = subprocess.run(
+            cmd,
+            cwd=test_dir.parent,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            env=env,
+            text=True,
+        )
+    return path, result.returncode, result.stdout if no_capture else ""
 
 
 def main():
@@ -40,6 +52,12 @@ def main():
     parser.add_argument(
         "--name", help="filter scenarios by substring match on relative path"
     )
+    parser.add_argument(
+        "--no-capture",
+        help="filter scenarios by substring match on relative path",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     scenarios = list(find_molecule_scenarios(TESTS_DIR))
@@ -57,7 +75,7 @@ def main():
     failures = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = [executor.submit(run_test, s) for s in scenarios]
+        futures = [executor.submit(run_test, s, args.no_capture) for s in scenarios]
 
         for future in as_completed(futures):
             path, rc, output = future.result()
