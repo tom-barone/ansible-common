@@ -8,10 +8,15 @@
 # $ sudo -u logcheck logcheck
 # To add a test log that will flag
 # $ logger -p kern.error This is a test
+#
+# By default logcheck will run via cron (see /etc/cron.d/logcheck):
+# - every hour
+# - on reboot
 
 - name: Install logcheck
   ansible.builtin.apt:
     name: logcheck
+    update_cache: true
     state: present
 
 - name: Add logcheck ingore rules
@@ -34,12 +39,6 @@
     src: files/{{ item }}
     dest: /etc/logcheck/ignore.d.server/{{ item }}
     mode: "0644"
-
-- name: Restart logcheck service
-  ansible.builtin.systemd:
-    name: logcheck
-    state: restarted
-    enabled: true
 
 - name: Run and test
   ansible.builtin.command: >

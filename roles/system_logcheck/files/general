@@ -10,3 +10,4 @@
 .* .*systemd.*: Finish.* .* - .*\.$
 .* .*systemd.*: .*: Deactivated successfully\.$
 .* .*wpa_supplicant.*: .*: CTRL-EVENT-BEACON-LOSS.*$
+.*I am a logcheck test that should be filtered out.*$
