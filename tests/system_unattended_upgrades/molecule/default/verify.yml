@@ -1,0 +1,15 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Check unattended-upgrades service status
+      ansible.builtin.systemd:
+        name: unattended-upgrades
+      register: status
+
+    - name: Assert unattended-upgrades service is active and enabled
+      ansible.builtin.assert:
+        that:
+          - "status.status.ActiveState == 'active'"
+          - "status.status.UnitFileState == 'enabled'"
+        msg: "unattended-upgrades service is not active and enabled"

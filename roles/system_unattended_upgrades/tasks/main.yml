@@ -18,9 +18,11 @@
 
 - name: Configure unattended-upgrades
   ansible.builtin.command: "echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections"
+  changed_when: false
 
 - name: Reconfigure unattended-upgrades
   ansible.builtin.command: "dpkg-reconfigure -f noninteractive unattended-upgrades"
+  changed_when: false
 
 - name: Ensure unattended-upgrades is enabled and started
   ansible.builtin.systemd:
