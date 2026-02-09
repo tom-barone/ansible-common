@@ -1,0 +1,30 @@
+---
+driver:
+  name: docker
+platforms:
+  - name: "${TEST_NAME}"
+    image: "${MOLECULE_DOCKER_IMAGE}"
+    pre_build_image: true
+    # Necessary for systemd to work properly
+    privileged: true
+    cgroupns_mode: host
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+provisioner:
+  name: ansible
+
+scenario:
+  test_sequence:
+    # - dependency
+    # - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    # - side_effect
+    - verify
+    # - cleanup
+    - destroy

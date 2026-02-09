@@ -1,0 +1,18 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Create Docker config directory
+      ansible.builtin.file:
+        path: /etc/docker
+        state: directory
+        mode: "0755"
+
+    - name: Configure Docker to use vfs storage driver
+      ansible.builtin.copy:
+        dest: /etc/docker/daemon.json
+        # 'vfs' is intended for testing purposes, and for situations
+        # where no copy-on-write filesystem can be used.
+        # Performance is poor, and not generally recommended for production use.
+        content: '{"storage-driver": "vfs"}'
+        mode: "0644"

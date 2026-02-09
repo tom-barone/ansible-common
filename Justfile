@@ -14,6 +14,7 @@
 # Run linters
 @lint:
     uv run ansible-lint tests \
+      ./roles/docker_install \
       ./roles/system_fail2ban \
       ./roles/system_harden_ssh \
       ./roles/system_locale \
@@ -23,12 +24,13 @@
     # https://github.com/ansible/ansible-lint/issues/4533
     rm -rf .ansible
     uv run yamllint --strict tests \
-      roles/system_fail2ban \
+      ./roles/docker_install \
+      ./roles/system_fail2ban \
       ./roles/system_harden_ssh \
       ./roles/system_locale \
       ./roles/system_logcheck \
-      roles/user_add_to_groups \
-      roles/user_create_admin
+      ./roles/user_add_to_groups \
+      ./roles/user_create_admin
 
 # Run formatters
 @format:

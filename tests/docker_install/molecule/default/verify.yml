@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Check docker-ce package is installed
+      ansible.builtin.command: dpkg -s docker-ce
+      changed_when: false
+
+    - name: Check Docker service is active
+      ansible.builtin.systemd:
+        name: docker
+      register: docker_service
+
+    - name: Assert Docker service is running
+      ansible.builtin.assert:
+        that:
+          - docker_service.status.ActiveState == "active"
+        msg: "Docker service is not running"
+
+    - name: Check Docker CLI works
+      ansible.builtin.command: docker version
+      changed_when: false
+
+    - name: Check Docker Compose plugin is installed
+      ansible.builtin.command: docker compose version
+      changed_when: false
+
+    - name: Run hello-world container
+      ansible.builtin.command: docker run --rm hello-world
+      changed_when: false
