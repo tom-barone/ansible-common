@@ -2,7 +2,7 @@
 driver:
   name: docker
 platforms:
-  - name: "TEST_NAME}"
+  - name: "${TEST_NAME}"
     image: "${MOLECULE_DOCKER_IMAGE}"
     pre_build_image: true
     # Necessary for systemd to work properly
