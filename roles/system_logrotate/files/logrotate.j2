@@ -1,0 +1,12 @@
+{{ item.path }} {
+				{% if item.su is defined %}
+				su {{ item.su | trim }}
+				{% endif %}
+				{{ item.frequency | default('daily') }}
+				missingok
+				rotate {{ item.rotate | default('7') }}
+				compress
+				delaycompress
+				notifempty
+				copytruncate
+}

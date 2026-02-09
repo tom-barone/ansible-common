@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: system_logrotate
+      vars:
+        system_logrotate_configs:
+          - name: test-app
+            path: "/var/log/test-app/*.log"
+          - name: test-custom
+            path: "/var/log/test-custom/*.log"
+            su: "root adm"
+            frequency: weekly
+            rotate: 14

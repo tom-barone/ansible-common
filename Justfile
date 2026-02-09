@@ -19,6 +19,7 @@
       ./roles/system_harden_ssh \
       ./roles/system_locale \
       ./roles/system_logcheck \
+      ./roles/system_logrotate \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
     # https://github.com/ansible/ansible-lint/issues/4533
@@ -29,6 +30,7 @@
       ./roles/system_harden_ssh \
       ./roles/system_locale \
       ./roles/system_logcheck \
+      ./roles/system_logrotate \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
 
