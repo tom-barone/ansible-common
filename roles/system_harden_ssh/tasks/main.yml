@@ -1,3 +1,4 @@
+---
 - name: Validate required variables
   ansible.builtin.assert:
     that:
@@ -29,4 +30,5 @@
     dest: /etc/ssh/sshd_config
     backup: true
     validate: "sshd -t -f %s"
+    mode: "0644"
   notify: Reload ssh service

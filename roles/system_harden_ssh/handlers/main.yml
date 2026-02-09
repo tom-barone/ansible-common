@@ -1,3 +1,4 @@
+---
 - name: Reload ssh service
   ansible.builtin.systemd:
     name: ssh
