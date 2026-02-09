@@ -2,8 +2,8 @@
 driver:
   name: docker
 platforms:
-  - name: "debian12-${TEST_NAME}"
-    image: "geerlingguy/docker-debian12-ansible:latest"
+  - name: "debian-${TEST_NAME}"
+    image: "${MOLECULE_DOCKER_IMAGE}"
     pre_build_image: true
     # Necessary for systemd to work properly
     privileged: true

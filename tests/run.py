@@ -9,6 +9,7 @@ from pathlib import Path
 
 TESTS_DIR = Path("./tests").resolve()
 ROLES_DIR = Path("./roles").resolve()
+MOLECULE_DOCKER_IMAGE = "geerlingguy/docker-debian13-ansible:latest"  # Trixie
 
 
 def find_molecule_scenarios(root: Path):
@@ -25,6 +26,7 @@ def run_test(path: Path, no_capture: bool):
         **os.environ.copy(),
         "TEST_NAME": str(test_dir.relative_to(TESTS_DIR)).replace(os.sep, "_"),
         "ANSIBLE_ROLES_PATH": str(ROLES_DIR),
+        "MOLECULE_DOCKER_IMAGE": MOLECULE_DOCKER_IMAGE,
     }
 
     if no_capture:
