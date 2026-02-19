@@ -1,0 +1,32 @@
+---
+name: "continuous integration"
+
+on:
+  push:
+    branches: ["main"]
+
+# Run only one CI workflow at a time
+concurrency:
+  group: "main"
+  cancel-in-progress: false
+
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install just
+        uses: extractions/setup-just@v3
+        with:
+          just-version: "1.42.4"
+
+      - name: "Install uv"
+        uses: "astral-sh/setup-uv@v7"
+        with:
+          version: "0.9.17"
+          enable-cache: true
+
+      - name: Run linters
+        shell: bash
+        run: just lint
