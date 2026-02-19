@@ -1,7 +1,7 @@
 ---
-- name: Converge
-  hosts: all
+- name: "Converge"
+  hosts: "all"
   tasks:
-    - name: Apply role under test
+    - name: "Apply role under test"
       ansible.builtin.include_role:
-        name: system_fail2ban
+        name: "system_fail2ban"

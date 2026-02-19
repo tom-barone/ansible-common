@@ -1,15 +1,15 @@
 ---
 # Purpose: assert that the instance really ended up in the expected state.
 # Molecule calls this playbook with `molecule verify`.
-- name: Verify
-  hosts: all
+- name: "Verify"
+  hosts: "all"
   tasks:
-    - name: Get user info
-      ansible.builtin.command: id testuser
-      register: user_info
+    - name: "Get user info"
+      ansible.builtin.command: "id testuser"
+      register: "user_info"
       changed_when: false
 
-    - name: Assert user is in group1
+    - name: "Assert user is in group1"
       ansible.builtin.assert:
         that:
           - "'group1' in user_info.stdout"

@@ -1,30 +1,30 @@
 ---
-- name: Verify
-  hosts: all
+- name: "Verify"
+  hosts: "all"
   tasks:
     # Given dokku was installed via the bootstrap script
     # When we check for the dokku binary
     # Then it exists on the system
-    - name: Check dokku binary exists
-      ansible.builtin.command: which dokku
+    - name: "Check dokku binary exists"
+      ansible.builtin.command: "which dokku"
       changed_when: false
 
     # Given dokku was installed via the bootstrap script
     # When we run dokku version
     # Then it succeeds
-    - name: Check dokku version runs successfully
-      ansible.builtin.command: dokku version
+    - name: "Check dokku version runs successfully"
+      ansible.builtin.command: "dokku version"
       changed_when: false
 
     # Given an admin SSH key was added
     # When we list dokku SSH keys
     # Then the admin key is present
-    - name: Check admin SSH key is present
-      ansible.builtin.command: dokku ssh-keys:list
+    - name: "Check admin SSH key is present"
+      ansible.builtin.command: "dokku ssh-keys:list"
       changed_when: false
-      register: ssh_keys
+      register: "ssh_keys"
 
-    - name: Assert admin key exists
+    - name: "Assert admin key exists"
       ansible.builtin.assert:
         that:
           - "'admin' in ssh_keys.stdout"
@@ -33,12 +33,12 @@
     # Given a global domain was set
     # When we check the global domain report
     # Then it contains our test domain
-    - name: Check global domain is set
-      ansible.builtin.command: dokku domains:report --global
+    - name: "Check global domain is set"
+      ansible.builtin.command: "dokku domains:report --global"
       changed_when: false
-      register: domain_report
+      register: "domain_report"
 
-    - name: Assert global domain is correct
+    - name: "Assert global domain is correct"
       ansible.builtin.assert:
         that:
           - "'test.example.com' in domain_report.stdout"

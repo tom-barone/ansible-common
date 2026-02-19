@@ -1,32 +1,32 @@
 ---
-- name: Validate required variables
+- name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - user_create_admin_username is defined
-      - user_create_admin_ssh_public_key is defined
+      - "user_create_admin_username is defined"
+      - "user_create_admin_ssh_public_key is defined"
     msg: "Missing a required variable"
 
-- name: Create admin user
+- name: "Create admin user"
   ansible.builtin.user:
     name: "{{ user_create_admin_username }}"
-    state: present
-    shell: /bin/bash
+    state: "present"
+    shell: "/bin/bash"
     create_home: true
 
-- name: Add admin to sudo group
+- name: "Add admin to sudo group"
   ansible.builtin.user:
     name: "{{ user_create_admin_username }}"
-    groups: sudo
+    groups: "sudo"
     append: true
 
-- name: Set up authorized keys for new user
+- name: "Set up authorized keys for new user"
   ansible.posix.authorized_key:
     user: "{{ user_create_admin_username }}"
     key: "{{ user_create_admin_ssh_public_key }}"
 
-- name: Set up passwordless sudo for user
+- name: "Set up passwordless sudo for user"
   ansible.builtin.lineinfile:
-    path: /etc/sudoers.d/{{ user_create_admin_username }}
+    path: "/etc/sudoers.d/{{ user_create_admin_username }}"
     line: "{{ user_create_admin_username }} ALL=(ALL) NOPASSWD:ALL"
     create: true
     mode: "0440"

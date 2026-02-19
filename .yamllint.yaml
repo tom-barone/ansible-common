@@ -1,0 +1,13 @@
+---
+extends: "default"
+
+rules:
+  braces:
+    max-spaces-inside: 1
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: false
+  empty-values: "enable"
+  float-values: "enable"
+  octal-values: "enable"
+  quoted-strings: "enable"

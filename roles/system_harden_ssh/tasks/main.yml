@@ -1,34 +1,34 @@
 ---
-- name: Validate required variables
+- name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - system_harden_ssh_public_key is defined
-      - system_harden_ssh_exclusive_access is defined
-      - system_harden_ssh_permit_root_login is defined
+      - "system_harden_ssh_public_key is defined"
+      - "system_harden_ssh_exclusive_access is defined"
+      - "system_harden_ssh_permit_root_login is defined"
     msg: "Missing a required variable"
 
-- name: Install openssh-server
+- name: "Install openssh-server"
   ansible.builtin.apt:
-    name: openssh-server
-    state: present
+    name: "openssh-server"
+    state: "present"
     update_cache: true
 
-- name: Start the ssh service
+- name: "Start the ssh service"
   ansible.builtin.systemd:
-    name: ssh
-    state: started
+    name: "ssh"
+    state: "started"
 
-- name: Set up authorized keys for root user
+- name: "Set up authorized keys for root user"
   ansible.posix.authorized_key:
-    user: root
+    user: "root"
     key: "{{ system_harden_ssh_public_key }}"
     exclusive: "{{ system_harden_ssh_exclusive_access }}"
 
-- name: Update sshd_config
+- name: "Update sshd_config"
   ansible.builtin.template:
-    src: sshd_config.j2
-    dest: /etc/ssh/sshd_config
+    src: "sshd_config.j2"
+    dest: "/etc/ssh/sshd_config"
     backup: true
     validate: "sshd -t -f %s"
     mode: "0644"
-  notify: Reload ssh service
+  notify: "Reload ssh service"

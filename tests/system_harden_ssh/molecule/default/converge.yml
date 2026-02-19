@@ -1,10 +1,10 @@
 ---
-- name: Converge
-  hosts: all
+- name: "Converge"
+  hosts: "all"
   tasks:
-    - name: Apply role under test
+    - name: "Apply role under test"
       ansible.builtin.include_role:
-        name: system_harden_ssh
+        name: "system_harden_ssh"
       vars:
         system_harden_ssh_public_key: "ssh-ed25519 AAAAC3 test@test"
         system_harden_ssh_exclusive_access: true

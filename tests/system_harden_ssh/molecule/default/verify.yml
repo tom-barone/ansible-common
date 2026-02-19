@@ -1,13 +1,13 @@
 ---
-- name: Verify
-  hosts: all
+- name: "Verify"
+  hosts: "all"
   tasks:
-    - name: Read sshd_config
+    - name: "Read sshd_config"
       ansible.builtin.slurp:
-        src: /etc/ssh/sshd_config
-      register: sshd_config
+        src: "/etc/ssh/sshd_config"
+      register: "sshd_config"
 
-    - name: Assert sshd_config has correct content
+    - name: "Assert sshd_config has correct content"
       vars:
         content: "{{ sshd_config.content | b64decode }}"
       ansible.builtin.assert:
@@ -17,12 +17,12 @@
           - "'X11Forwarding no' in content"
         msg: "sshd_config missing expected configuration"
 
-    - name: Read authorized_keys
+    - name: "Read authorized_keys"
       ansible.builtin.slurp:
-        src: /root/.ssh/authorized_keys
-      register: authorized_keys
+        src: "/root/.ssh/authorized_keys"
+      register: "authorized_keys"
 
-    - name: Assert authorized_keys has correct content
+    - name: "Assert authorized_keys has correct content"
       vars:
         content: "{{ authorized_keys.content | b64decode }}"
       ansible.builtin.assert:
@@ -30,12 +30,12 @@
           - "'ssh-ed25519 AAAAC3 test@test' in content"
         msg: "authorized_keys missing expected SSH key"
 
-    - name: Check ssh service status
+    - name: "Check ssh service status"
       ansible.builtin.systemd:
-        name: ssh
-      register: ssh_service
+        name: "ssh"
+      register: "ssh_service"
 
-    - name: Assert ssh service is active
+    - name: "Assert ssh service is active"
       ansible.builtin.assert:
         that:
           - "ssh_service.status.ActiveState == 'active'"

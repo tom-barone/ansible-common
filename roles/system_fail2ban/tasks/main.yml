@@ -7,32 +7,32 @@
 # Unban an IP (if needed):
 #   `sudo fail2ban-client set sshd unbanip <IP_ADDRESS>`
 
-- name: Install fail2ban and dependencies
+- name: "Install fail2ban and dependencies"
   ansible.builtin.apt:
     pkg:
-      - fail2ban
-      - whois
+      - "fail2ban"
+      - "whois"
     update_cache: true
-    state: present
+    state: "present"
 
-- name: Configure jail for sshd
+- name: "Configure jail for sshd"
   ansible.builtin.template:
-    src: files/jail.local.j2
-    dest: /etc/fail2ban/jail.local
+    src: "files/jail.local.j2"
+    dest: "/etc/fail2ban/jail.local"
     mode: "0644"
     backup: true
-  notify: Restart fail2ban
+  notify: "Restart fail2ban"
 
-- name: Test fail2ban configuration
+- name: "Test fail2ban configuration"
   ansible.builtin.command:
     argv:
-      - fail2ban-client
-      - -d
-      - --test
+      - "fail2ban-client"
+      - "-d"
+      - "--test"
   changed_when: false
 
-- name: Ensure fail2ban is enabled and started
+- name: "Ensure fail2ban is enabled and started"
   ansible.builtin.systemd:
-    name: fail2ban
-    state: started
+    name: "fail2ban"
+    state: "started"
     enabled: true

@@ -1,11 +1,11 @@
 ---
-- name: Prepare
-  hosts: all
+- name: "Prepare"
+  hosts: "all"
   become: true
   tasks:
-    - name: Ensure auth log file exists for fail2ban to read
+    - name: "Ensure auth log file exists for fail2ban to read"
       ansible.builtin.file:
-        path: /var/log/auth.log
-        state: touch
-        owner: root
+        path: "/var/log/auth.log"
+        state: "touch"
+        owner: "root"
         mode: "0644"

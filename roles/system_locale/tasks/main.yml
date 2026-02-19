@@ -1,19 +1,19 @@
 ---
 # Ansible role to set the system locale
 
-- name: Validate required variables
+- name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - system_locale_name is defined
+      - "system_locale_name is defined"
     msg: "Missing a required variable"
 
-- name: Install locales package
+- name: "Install locales package"
   ansible.builtin.apt:
-    name: locales
-    state: present
+    name: "locales"
+    state: "present"
     update_cache: true
 
-- name: Ensure the correct locale is generated
+- name: "Ensure the correct locale is generated"
   community.general.locale_gen:
     name: "{{ system_locale_name }}"
-    state: present
+    state: "present"

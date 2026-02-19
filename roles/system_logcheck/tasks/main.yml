@@ -13,34 +13,34 @@
 # - every hour
 # - on reboot
 
-- name: Install logcheck
+- name: "Install logcheck"
   ansible.builtin.apt:
-    name: logcheck
+    name: "logcheck"
     update_cache: true
-    state: present
+    state: "present"
 
-- name: Add logcheck ingore rules
+- name: "Add logcheck ingore rules"
   loop:
-    - ansible
-    - collectd
-    - containerd
-    - docker
-    - dokku
-    - general
-    - gpg
-    - kernel
-    - nginx
-    - packagekit
-    - polkit
-    - postfix
-    - ssh
-    - systemd
+    - "ansible"
+    - "collectd"
+    - "containerd"
+    - "docker"
+    - "dokku"
+    - "general"
+    - "gpg"
+    - "kernel"
+    - "nginx"
+    - "packagekit"
+    - "polkit"
+    - "postfix"
+    - "ssh"
+    - "systemd"
   ansible.builtin.template:
-    src: files/{{ item }}
-    dest: /etc/logcheck/ignore.d.server/{{ item }}
+    src: "files/{{ item }}"
+    dest: "/etc/logcheck/ignore.d.server/{{ item }}"
     mode: "0644"
 
-- name: Run and test
+- name: "Run and test"
   ansible.builtin.command: >
     su -s /bin/bash -c "/usr/sbin/logcheck" logcheck
   changed_when: false

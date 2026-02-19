@@ -1,21 +1,21 @@
 ---
-- name: Verify
-  hosts: all
+- name: "Verify"
+  hosts: "all"
   tasks:
-    - name: Check fail2ban package is installed
-      ansible.builtin.command: dpkg -s fail2ban
+    - name: "Check fail2ban package is installed"
+      ansible.builtin.command: "dpkg -s fail2ban"
       changed_when: false
 
-    - name: Check whois package is installed
-      ansible.builtin.command: dpkg -s whois
+    - name: "Check whois package is installed"
+      ansible.builtin.command: "dpkg -s whois"
       changed_when: false
 
-    - name: Read jail.local file
+    - name: "Read jail.local file"
       ansible.builtin.slurp:
-        src: /etc/fail2ban/jail.local
-      register: jail_local
+        src: "/etc/fail2ban/jail.local"
+      register: "jail_local"
 
-    - name: Assert jail.local has correct content
+    - name: "Assert jail.local has correct content"
       vars:
         content: "{{ jail_local.content | b64decode }}"
       ansible.builtin.assert:
@@ -24,12 +24,12 @@
           - "'enabled = true' in content"
         msg: "jail.local missing expected configuration"
 
-    - name: Check fail2ban service is running
+    - name: "Check fail2ban service is running"
       ansible.builtin.systemd:
-        name: fail2ban
-      register: fail2ban_service
+        name: "fail2ban"
+      register: "fail2ban_service"
 
-    - name: Assert fail2ban service is active
+    - name: "Assert fail2ban service is active"
       ansible.builtin.assert:
         that:
           - "fail2ban_service.status.ActiveState == 'active'"

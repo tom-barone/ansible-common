@@ -1,22 +1,22 @@
 ---
-- name: Validate required variables
+- name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - system_logrotate_configs is defined
-      - system_logrotate_configs | length > 0
+      - "system_logrotate_configs is defined"
+      - "system_logrotate_configs | length > 0"
     msg: "system_logrotate_configs must be defined and non-empty"
 
-- name: Install logrotate
+- name: "Install logrotate"
   become: true
   ansible.builtin.apt:
-    name: logrotate
-    state: present
+    name: "logrotate"
+    state: "present"
     update_cache: true
 
-- name: Configure logrotate
+- name: "Configure logrotate"
   become: true
   loop: "{{ system_logrotate_configs }}"
   ansible.builtin.template:
-    src: files/logrotate.j2
+    src: "files/logrotate.j2"
     dest: "/etc/logrotate.d/{{ item.name }}"
     mode: "0644"

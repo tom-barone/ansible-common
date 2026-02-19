@@ -1,9 +1,9 @@
 ---
-- name: Converge
-  hosts: all
+- name: "Converge"
+  hosts: "all"
   tasks:
-    - name: Apply role under test
+    - name: "Apply role under test"
       ansible.builtin.include_role:
-        name: docker_install
+        name: "docker_install"
       vars:
         docker_install_version: "5:29.2.1-1~debian.13~trixie"

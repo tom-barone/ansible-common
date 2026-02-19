@@ -35,10 +35,11 @@
       ./roles/system_logrotate \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
+    docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:latest -color
 
 # Run formatters
 @format:
-    npx prettier --write 'roles/**/*.yml' 'tests/**/*.yml' --list-different
+    npx prettier --write 'roles/**/*.yml' 'tests/**/*.yml' '.github/**/*.yaml' --list-different
     just --fmt --unstable
 
 # Run tests

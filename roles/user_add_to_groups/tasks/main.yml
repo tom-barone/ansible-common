@@ -1,20 +1,20 @@
 ---
-- name: Validate required variables
+- name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - user_add_to_groups_username is defined
-      - user_add_to_groups_groupnames is defined
+      - "user_add_to_groups_username is defined"
+      - "user_add_to_groups_groupnames is defined"
     msg: "Missing a required variable"
 
-- name: Ensure groups exist
+- name: "Ensure groups exist"
   ansible.builtin.group:
     name: "{{ item }}"
-    state: present
+    state: "present"
   loop: "{{ user_add_to_groups_groupnames }}"
 
-- name: Add user to groups
+- name: "Add user to groups"
   ansible.builtin.user:
     name: "{{ user_add_to_groups_username }}"
     groups: "{{ user_add_to_groups_groupnames }}"
     append: true
-    state: present
+    state: "present"

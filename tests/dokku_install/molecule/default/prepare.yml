@@ -1,8 +1,8 @@
 ---
-- name: Prepare
-  hosts: all
+- name: "Prepare"
+  hosts: "all"
   tasks:
-    - name: Set hostname for dokku bootstrap
+    - name: "Set hostname for dokku bootstrap"
       ansible.builtin.shell:
         # /etc/hosts is bind-mounted in Docker, so we
         # must use cp (not mv/rename) to modify it.
@@ -14,32 +14,32 @@
           && cp /tmp/hosts.tmp /etc/hosts
       changed_when: true
 
-    - name: Update apt cache for dokku dependencies
+    - name: "Update apt cache for dokku dependencies"
       ansible.builtin.apt:
         update_cache: true
 
-    - name: Create Docker config directory
+    - name: "Create Docker config directory"
       ansible.builtin.file:
-        path: /etc/docker
-        state: directory
+        path: "/etc/docker"
+        state: "directory"
         mode: "0755"
 
-    - name: Configure Docker to use vfs storage driver
+    - name: "Configure Docker to use vfs storage driver"
       ansible.builtin.copy:
-        dest: /etc/docker/daemon.json
+        dest: "/etc/docker/daemon.json"
         # 'vfs' is intended for testing purposes, and for situations
         # where no copy-on-write filesystem can be used.
         # Performance is poor, and not generally recommended for production use.
         content: '{"storage-driver": "vfs"}'
         mode: "0644"
 
-    - name: Install Docker
+    - name: "Install Docker"
       ansible.builtin.include_role:
-        name: docker_install
+        name: "docker_install"
       vars:
         docker_install_version: "5:27.5.1-1~debian.12~bookworm"
 
-    - name: Generate test SSH keypair
+    - name: "Generate test SSH keypair"
       ansible.builtin.command:
-        cmd: ssh-keygen -t ed25519 -f /tmp/test_key -N ""
-        creates: /tmp/test_key
+        cmd: 'ssh-keygen -t ed25519 -f /tmp/test_key -N ""'
+        creates: "/tmp/test_key"

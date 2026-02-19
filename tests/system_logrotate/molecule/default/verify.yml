@@ -1,16 +1,16 @@
 ---
-- name: Verify
-  hosts: all
+- name: "Verify"
+  hosts: "all"
   tasks:
     # Given logrotate role was applied with default config
     # When we read the generated config file
     # Then it has correct path, user/group, and defaults
-    - name: Slurp test-app logrotate config
+    - name: "Slurp test-app logrotate config"
       ansible.builtin.slurp:
-        src: /etc/logrotate.d/test-app
-      register: test_app_config
+        src: "/etc/logrotate.d/test-app"
+      register: "test_app_config"
 
-    - name: Assert test-app config has correct defaults
+    - name: "Assert test-app config has correct defaults"
       vars:
         content: "{{ test_app_config.content | b64decode }}"
       ansible.builtin.assert:
@@ -23,12 +23,12 @@
     # Given logrotate role was applied with custom frequency and rotate
     # When we read the generated config file
     # Then it contains the custom values
-    - name: Slurp test-custom logrotate config
+    - name: "Slurp test-custom logrotate config"
       ansible.builtin.slurp:
-        src: /etc/logrotate.d/test-custom
-      register: test_custom_config
+        src: "/etc/logrotate.d/test-custom"
+      register: "test_custom_config"
 
-    - name: Assert test-custom config has custom values
+    - name: "Assert test-custom config has custom values"
       vars:
         content: "{{ test_custom_config.content | b64decode }}"
       ansible.builtin.assert:
@@ -39,17 +39,17 @@
           - "'rotate 14' in content"
         msg: "test-custom logrotate config is incorrect"
 
-    - name: Run debug logrotate to verify config
-      ansible.builtin.shell: logrotate --debug /etc/logrotate.conf 2>&1
+    - name: "Run debug logrotate to verify config"
+      ansible.builtin.shell: "logrotate --debug /etc/logrotate.conf 2>&1"
       become: true
       changed_when: false
-      register: logrotate_debug
+      register: "logrotate_debug"
 
-    - name: Print logrotate debug output for troubleshooting
+    - name: "Print logrotate debug output for troubleshooting"
       ansible.builtin.debug:
-        var: logrotate_debug.stdout
+        var: "logrotate_debug.stdout"
 
-    - name: Assert both apps are included in logrotate debug output
+    - name: "Assert both apps are included in logrotate debug output"
       ansible.builtin.assert:
         that:
           - "'test-app' in logrotate_debug.stdout"

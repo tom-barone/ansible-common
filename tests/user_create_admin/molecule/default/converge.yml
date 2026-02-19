@@ -1,11 +1,11 @@
 ---
-- name: Converge
-  hosts: all
+- name: "Converge"
+  hosts: "all"
   tasks:
-    - name: Apply role under test
+    - name: "Apply role under test"
       ansible.builtin.include_role:
-        name: user_create_admin
+        name: "user_create_admin"
       vars:
-        user_create_admin_username: testadmin
+        user_create_admin_username: "testadmin"
         user_create_admin_ssh_public_key: >-
           ssh-ed25519 AAAAC3 test@test

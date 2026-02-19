@@ -1,31 +1,31 @@
 ---
-- name: Verify
-  hosts: all
+- name: "Verify"
+  hosts: "all"
   tasks:
-    - name: Add a kernel error log entry for testing that should show up
+    - name: "Add a kernel error log entry for testing that should show up"
       ansible.builtin.command: >
         logger -p kern.error
         "This is a test log entry for logcheck verification"
       changed_when: false
 
-    - name: Add a kernel error log entry for testing that be filtered
+    - name: "Add a kernel error log entry for testing that be filtered"
       ansible.builtin.command: >
         logger -p kern.error
         "I am a logcheck test that should be filtered out"
       changed_when: false
 
-    - name: Run logcheck and check for test log entry
+    - name: "Run logcheck and check for test log entry"
       ansible.builtin.command: >
         su -s /bin/bash -c
         "/usr/sbin/logcheck -o -t" logcheck
-      register: logcheck_output
+      register: "logcheck_output"
       changed_when: false
 
-    - name: Show stdout lines
+    - name: "Show stdout lines"
       ansible.builtin.debug:
-        var: logcheck_output.stdout_lines
+        var: "logcheck_output.stdout_lines"
 
-    - name: Assert logcheck output contains correct entries
+    - name: "Assert logcheck output contains correct entries"
       ansible.builtin.assert:
         that:
           - >-

@@ -1,15 +1,15 @@
 ---
-- name: Converge
-  hosts: all
+- name: "Converge"
+  hosts: "all"
   tasks:
-    - name: Slurp test SSH public key
+    - name: "Slurp test SSH public key"
       ansible.builtin.slurp:
-        src: /tmp/test_key.pub
-      register: test_ssh_key
+        src: "/tmp/test_key.pub"
+      register: "test_ssh_key"
 
-    - name: Apply role under test
+    - name: "Apply role under test"
       ansible.builtin.include_role:
-        name: dokku_install
+        name: "dokku_install"
       vars:
         dokku_install_version: "v0.35.15"
         dokku_install_domain: "test.example.com"
