@@ -40,7 +40,15 @@
   when: 'dokku_install_keys.stdout is not search(''NAME="admin"'')'
   changed_when: true
 
+- name: "Check existing dokku global domain"
+  become: true
+  ansible.builtin.command: "dokku domains:report --global"
+  failed_when: false
+  register: "dokku_install_global_domain"
+  changed_when: false
+
 - name: "Set global domain"
   ansible.builtin.command:
     cmd: "dokku domains:set-global {{ dokku_install_domain }}"
-  changed_when: true
+  become: true
+  when: 'dokku_install_global_domain.stdout is not search(''{{ dokku_install_domain }}'')'

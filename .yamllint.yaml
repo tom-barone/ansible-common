@@ -6,7 +6,7 @@ rules:
     max-spaces-inside: 1
   comments:
     min-spaces-from-content: 1
-  comments-indentation: false
+  comments-indentation: "disable"
   empty-values: "enable"
   float-values: "enable"
   octal-values: "enable"
