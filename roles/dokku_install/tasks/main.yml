@@ -1,0 +1,45 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - dokku_install_version is defined
+      - dokku_install_domain is defined
+      - dokku_install_admin_ssh_key is defined
+    msg: "Missing a required variable"
+
+- name: Download bootstrap script
+  ansible.builtin.get_url:
+    url: https://dokku.com/install/{{ dokku_install_version }}/bootstrap.sh
+    dest: /tmp/dokku_bootstrap_{{ dokku_install_version }}.sh
+    mode: "0755"
+
+- name: Install dokku
+  ansible.builtin.command:
+    argv:
+      - /bin/bash
+      - /tmp/dokku_bootstrap_{{ dokku_install_version }}.sh
+      - DOKKU_TAG={{ dokku_install_version }}
+    creates: /usr/bin/dokku
+  become: true
+
+- name: Check existing dokku ssh keys
+  become: true
+  ansible.builtin.command: dokku ssh-keys:list
+  failed_when: false
+  register: dokku_install_keys
+  changed_when: false
+
+- name: Add deploy key to dokku
+  become: true
+  ansible.builtin.shell:
+    cmd: >-
+      set -o pipefail &&
+      echo "{{ dokku_install_admin_ssh_key }}"
+      | dokku ssh-keys:add admin
+    executable: /bin/bash
+  when: dokku_install_keys.stdout is not search('NAME="admin"')
+
+- name: Set global domain
+  ansible.builtin.command:
+    cmd: "dokku domains:set-global {{ dokku_install_domain }}"
+  changed_when: true

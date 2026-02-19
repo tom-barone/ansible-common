@@ -15,6 +15,7 @@
 @lint:
     uv run ansible-lint tests \
       ./roles/docker_install \
+      ./roles/dokku_install \
       ./roles/system_fail2ban \
       ./roles/system_harden_ssh \
       ./roles/system_locale \
@@ -26,6 +27,7 @@
     rm -rf .ansible
     uv run yamllint --strict tests \
       ./roles/docker_install \
+      ./roles/dokku_install \
       ./roles/system_fail2ban \
       ./roles/system_harden_ssh \
       ./roles/system_locale \
