@@ -32,4 +32,4 @@ jobs:
         run: "just lint"
 
       - name: Run tests
-        run: "just test"
+        run: "just test --no-capture"
