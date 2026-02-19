@@ -24,7 +24,7 @@ scenario:
     - create
     - prepare
     - converge
-    - idempotence  # Dokku bootstrap is slow and shell tasks lack changed_when
+    - idempotence
     # - side_effect
     - verify
     # - cleanup
