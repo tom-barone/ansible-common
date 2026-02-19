@@ -29,4 +29,7 @@ jobs:
 
       - name: Run linters
         shell: bash
-        run: just lint
+        run: "just lint"
+
+      - name: Run tests
+        run: "just test"
