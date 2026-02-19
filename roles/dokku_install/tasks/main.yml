@@ -49,6 +49,11 @@
 
 - name: "Set global domain"
   ansible.builtin.command:
-    cmd: "dokku domains:set-global {{ dokku_install_domain }}"
+    cmd: >-
+      dokku domains:set-global
+      {{ dokku_install_domain }}
   become: true
-  when: 'dokku_install_global_domain.stdout is not search(''{{ dokku_install_domain }}'')'
+  when: >-
+    dokku_install_global_domain.stdout is not
+    search(dokku_install_domain)
+  changed_when: true
