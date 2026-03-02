@@ -1,0 +1,15 @@
+---
+- name: "Install postfix"
+  ansible.builtin.apt:
+    name: "postfix"
+    state: "present"
+    update_cache: true
+
+- name: "Set inet_protocols"
+  ansible.builtin.lineinfile:
+    path: "/etc/postfix/main.cf"
+    regexp: "^inet_protocols"
+    line: "inet_protocols = {{ postfix_config_inet_protocols }}"
+    backup: true
+  notify: "Restart postfix"
+  when: "postfix_config_inet_protocols is defined"

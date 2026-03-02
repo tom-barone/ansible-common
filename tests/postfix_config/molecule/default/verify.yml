@@ -1,0 +1,20 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check postfix package is installed"
+      ansible.builtin.command: "dpkg -s postfix"
+      changed_when: false
+
+    - name: "Read main.cf file"
+      ansible.builtin.slurp:
+        src: "/etc/postfix/main.cf"
+      register: "main_cf"
+
+    - name: "Assert main.cf has correct inet_protocols"
+      vars:
+        content: "{{ main_cf.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'inet_protocols = ipv4' in content"
+        msg: "main.cf missing expected inet_protocols configuration"

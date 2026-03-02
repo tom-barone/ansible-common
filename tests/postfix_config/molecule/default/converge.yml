@@ -1,0 +1,9 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "postfix_config"
+      vars:
+        postfix_config_inet_protocols: "ipv4"

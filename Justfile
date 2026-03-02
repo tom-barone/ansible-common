@@ -13,6 +13,7 @@
     uv run ansible-lint tests \
       ./roles/docker_install \
       ./roles/dokku_install \
+      ./roles/postfix_config \
       ./roles/system_fail2ban \
       ./roles/system_grub \
       ./roles/system_harden_ssh \
@@ -26,6 +27,7 @@
     uv run yamllint --strict tests \
       ./roles/docker_install \
       ./roles/dokku_install \
+      ./roles/postfix_config \
       ./roles/system_fail2ban \
       ./roles/system_grub \
       ./roles/system_harden_ssh \
