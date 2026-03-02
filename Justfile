@@ -1,3 +1,12 @@
+export PROXMOX_ISO := "proxmox-ve_9.1-1.iso"
+export PROXMOX_BASE_IMAGE := "proxmox-base.qcow2"
+export PROXMOX_WORKING_IMAGE := "proxmox-working.qcow2"
+export PROXMOX_HOST := "127.0.0.1"
+export PROXMOX_SSH_PORT := "2222"
+export PROXMOX_WEB_PORT := "8006"
+export PROXMOX_SSH_USER := "root"
+export PROXMOX_SSH_PASSWORD := "password"
+
 # Show help by default when running `just` with no arguments [private]
 @default: help
 
@@ -62,16 +71,9 @@
 # Run all pre-commit checks
 @precommit: install format lint test
 
-PROXMOX_ISO := "proxmox-ve_9.1-1.iso"
-PROXMOX_BASE_IMAGE := "proxmox-base.qcow2"
-PROXMOX_WORKING_IMAGE := "proxmox-working.qcow2"
-PROXMOX_HOST := "127.0.0.1"
-PROXMOX_SSH_PORT := "2222"
-PROXMOX_WEB_PORT := "8006"
-PROXMOX_SSH_USER := "root"
-PROXMOX_SSH_PASSWORD := "password"
-
 @proxmox-create-base:
+    wget --no-clobber "https://enterprise.proxmox.com/iso/{{ PROXMOX_ISO }}" -O .cache/{{ PROXMOX_ISO }} || true
+    test -f .cache/{{ PROXMOX_ISO }}
     cd .cache && qemu-img create -f qcow2 {{ PROXMOX_BASE_IMAGE }} 64G
     cd .cache && qemu-system-x86_64 \
       -machine q35 \
