@@ -2,27 +2,15 @@
 
 import argparse
 import os
-import shutil
 import subprocess
 import sys
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-
-import yaml
 
 TESTS_DIR = Path("./tests").resolve()
 ROLES_DIR = Path("./roles").resolve()
 MOLECULE_DOCKER_IMAGE = "geerlingguy/docker-debian13-ansible:latest"  # Trixie
-PROXMOX_ISO_URL = "https://enterprise.proxmox.com/iso/proxmox-ve_9.1-1.iso"
 CACHE_DIR = Path(".cache").resolve()
-
-
-def get_driver_name(scenario_path: Path) -> str:
-    molecule_yml = scenario_path / "molecule.yml"
-    with molecule_yml.open() as f:
-        config = yaml.safe_load(f)
-    return config.get("driver", {}).get("name", "default")
 
 
 def find_molecule_scenarios(root: Path):
@@ -63,27 +51,6 @@ def run_test(path: Path, no_capture: bool):
     return path, result.returncode, result.stdout if no_capture else ""
 
 
-def download_proxmox_image():
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-
-    filename = PROXMOX_ISO_URL.split("/")[-1]
-    dest = CACHE_DIR / filename
-
-    # Cache hit
-    if dest.exists() and dest.stat().st_size > 0:
-        return dest
-
-    tmp = dest.with_suffix(dest.suffix + ".part")
-    req = urllib.request.Request(
-        PROXMOX_ISO_URL, headers={"User-Agent": "iso-downloader/1.0"}
-    )
-
-    with urllib.request.urlopen(req) as r, tmp.open("wb") as f:
-        shutil.copyfileobj(r, f)
-
-    tmp.replace(dest)  # atomic move
-
-
 def main():
     parser = argparse.ArgumentParser(description="Run molecule tests")
     parser.add_argument(
@@ -94,19 +61,9 @@ def main():
         help="print test output directly to console",
         action="store_true",
     )
-    parser.add_argument(
-        "--include-vm",
-        help="include non-Docker scenarios (e.g. QEMU-based PVE tests)",
-        action="store_true",
-    )
-
     args = parser.parse_args()
 
     scenarios = list(find_molecule_scenarios(TESTS_DIR))
-    download_proxmox_image()
-
-    if not args.include_vm:
-        scenarios = [s for s in scenarios if get_driver_name(s) == "docker"]
 
     if args.name:
         scenarios = [s for s in scenarios if args.name in str(s.relative_to(TESTS_DIR))]
