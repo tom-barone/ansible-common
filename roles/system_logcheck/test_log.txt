@@ -197,6 +197,7 @@ Mar 06 06:56:26 au-adelaide polkitd[444192]: Acquired the name org.freedesktop.P
 2025-11-15T13:14:42.615427+00:00 dokku-sandbox python3[258684]: ansible-ansible.legacy.stat Invoked with path=/etc/logcheck/ignore.d.server/collectd follow=False get_checksum=True get_size=False checksum_algorithm=sha1 get_mime=True get_attributes=True
 2025-11-15T13:15:01.895608+00:00 dokku-sandbox sshd-session[255648]: syslogin_perform_logout: logout() returned an error
 2025-11-15T13:15:03.227986+00:00 dokku-sandbox python3[259435]: ansible-ansible.builtin.systemd Invoked with enabled=True name=logcheck state=restarted daemon_reload=False daemon_reexec=False scope=system no_block=False force=None masked=None
+_uses_shell=False expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None argv=None chdir=None executable=None creates=None removes=None stdin=None
 
 # Proxmox
 Mar 02 22:15:34 quilava proxmox-mail-forward[219055]: notified via target `mail-to-root`

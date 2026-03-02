@@ -1,1 +1,2 @@
 .* .*python3.*: ansible-ansible.*Invoked with.*
+.*_uses_shell=False expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True.*
