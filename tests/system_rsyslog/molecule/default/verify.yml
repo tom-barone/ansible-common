@@ -1,0 +1,18 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check rsyslog package is installed"
+      ansible.builtin.command: "dpkg -s rsyslog"
+      changed_when: false
+
+    - name: "Check rsyslog service is running"
+      ansible.builtin.systemd:
+        name: "rsyslog"
+      register: "rsyslog_service"
+
+    - name: "Assert rsyslog service is active"
+      ansible.builtin.assert:
+        that:
+          - "rsyslog_service.status.ActiveState == 'active'"
+        msg: "rsyslog service is not running"
