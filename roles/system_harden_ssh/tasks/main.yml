@@ -5,6 +5,7 @@
       - "system_harden_ssh_public_key is defined"
       - "system_harden_ssh_exclusive_access is defined"
       - "system_harden_ssh_permit_root_login is defined"
+      - "system_harden_ssh_permit_password_authentication is defined"
     msg: "Missing a required variable"
 
 - name: "Install openssh-server"

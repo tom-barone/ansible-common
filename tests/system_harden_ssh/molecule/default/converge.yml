@@ -9,3 +9,4 @@
         system_harden_ssh_public_key: "ssh-ed25519 AAAAC3 test@test"
         system_harden_ssh_exclusive_access: true
         system_harden_ssh_permit_root_login: "no"
+        system_harden_ssh_permit_password_authentication: "no"

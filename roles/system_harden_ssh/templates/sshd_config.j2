@@ -1,5 +1,5 @@
 PermitRootLogin {{ system_harden_ssh_permit_root_login }}
-PasswordAuthentication no
+PasswordAuthentication {{ system_harden_ssh_permit_password_authentication }}
 KbdInteractiveAuthentication no
 UsePAM yes
 X11Forwarding no
