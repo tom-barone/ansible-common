@@ -16,6 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Import GPG key
+        run: echo "${{ secrets.SOPS_GITHUB_ACTIONS_GPG_PRIVATE_KEY }}" | gpg --batch --import
+      - name: "Install SOPS"
+        uses: "nhedger/setup-sops@v2"
+
       - name: Install just
         uses: extractions/setup-just@v3
         with:

@@ -1,0 +1,6 @@
+creation_rules:
+  - pgp:
+      # My own GPG key
+      - 79B39318D5DD51A12808B4478672CEE1629D465B
+      # Github Actions GPG key
+      - 4E261D5A0F96C0EAC07A502796FFE011E8D79959

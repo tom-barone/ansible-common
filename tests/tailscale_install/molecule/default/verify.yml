@@ -1,0 +1,38 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given Tailscale was installed via the install script
+    # When we check for the tailscale binary
+    # Then it exists on the system
+    - name: "Check tailscale binary exists"
+      ansible.builtin.command: "which tailscale"
+      changed_when: false
+
+    # Given Tailscale was installed via the install script
+    # When we check the tailscaled service
+    # Then it is active
+    - name: "Check tailscaled service status"
+      ansible.builtin.systemd:
+        name: "tailscaled"
+      register: "tailscaled_service"
+
+    - name: "Assert tailscaled service is active"
+      ansible.builtin.assert:
+        that:
+          - "tailscaled_service.status.ActiveState == 'active'"
+        msg: "tailscaled service is not running"
+
+    # Given Tailscale was authenticated with an auth key
+    # When we run tailscale status
+    # Then it succeeds and shows peers
+    - name: "Check tailscale status"
+      ansible.builtin.command: "tailscale status"
+      changed_when: false
+      register: "tailscale_status"
+
+    - name: "Assert tailscale is connected"
+      ansible.builtin.assert:
+        that:
+          - "tailscale_status.rc == 0"
+        msg: "Tailscale is not connected to the network"

@@ -1,16 +1,14 @@
-# Show help by default when running `just` with no arguments [private]
-@default: help
-
-# Install dependencies
-@install:
-    uv sync --quiet
-    npm install --silent
-
-# Show this help message
-@help:
+# Show help by default when running `just` with no arguments
+@default:
     just --list
 
-# Run linters
+[doc("Install dependencies")]
+@install:
+    uv sync --quiet
+    uv run ansible-galaxy install -r requirements.yml
+    npm install --silent
+
+[doc("Run linters")]
 @lint:
     uv run ansible-lint tests \
       ./roles/docker_install \
@@ -38,18 +36,23 @@
       ./roles/user_create_admin
     docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:latest -color
 
-# Run formatters
+[doc("Run formatters")]
 @format:
     npx prettier --write 'roles/**/*.yml' 'tests/**/*.yml' '.github/**/*.yaml' --list-different
     just --fmt --unstable
 
-# Run tests
+[doc("Run tests")]
 @test *ARGS:
-    uv run tests/run.py {{ ARGS }}
+    sops exec-env secrets.sops.env \
+      'uv run tests/run.py {{ ARGS }}'
     # Test logcheck matchers
     ./roles/system_logcheck/test.sh
 
-# Run the Ansible docker container for testing (systemd enabled)
+[doc("Edit secrets with sops")]
+@secrets-edit:
+    sops secrets.sops.env
+
+[doc("Run a Debian 12 Ansible container for testing")]
 @run-docker:
     docker run --rm --detach \
       --privileged \
@@ -59,5 +62,5 @@
       geerlingguy/docker-debian12-ansible:latest
     docker exec -it debian12-ansible bash
 
-# Run all pre-commit checks
+[doc("Run all precommit checks")]
 @precommit: install format lint test
