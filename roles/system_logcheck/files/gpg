@@ -2,3 +2,5 @@
 .* .*systemd.*: Listening on dirmngr.socket.*$
 .* .*systemd.*: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent .*ssh-agent emulation.*$
 .* .*systemd.*: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.*$
+.* .*systemd.*: Closed keyboxd.socket .* GnuPG public key management service.*$
+.* .*systemd.*: Listening on keyboxd.socket .* GnuPG public key management service.*$

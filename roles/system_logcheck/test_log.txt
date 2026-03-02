@@ -104,6 +104,11 @@ Feb 22 03:14:03 au-melbourne sshd[966352]: error: send_error: write: Broken pipe
 2025-11-15T13:16:27.459586+00:00 dokku-sandbox systemd[255653]: Stopping ssh-agent.socket - OpenSSH Agent socket...
 2025-11-15T13:16:27.491028+00:00 dokku-sandbox systemd[255653]: Closed ssh-agent.socket - OpenSSH Agent socket.
 2025-11-15T13:22:58.290841+00:00 dokku-sandbox systemd[261922]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+Mar 02 22:36:04 quilava sshd-session[222321]: Accepted password for root from 100.116.20.108 port 62703 ssh2
+Mar 02 22:52:31 quilava sshd[892]: Received SIGHUP; restarting.
+Mar 02 22:52:31 quilava sshd[892]: Server listening on 0.0.0.0 port 22.
+Mar 02 22:52:31 quilava sshd[892]: Server listening on :: port 22.
+Mar 02 22:52:31 quilava systemd[1]: Reloaded ssh.service - OpenBSD Secure Shell server.
 
 # Systemd
 2025-03-05T13:54:00.087664+00:00 au-melbourne systemd[1]: Stopping user@0.service - User Manager for UID 0...
@@ -164,6 +169,8 @@ Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2
 2025-03-18T11:39:23.397122+10:30 au-adelaide systemd[613761]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
 2025-11-15T13:16:27.459101+00:00 dokku-sandbox systemd[255653]: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
 2025-11-15T13:16:27.459357+00:00 dokku-sandbox systemd[255653]: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+Mar 02 22:17:22 quilava systemd[205897]: Closed keyboxd.socket - GnuPG public key management service.
+Mar 02 22:36:04 quilava systemd[222327]: Listening on keyboxd.socket - GnuPG public key management service.
 
 # Polkit
 2025-03-06T06:56:26.288271+10:30 au-adelaide polkitd[444192]: Started polkitd version 122
@@ -185,6 +192,21 @@ Mar 06 06:56:26 au-adelaide polkitd[444192]: Acquired the name org.freedesktop.P
 2025-11-15T13:15:01.895608+00:00 dokku-sandbox sshd-session[255648]: syslogin_perform_logout: logout() returned an error
 2025-11-15T13:15:03.227986+00:00 dokku-sandbox python3[259435]: ansible-ansible.builtin.systemd Invoked with enabled=True name=logcheck state=restarted daemon_reload=False daemon_reexec=False scope=system no_block=False force=None masked=None
 
-# Put in bulk output from the last report below to double check it filters everything
+# Proxmox
+Mar 02 22:15:34 quilava proxmox-mail-forward[219055]: notified via target `mail-to-root`
+Mar 02 22:15:47 quilava pvedaemon[1085]: <root@pam> successful auth for user 'root@pam'
+Mar 02 22:53:08 quilava pvedaemon[1087]: <root@pam> end task UPID:quilava:00037144:00757120:69A57E73:vncshell::root@pam: OK
+Mar 03 22:53:09 quilava pveproxy[226892]: worker exit
+Mar 02 22:41:31 quilava pvedaemon[225604]: starting termproxy UPID:quilava:00037144:00757120:69A57E73:vncshell::root@pam:
+Mar 02 22:41:31 quilava pvedaemon[1087]: <root@pam> starting task UPID:quilava:00037144:00757120:69A57E73:vncshell::root@pam:
+Mar 02 22:41:31 quilava login[225611]: ROOT LOGIN ON pts/0
+Mar 02 22:43:27 quilava pveproxy[1097]: worker 192878 finished
+Mar 02 22:43:27 quilava pveproxy[1097]: starting 1 worker(s)
+Mar 02 22:43:27 quilava pveproxy[1097]: worker 225950 started
+Mar 02 22:49:10 quilava pveproxy[226892]: got inotify poll request in wrong process - disabling inotify
 
+# Tailscale
+Mar 02 22:16:30 quilava tailscaled[197800]: magicsock: disco: node [8JL4V] d:261022aade5f34a9 now using 192.168.50.181:41641 mtu=1360 tx=b848c682815f
+
+# Put in bulk output from the last report below to double check it filters everything
 

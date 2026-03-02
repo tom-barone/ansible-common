@@ -33,8 +33,10 @@
     - "packagekit"
     - "polkit"
     - "postfix"
+    - "proxmox"
     - "ssh"
     - "systemd"
+    - "tailscale"
   ansible.builtin.template:
     src: "files/{{ item }}"
     dest: "/etc/logcheck/ignore.d.server/{{ item }}"

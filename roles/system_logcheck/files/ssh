@@ -34,3 +34,7 @@
 .* .*systemd.*: Stopping ssh-agent.socket - OpenSSH Agent socket.*$
 .* .*systemd.*: Closed ssh-agent.socket - OpenSSH Agent socket.*$
 .* .*systemd.*: Listening on ssh-agent.socket - OpenSSH Agent socket.*$
+.* .*sshd-session.*: Accepted password for .* ssh.*$
+.* .*sshd.*: Received SIGHUP; restarting.*$
+.* .*sshd.*: Server listening on .*$
+.* .*systemd.*: Reloaded ssh.service .*$

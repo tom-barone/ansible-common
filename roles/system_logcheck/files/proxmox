@@ -1,0 +1,11 @@
+.* .*proxmox-mail-forward.*: notified via target .*$
+.* .*pvedaemon.*:.* successful auth for user .*$
+.* .*pvedaemon.*: starting termproxy UPID.*$
+.* .*pvedaemon.*:.* starting task UPID.*$
+.* .*pvedaemon.*:.* end task UPID.*$
+.* .*pveproxy.*: worker exit.*$
+.* .*pveproxy.*: worker .* finished.*$
+.* .*pveproxy.*: worker .* started.*$
+.* .*pveproxy.*: starting .* worker.*$
+.* .*pveproxy.*: got inotify poll request in wrong process - disabling inotify.*$
+.* .*login.*: ROOT LOGIN ON.*$
