@@ -1,1 +1,7 @@
 .* .*postfix.*: .*: removed$
+.* .*systemd.*: Stopping postfix.service.*$
+.* .*systemd.*: Stopped postfix.service.*$
+.* .*postfix.*: stopping the Postfix mail system.*$
+.* .*postfix.*: terminating on signal.*$
+.* .*systemd.*: Stopped postfix service.*$
+.* .*postfix.*: daemon started.*$
