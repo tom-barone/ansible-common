@@ -75,6 +75,7 @@ def main():
         return 1
 
     max_workers = max(1, (os.cpu_count() or 1) - 1)  # leave one CPU core free
+    print(f"Running tests with {max_workers} parallel workers...")
     failures = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
