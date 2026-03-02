@@ -16,8 +16,7 @@
 
     - name: "Run logcheck and check for test log entry"
       ansible.builtin.command: >
-        su -s /bin/bash -c
-        "/usr/sbin/logcheck -o -t" logcheck
+        su -s /bin/bash -c "/usr/sbin/logcheck -o -t" logcheck
       register: "logcheck_output"
       changed_when: false
 
