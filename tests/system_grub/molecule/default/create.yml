@@ -1,0 +1,46 @@
+---
+- name: "Create"
+  hosts: "localhost"
+  connection: "local"
+  gather_facts: false
+  vars:
+    cache_dir: "{{ lookup('env', 'CACHE_DIR') }}"
+    base_image: "proxmox-base.qcow2"
+    working_image: "proxmox-test-system-grub.qcow2"
+    ssh_host: "127.0.0.1"
+    ssh_port: 2222
+    pid_file: "/tmp/molecule-system-grub-qemu.pid"
+  tasks:
+    - name: "Clone the base image"
+      ansible.builtin.command:
+        chdir: "{{ cache_dir }}"
+        cmd: >-
+          qemu-img create -f qcow2 -F qcow2
+          -b {{ base_image }} {{ working_image }}
+        creates: "{{ cache_dir }}/{{ working_image }}"
+
+    - name: "Start QEMU VM"
+      ansible.builtin.command:
+        chdir: "{{ cache_dir }}"
+        cmd: >-
+          qemu-system-x86_64
+          -machine q35
+          -cpu qemu64
+          -accel tcg
+          -m 4096
+          -smp 4
+          -drive file={{ working_image }},if=virtio,format=qcow2
+          -k en-us
+          -netdev user,id=net0,hostfwd=tcp:{{ ssh_host }}:{{ ssh_port }}-:22
+          -device virtio-net-pci,netdev=net0
+          -display none
+          -daemonize
+          -pidfile {{ pid_file }}
+      changed_when: true
+
+    - name: "Wait for SSH to become available"
+      ansible.builtin.wait_for:
+        host: "{{ ssh_host }}"
+        port: "{{ ssh_port }}"
+        search_regex: "OpenSSH"
+        timeout: 120

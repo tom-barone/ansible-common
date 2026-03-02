@@ -1,0 +1,35 @@
+---
+driver:
+  name: "default"
+platforms:
+  - name: "system_grub"
+provisioner:
+  name: "ansible"
+  env:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+  inventory:
+    host_vars:
+      system_grub:
+        ansible_host: "127.0.0.1"
+        ansible_port: 2222
+        ansible_user: "root"
+        ansible_password: "password"
+        ansible_ssh_common_args: >-
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+        ansible_python_interpreter: "/usr/bin/python3"
+
+scenario:
+  test_sequence:
+    # - dependency
+    # - cleanup
+    - "destroy"
+    - "syntax"
+    - "create"
+    # - prepare
+    - "converge"
+    - "idempotence"
+    # - side_effect
+    - "verify"
+    # - cleanup
+    - "destroy"

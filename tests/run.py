@@ -40,6 +40,7 @@ def run_test(path: Path, no_capture: bool):
         "TEST_NAME": str(test_dir.relative_to(TESTS_DIR)).replace(os.sep, "_"),
         "ANSIBLE_ROLES_PATH": str(ROLES_DIR),
         "MOLECULE_DOCKER_IMAGE": MOLECULE_DOCKER_IMAGE,
+        "CACHE_DIR": str(CACHE_DIR),
     }
 
     if no_capture:
