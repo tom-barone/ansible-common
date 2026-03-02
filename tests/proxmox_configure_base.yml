@@ -1,0 +1,7 @@
+---
+- name: "Configure the proxmox base VM"
+  hosts: "all"
+  roles:
+    - role: "../roles/system_grub"
+      vars:
+        system_grub_timeout: 0

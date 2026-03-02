@@ -16,6 +16,7 @@
       ./roles/docker_install \
       ./roles/dokku_install \
       ./roles/system_fail2ban \
+      ./roles/system_grub \
       ./roles/system_harden_ssh \
       ./roles/system_locale \
       ./roles/system_logcheck \
@@ -28,6 +29,7 @@
       ./roles/docker_install \
       ./roles/dokku_install \
       ./roles/system_fail2ban \
+      ./roles/system_grub \
       ./roles/system_harden_ssh \
       ./roles/system_locale \
       ./roles/system_logcheck \
@@ -63,6 +65,11 @@
 PROXMOX_ISO := "proxmox-ve_9.1-1.iso"
 PROXMOX_BASE_IMAGE := "proxmox-base.qcow2"
 PROXMOX_WORKING_IMAGE := "proxmox-working.qcow2"
+PROXMOX_HOST := "127.0.0.1"
+PROXMOX_SSH_PORT := "2222"
+PROXMOX_WEB_PORT := "8006"
+PROXMOX_SSH_USER := "root"
+PROXMOX_SSH_PASSWORD := "password"
 
 @proxmox-create-base:
     cd .cache && qemu-img create -f qcow2 {{ PROXMOX_BASE_IMAGE }} 64G
@@ -76,7 +83,7 @@ PROXMOX_WORKING_IMAGE := "proxmox-working.qcow2"
       -cdrom {{ PROXMOX_ISO }} \
       -boot d \
       -k en-us \
-      -netdev user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22,hostfwd=tcp:127.0.0.1:8006-:8006 \
+      -netdev user,id=net0,hostfwd=tcp:{{ PROXMOX_HOST }}:{{ PROXMOX_SSH_PORT }}-:22,hostfwd=tcp:{{ PROXMOX_HOST }}:{{ PROXMOX_WEB_PORT }}-:8006 \
       -device virtio-net-pci,netdev=net0 \
       -display cocoa \
       -vga virtio
@@ -86,11 +93,11 @@ PROXMOX_WORKING_IMAGE := "proxmox-working.qcow2"
     # On MACOS use ctrl-option-G to release mouse from QEMU window
     # Choose graphical
     # Set country/timezone as normal
-    # Set password as normal
-    # Set email to email+alias@domain.com (gmail aliasing)
-    # Set hostname to alias.domain.com
+    # Set password to {{ PROXMOX_SSH_PASSWORD }}
+    # Set email to mail+proxmox-test@tombarone.net
+    # Set hostname to proxmox-test.tombarone.net
 
-@proxmox-run:
+@proxmox-run-from-base:
     # Clone the base image for testing
     cd .cache && rm -rf {{ PROXMOX_WORKING_IMAGE }}
     cd .cache && qemu-img create -f qcow2 -F qcow2 -b {{ PROXMOX_BASE_IMAGE }} {{ PROXMOX_WORKING_IMAGE }}
@@ -102,9 +109,27 @@ PROXMOX_WORKING_IMAGE := "proxmox-working.qcow2"
       -m 8192 \
       -smp 4 \
       -drive file={{ PROXMOX_WORKING_IMAGE }},if=virtio,format=qcow2 \
-      -netdev user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22,hostfwd=tcp:127.0.0.1:8006-:8006 \
+      -k en-us \
+      -netdev user,id=net0,\
+      hostfwd=tcp:{{ PROXMOX_HOST }}:{{ PROXMOX_SSH_PORT }}-:22,\
+      hostfwd=tcp:{{ PROXMOX_HOST }}:{{ PROXMOX_WEB_PORT }}-:8006 \
       -device virtio-net-pci,netdev=net0 \
       -display cocoa \
       -vga virtio
     # SSH should be accessible on 127.0.0.1:2222
     # Proxmox web UI should be accessible on 127.0.0.1:8006
+
+@proxmox-commit-to-base:
+    # After making changes to the working image, commit them back to the base image
+    cd .cache && qemu-img commit {{ PROXMOX_WORKING_IMAGE }}
+
+@proxmox-configure-base:
+    ANSIBLE_HOST_KEY_CHECKING=False \
+      uv run ansible-playbook \
+      -i "{{ PROXMOX_HOST }}:{{ PROXMOX_SSH_PORT }}," \
+      -e "ansible_user={{ PROXMOX_SSH_USER }} \
+      ansible_ssh_pass={{ PROXMOX_SSH_PASSWORD }} \
+      ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
+      ansible_python_interpreter=/usr/bin/python3" \
+      ./tests/proxmox_configure_base.yml
+    # Shutdown the VM and then commit changes to the base image
