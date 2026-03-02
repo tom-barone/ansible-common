@@ -74,7 +74,7 @@ def main():
         print("No molecule scenarios found.")
         return 1
 
-    max_workers = os.cpu_count() or 1
+    max_workers = max(1, (os.cpu_count() or 1) - 1)  # leave one CPU core free
     failures = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
