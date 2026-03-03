@@ -1,0 +1,51 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check postfix package is installed"
+      ansible.builtin.command: "dpkg -s postfix"
+      changed_when: false
+
+    - name: "Check libsasl2-modules package is installed"
+      ansible.builtin.command: "dpkg -s libsasl2-modules"
+      changed_when: false
+
+    - name: "Read main.cf file"
+      ansible.builtin.slurp:
+        src: "/etc/postfix/main.cf"
+      register: "main_cf"
+
+    - name: "Assert main.cf has correct configuration"
+      vars:
+        content: "{{ main_cf.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'relayhost = [smtp.gmail.com]:587' in content"
+          - "'inet_protocols = ipv4' in content"
+          - "'smtp_sasl_auth_enable = yes' in content"
+        msg: "main.cf missing expected configuration"
+
+    - name: "Check sasl_passwd file exists with correct permissions"
+      ansible.builtin.stat:
+        path: "/etc/postfix/sasl/sasl_passwd"
+      register: "sasl_passwd"
+
+    - name: "Assert sasl_passwd permissions"
+      ansible.builtin.assert:
+        that:
+          - "sasl_passwd.stat.exists"
+          - "sasl_passwd.stat.mode == '0600'"
+        msg: "sasl_passwd file missing or has incorrect permissions"
+
+    - name: "Read aliases file"
+      ansible.builtin.slurp:
+        src: "/etc/aliases"
+      register: "aliases"
+
+    - name: "Assert aliases has correct root alias"
+      vars:
+        content: "{{ aliases.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'root: admin@example.com' in content"
+        msg: "aliases missing expected root alias"

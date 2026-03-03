@@ -1,6 +1,6 @@
 # See /usr/share/postfix/main.cf.dist for a commented, more complete version
 
-myhostname={{ postfix_hostname }}
+myhostname={{ postfix_relay_hostname }}
 
 smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
 biff = no
@@ -14,7 +14,7 @@ append_dot_mydomain = no
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 mydestination = $myhostname, localhost.$mydomain, localhost
-relayhost = [smtp.gmail.com]:587
+relayhost = [{{ postfix_relay_host }}]:{{ postfix_relay_port }}
 mynetworks = 127.0.0.0/8
 inet_interfaces = loopback-only
 recipient_delimiter = +

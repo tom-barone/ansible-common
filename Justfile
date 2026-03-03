@@ -14,6 +14,7 @@
       ./roles/docker_install \
       ./roles/dokku_install \
       ./roles/postfix_config \
+      ./roles/postfix_relay \
       ./roles/system_fail2ban \
       ./roles/system_grub \
       ./roles/system_harden_ssh \
@@ -29,6 +30,7 @@
       ./roles/docker_install \
       ./roles/dokku_install \
       ./roles/postfix_config \
+      ./roles/postfix_relay \
       ./roles/system_fail2ban \
       ./roles/system_grub \
       ./roles/system_harden_ssh \
