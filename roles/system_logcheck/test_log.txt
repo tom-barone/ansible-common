@@ -231,6 +231,15 @@ Mar 03 11:00:38 quilava tailscaled[197800]: [RATELIMIT] format("health(warnable=
 Mar 03 11:00:38 quilava tailscaled[197800]: health(warnable=not-in-map-poll): ok
 Mar 03 11:11:12 quilava tailscaled[197800]: netcheck: DetectCaptivePortal(found=false)
 Mar 03 11:11:12 quilava tailscaled[197800]: magicsock: endpoints changed: 144.6.17.85:41642 (portmap), 144.6.17.85:41641 (stun), 192.168.50.91:41641 (local)
+Mar 03 17:39:01 quilava tailscaled[197800]: localapi: [POST] /localapi/v0/check-prefs
+Mar 03 17:39:01 quilava tailscaled[197800]: localapi: [PATCH] /localapi/v0/prefs
+Mar 03 17:39:01 quilava tailscaled[197800]: EditPrefs: MaskedPrefs{AdvertiseRoutes=[192.168.50.0/24]}
+Mar 03 17:39:01 quilava tailscaled[197800]: wgengine: Reconfig: configuring router
+Mar 03 17:39:01 quilava tailscaled[197800]: wgengine: Reconfig: user dialer
+Mar 03 17:39:01 quilava tailscaled[197800]: tsdial: bart table size: 4
+Mar 03 17:39:01 quilava tailscaled[197800]: wgengine: Reconfig: configuring DNS
+Mar 03 17:39:01 quilava tailscaled[197800]: dns: Set: {DefaultResolvers:[] Routes:{taile4f997.ts.net.:[] ts.net.:[199.247.155.53 2620:111:8007::53]}+65arpa SearchDomains:[taile4f997.ts.net.] Hosts:2}
+Mar 03 17:39:01 quilava tailscaled[197800]: dns: Resolvercfg: {Routes:{.:[192.168.50.1] ts.net.:[199.247.155.53 2620:111:8007::53]} Hosts:2 LocalDomains:[taile4f997.ts.net.]+65arpa}
+Mar 03 17:39:01 quilava tailscaled[197800]: dns: OScfg: {Nameservers:[100.100.100.100] SearchDomains:[taile4f997.ts.net. tombarone.net.] }
 
 # Put in bulk output from the last report below to double check it filters everything
-

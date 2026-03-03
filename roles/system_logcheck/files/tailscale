@@ -4,3 +4,13 @@
 .* .*tailscaled.*: control: sleeping for server.*$
 .* .*tailscaled.*:.*health.*warnable.*ok.*$
 .* .*tailscaled.*: netcheck: DetectCaptivePortal.*$
+.* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$
+.* .*tailscaled.*: localapi: \[PATCH\] /localapi/v0/prefs$
+.* .*tailscaled.*: EditPrefs: MaskedPrefs\{.*\}$
+.* .*tailscaled.*: wgengine: Reconfig: configuring router$
+.* .*tailscaled.*: wgengine: Reconfig: user dialer$
+.* .*tailscaled.*: tsdial: bart table size: .*$
+.* .*tailscaled.*: wgengine: Reconfig: configuring DNS$
+.* .*tailscaled.*: dns: Set: \{.*\}$
+.* .*tailscaled.*: dns: Resolvercfg: \{.*\}$
+.* .*tailscaled.*: dns: OScfg: \{.*\}$
