@@ -1,0 +1,16 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install and connect Tailscale"
+      ansible.builtin.include_role:
+        name: "artis3n.tailscale.machine"
+      vars:
+        verbose: true
+        state: "latest"
+        tailscale_authkey: >-
+          {{ lookup('env', 'TAILSCALE_ANSIBLE_TEST_OAUTH_CLIENT_SECRET') }}
+        tailscale_tags:
+          - "ansible-test"
+        tailscale_oauth_ephemeral: true
+        tailscale_oauth_preauthorized: false

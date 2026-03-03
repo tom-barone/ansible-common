@@ -20,7 +20,7 @@
       ./roles/system_locale \
       ./roles/system_logcheck \
       ./roles/system_logrotate \
-      ./roles/system_rsyslog \
+      ./roles/tailscale_subnet_router \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
     # https://github.com/ansible/ansible-lint/issues/4533
@@ -35,7 +35,7 @@
       ./roles/system_locale \
       ./roles/system_logcheck \
       ./roles/system_logrotate \
-      ./roles/system_rsyslog \
+      ./roles/tailscale_subnet_router \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
     docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:latest -color

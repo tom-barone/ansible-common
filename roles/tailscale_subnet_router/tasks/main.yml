@@ -1,0 +1,51 @@
+---
+- name: "Enable IPv4 forwarding"
+  ansible.posix.sysctl:
+    name: "net.ipv4.ip_forward"
+    value: "1"
+    sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
+    reload: true
+
+- name: "Enable IPv6 forwarding"
+  ansible.posix.sysctl:
+    name: "net.ipv6.conf.all.forwarding"
+    value: "1"
+    sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
+    reload: true
+
+- name: "Auto-discover local subnets"
+  ansible.builtin.shell:
+    cmd: >-
+      set -o pipefail &&
+      ip route show proto kernel scope link
+      | grep -v 'tailscale'
+      | awk '{print $1}'
+      | paste -sd ',' -
+    executable: "/bin/bash"
+  register: "_tailscale_subnet_router_discovered"
+  changed_when: false
+  when: "tailscale_subnet_router_routes | length == 0"
+
+- name: "Fail if no routes discovered"
+  ansible.builtin.fail:
+    msg: >-
+      No local subnets discovered.
+      Set tailscale_subnet_router_routes manually.
+  when:
+    - "tailscale_subnet_router_routes | length == 0"
+    - "_tailscale_subnet_router_discovered.stdout | length == 0"
+
+- name: "Set routes fact"
+  ansible.builtin.set_fact:
+    _tailscale_subnet_router_routes: >-
+      {{ (tailscale_subnet_router_routes
+          if tailscale_subnet_router_routes | length > 0
+          else _tailscale_subnet_router_discovered.stdout)
+         .split(',') | sort | join(',') }}
+
+- name: "Record advertised routes"
+  ansible.builtin.copy:
+    content: "{{ _tailscale_subnet_router_routes | trim }}"
+    dest: "/var/lib/tailscale/ansible-advertised-routes"
+    mode: "0600"
+  notify: "Advertise routes"

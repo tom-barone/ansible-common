@@ -1,0 +1,8 @@
+---
+- name: "Cleanup"
+  hosts: "all"
+  tasks:
+    - name: "Logout from Tailscale network"
+      ansible.builtin.command: "tailscale logout"
+      failed_when: false
+      changed_when: true

@@ -1,0 +1,6 @@
+---
+- name: "Advertise routes"
+  ansible.builtin.command: >-
+    tailscale set
+    --advertise-routes={{ _tailscale_subnet_router_routes }}
+  changed_when: true
