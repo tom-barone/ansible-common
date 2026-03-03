@@ -8,3 +8,4 @@
 .* .*kernel.*:.*port.*entered blocking state.*$
 .* .*kernel.*:.*port.*entered forwarding state.*$
 .* .*kernel.*:.*tap.*entered allmulticast mode.*$
+.* .*kernel.*:.*tap.*left allmulticast mode.*$

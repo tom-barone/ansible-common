@@ -1,13 +1,13 @@
 .* .*proxmox-mail-forward.*: notified via target .*$
-.* .*pvedaemon.*:.* successful auth for user .*$
-.* .*pvedaemon.*: starting termproxy UPID.*$
+.* .*pve.*:.* successful auth for user .*$
+.* .*pve.*: starting termproxy UPID.*$
 .* .*pve.*:.* starting task UPID.*$
 .* .*pve.*:.* end task UPID.*$
-.* .*pveproxy.*: worker exit.*$
-.* .*pveproxy.*: worker .* finished.*$
-.* .*pveproxy.*: worker .* started.*$
-.* .*pveproxy.*: starting .* worker.*$
-.* .*pveproxy.*: got inotify poll request in wrong process - disabling inotify.*$
+.* .*pve.*: worker exit.*$
+.* .*pve.*: worker .* finished.*$
+.* .*pve.*: worker .* started.*$
+.* .*pve.*: starting .* worker.*$
+.* .*pve.*: got inotify poll request in wrong process - disabling inotify.*$
 .* .*login.*: ROOT LOGIN ON.*$
 .* .* qm.*: .* starting task UPID.*
 .* .* qm.*: .* end task UPID.*$
@@ -15,3 +15,9 @@
 .* pveupdate.*: update new package list.*$
 .* .* qm.*: start VM .*$
 .* .* qm.*: VM .* started with PID.*$
+.* .*qmeventd.*: read: Connection reset.*$
+.* .*qmeventd.*: Starting cleanup.*$
+.* .*qmeventd.*: Finished cleanup.*$
+.* .*pve.*: starting vnc proxy.*$
+.* .*pve.*: shutdown VM.*$
+.* .*pve.*: destroy VM.*$
