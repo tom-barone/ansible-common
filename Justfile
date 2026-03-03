@@ -10,38 +10,10 @@
 
 [doc("Run linters")]
 @lint:
-    uv run ansible-lint tests \
-      ./roles/docker_install \
-      ./roles/dokku_install \
-      ./roles/postfix_config \
-      ./roles/postfix_relay \
-      ./roles/system_fail2ban \
-      ./roles/system_grub \
-      ./roles/system_harden_ssh \
-      ./roles/system_locale \
-      ./roles/system_logcheck \
-      ./roles/system_logrotate \
-      ./roles/system_unattended_upgrades \
-      ./roles/tailscale_subnet_router \
-      ./roles/user_add_to_groups \
-      ./roles/user_create_admin
+    uv run ansible-lint tests roles
     # https://github.com/ansible/ansible-lint/issues/4533
     rm -rf .ansible
-    uv run yamllint --strict tests \
-      ./roles/docker_install \
-      ./roles/dokku_install \
-      ./roles/postfix_config \
-      ./roles/postfix_relay \
-      ./roles/system_fail2ban \
-      ./roles/system_grub \
-      ./roles/system_harden_ssh \
-      ./roles/system_locale \
-      ./roles/system_logcheck \
-      ./roles/system_logrotate \
-      ./roles/system_unattended_upgrades \
-      ./roles/tailscale_subnet_router \
-      ./roles/user_add_to_groups \
-      ./roles/user_create_admin
+    uv run yamllint --strict tests roles
     docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:latest -color
     # Test logcheck matchers
     ./roles/system_logcheck/test.sh
