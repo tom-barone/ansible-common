@@ -1,7 +1,9 @@
 .* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
 .* .*tailscaled.*: magicsock: endpoints changed.*$
+.* .*tailscaled.*: magicsock: derp.* does not know about peer
 .* .*tailscaled.*: control: .* got new dial plan.*$
 .* .*tailscaled.*: control: sleeping for server.*$
+.* .*tailscaled.*: control: NetInfo: NetInfo.*$
 .* .*tailscaled.*:.*health.*warnable.*ok.*$
 .* .*tailscaled.*: netcheck: DetectCaptivePortal.*$
 .* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$

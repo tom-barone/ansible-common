@@ -63,6 +63,12 @@ Mar 02 23:24:16 quilava postfix/master[238561]: daemon started -- version 3.10.5
 2025-02-19T05:44:59.069255+00:00 jqc-production kernel: [528824.671587] device veth8995f1b left promiscuous mode
 Mar 07 21:45:07 au-adelaide kernel: perf: interrupt took too long (3134 > 3128), lowering kernel.perf_event_max_sample_rate to 63750
 2025-03-10T13:01:02.655403+10:30 au-adelaide kernel: [399592.532630] perf: interrupt took too long (4921 > 4918), lowering kernel.perf_event_max_sample_rate to 40500
+Mar 03 23:00:27 quilava systemd[1]: Started 100.scope.
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered blocking state
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered disabled state
+Mar 03 23:00:28 quilava kernel: tap100i0: entered allmulticast mode
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered blocking state
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered forwarding state
 
 # Containerd
 2025-02-19T05:04:43.419981+00:00 jqc-production containerd[16080]: time="2025-02-19T05:04:43.419578510Z" level=info msg="shim disconnected" id=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db namespace=moby
@@ -222,6 +228,8 @@ Mar 02 22:49:10 quilava pveproxy[226892]: got inotify poll request in wrong proc
 Mar 03 04:38:15 quilava pveupdate[324667]: <root@pam> starting task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam:
 Mar 03 04:38:17 quilava pveupdate[324674]: update new package list: /var/lib/pve-manager/pkgupdates
 Mar 03 04:38:19 quilava pveupdate[324667]: <root@pam> end task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam: OK
+Mar 03 23:00:27 quilava qm[535897]: start VM 100: UPID:quilava:00082D59:00FB02EF:69A6D463:qmstart:100:root@pam:
+Mar 03 23:00:28 quilava qm[535897]: VM 100 started with PID 535922.
 
 # Tailscale
 Mar 02 22:16:30 quilava tailscaled[197800]: magicsock: disco: node [8JL4V] d:261022aade5f34a9 now using 192.168.50.181:41641 mtu=1360 tx=b848c682815f
@@ -241,5 +249,7 @@ Mar 03 17:39:01 quilava tailscaled[197800]: wgengine: Reconfig: configuring DNS
 Mar 03 17:39:01 quilava tailscaled[197800]: dns: Set: {DefaultResolvers:[] Routes:{taile4f997.ts.net.:[] ts.net.:[199.247.155.53 2620:111:8007::53]}+65arpa SearchDomains:[taile4f997.ts.net.] Hosts:2}
 Mar 03 17:39:01 quilava tailscaled[197800]: dns: Resolvercfg: {Routes:{.:[192.168.50.1] ts.net.:[199.247.155.53 2620:111:8007::53]} Hosts:2 LocalDomains:[taile4f997.ts.net.]+65arpa}
 Mar 03 17:39:01 quilava tailscaled[197800]: dns: OScfg: {Nameservers:[100.100.100.100] SearchDomains:[taile4f997.ts.net. tombarone.net.] }
+Mar 03 18:58:45 quilava tailscaled[197800]: magicsock: derp-5 does not know about peer [8JL4V], removing route
+Mar 03 21:20:44 quilava tailscaled[197800]: control: NetInfo: NetInfo{varies=false ipv6=false ipv6os=true udp=true icmpv4=false derp=#5 portmap=active-UMC link="" firewallmode="ipt-default"}
 
 # Put in bulk output from the last report below to double check it filters everything

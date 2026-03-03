@@ -3,3 +3,8 @@
 .* .*kernel.*: .*renamed from.*$
 .* .*kernel.*: .*becomes ready.*$
 .* .*kernel.*:.*perf: interrupt took too long.*$
+.* .*kernel.*:.*port.*entered blocking state.*$
+.* .*kernel.*:.*port.*entered disabled state.*$
+.* .*kernel.*:.*port.*entered blocking state.*$
+.* .*kernel.*:.*port.*entered forwarding state.*$
+.* .*kernel.*:.*tap.*entered allmulticast mode.*$

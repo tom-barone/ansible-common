@@ -27,3 +27,4 @@
 .* .*systemd.*: .* limits reached .* rotating\.$
 .* .*systemd.*: Reloading.*$
 .* .*systemd.*: Duplicate line for path "/run/lock".*$
+.* .*systemd.*: Started .*scope.*$

@@ -13,3 +13,5 @@
 .* .* qm.*: .* end task UPID.*$
 .* .* qm.*: .* update VM .*$
 .* pveupdate.*: update new package list.*$
+.* .* qm.*: start VM .*$
+.* .* qm.*: VM .* started with PID.*$
