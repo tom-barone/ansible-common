@@ -8,24 +8,36 @@
 # Check the settings are set
 # $ sudo cat /etc/apt/apt.conf.d/20auto-upgrades
 
-- name: Install required packages for unattended-upgrades
+- name: "Install required packages for unattended-upgrades"
   ansible.builtin.apt:
     name:
-      - unattended-upgrades
-      - apt-listchanges
-    state: present
-    update_cache: yes
+      - "unattended-upgrades"
+      - "apt-listchanges"
+    state: "present"
+    update_cache: true
 
-- name: Configure unattended-upgrades
-  ansible.builtin.command: "echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections"
+- name: "Configure unattended-upgrades"
+  ansible.builtin.command:
+    argv:
+      - "sh"
+      - "-c"
+      - >-
+        echo unattended-upgrades
+        unattended-upgrades/enable_auto_updates
+        boolean true | debconf-set-selections
   changed_when: false
 
-- name: Reconfigure unattended-upgrades
-  ansible.builtin.command: "dpkg-reconfigure -f noninteractive unattended-upgrades"
+- name: "Reconfigure unattended-upgrades"
+  ansible.builtin.command:
+    argv:
+      - "dpkg-reconfigure"
+      - "-f"
+      - "noninteractive"
+      - "unattended-upgrades"
   changed_when: false
 
-- name: Ensure unattended-upgrades is enabled and started
+- name: "Ensure unattended-upgrades is enabled and started"
   ansible.builtin.systemd:
-    name: unattended-upgrades
-    enabled: yes
-    state: started
+    name: "unattended-upgrades"
+    enabled: true
+    state: "started"

@@ -21,6 +21,7 @@
       ./roles/system_locale \
       ./roles/system_logcheck \
       ./roles/system_logrotate \
+      ./roles/system_unattended_upgrades \
       ./roles/tailscale_subnet_router \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
@@ -37,10 +38,13 @@
       ./roles/system_locale \
       ./roles/system_logcheck \
       ./roles/system_logrotate \
+      ./roles/system_unattended_upgrades \
       ./roles/tailscale_subnet_router \
       ./roles/user_add_to_groups \
       ./roles/user_create_admin
     docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:latest -color
+    # Test logcheck matchers
+    ./roles/system_logcheck/test.sh
 
 [doc("Run formatters")]
 @format:
@@ -51,8 +55,6 @@
 @test *ARGS:
     sops exec-env secrets.sops.env \
       'uv run tests/run.py {{ ARGS }}'
-    # Test logcheck matchers
-    ./roles/system_logcheck/test.sh
 
 [doc("Edit secrets with sops")]
 @secrets-edit:
@@ -69,4 +71,4 @@
     docker exec -it debian12-ansible bash
 
 [doc("Run all precommit checks")]
-@precommit: install format lint test
+@precommit: install format lint
