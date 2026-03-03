@@ -1,0 +1,7 @@
+---
+# Ansible role to flush all handlers
+# Used when needing to handlers are executed
+# before another upcoming task or role
+
+- name: "Flush handlers"
+  ansible.builtin.meta: "flush_handlers"
