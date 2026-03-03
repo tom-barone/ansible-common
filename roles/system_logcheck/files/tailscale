@@ -1,4 +1,6 @@
 .* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
+.* .*tailscaled.*: magicsock: endpoints changed.*$
 .* .*tailscaled.*: control: .* got new dial plan.*$
 .* .*tailscaled.*: control: sleeping for server.*$
 .* .*tailscaled.*:.*health.*warnable.*ok.*$
+.* .*tailscaled.*: netcheck: DetectCaptivePortal.*$

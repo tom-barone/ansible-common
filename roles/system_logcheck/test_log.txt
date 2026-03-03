@@ -229,6 +229,8 @@ Mar 03 03:31:53 quilava tailscaled[197800]: control: netmap: got new dial plan f
 Mar 03 10:58:55 quilava tailscaled[197800]: control: sleeping for server-requested 5.022355638s ...
 Mar 03 11:00:38 quilava tailscaled[197800]: [RATELIMIT] format("health(warnable=%s): ok") (2 dropped)
 Mar 03 11:00:38 quilava tailscaled[197800]: health(warnable=not-in-map-poll): ok
+Mar 03 11:11:12 quilava tailscaled[197800]: netcheck: DetectCaptivePortal(found=false)
+Mar 03 11:11:12 quilava tailscaled[197800]: magicsock: endpoints changed: 144.6.17.85:41642 (portmap), 144.6.17.85:41641 (stun), 192.168.50.91:41641 (local)
 
 # Put in bulk output from the last report below to double check it filters everything
 
