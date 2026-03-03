@@ -1,0 +1,25 @@
+---
+# Ansible role to add a host to the in-memory inventory.
+# Good when wanting to manage a host that was just created in
+# a previous task, like a new VM
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "ansible_add_host_name is defined"
+      - "ansible_add_host_user is defined"
+      - "ansible_add_host_groups is defined"
+      - "ansible_add_host_address is defined"
+    msg: "Missing a required variable"
+
+- name: "Add host to inventory"
+  ansible.builtin.add_host:
+    name: "{{ ansible_add_host_name }}"
+    groups: "{{ ansible_add_host_groups }}"
+    ansible_host: "{{ ansible_add_host_address }}"
+    ansible_user: "{{ ansible_add_host_user }}"
+    ansible_python_interpreter: "/usr/bin/python3"
+    ansible_ssh_common_args: >-
+      -o StrictHostKeyChecking=no
+      -o UserKnownHostsFile=/dev/null
+  changed_when: false
