@@ -2,6 +2,39 @@
 - name: "Verify"
   hosts: "all"
   tasks:
+    # Given journal is enabled in converge
+    # When we read the journal logfiles config
+    # Then 'journal' should be uncommented
+    - name: "Read journal logfiles config"
+      ansible.builtin.slurp:
+        src: "/etc/logcheck/logcheck.logfiles.d/journal.logfiles"
+      register: "journal_logfiles"
+
+    - name: "Assert journal is enabled"
+      ansible.builtin.assert:
+        that:
+          - "'\njournal\n' in journal_logfiles.content | b64decode"
+        msg: >-
+          journal should be uncommented when
+          system_logcheck_enable_journal is true
+
+    # Given syslog is disabled in converge
+    # When we read the syslog logfiles config
+    # Then the syslog paths should be commented out
+    - name: "Read syslog logfiles config"
+      ansible.builtin.slurp:
+        src: "/etc/logcheck/logcheck.logfiles.d/syslog.logfiles"
+      register: "syslog_logfiles"
+
+    - name: "Assert syslog is disabled"
+      ansible.builtin.assert:
+        that:
+          - "'\n#/var/log/syslog\n' in syslog_logfiles.content | b64decode"
+          - "'\n#/var/log/auth.log\n' in syslog_logfiles.content | b64decode"
+        msg: >-
+          syslog paths should be commented out when
+          system_logcheck_enable_syslog is false
+
     - name: "Add a kernel error log entry for testing that should show up"
       ansible.builtin.command: >
         logger -p kern.error

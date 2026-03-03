@@ -1,0 +1,10 @@
+## The word 'journal' tells logcheck to check log entries in the
+## systemd journal
+
+# (This is enabled by default, but if you do not want to check entries
+# in the journal you can comment out the next line)
+{% if system_logcheck_enable_journal %}
+journal
+{% else %}
+#journal
+{% endif %}

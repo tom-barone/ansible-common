@@ -13,6 +13,13 @@
 # - every hour
 # - on reboot
 
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "system_logcheck_enable_journal is defined"
+      - "system_logcheck_enable_syslog is defined"
+    msg: "Missing a required variable"
+
 - name: "Install logcheck"
   ansible.builtin.apt:
     name: "logcheck"
@@ -40,6 +47,18 @@
   ansible.builtin.template:
     src: "files/{{ item }}"
     dest: "/etc/logcheck/ignore.d.server/{{ item }}"
+    mode: "0644"
+
+- name: "Configure journal logfiles"
+  ansible.builtin.template:
+    src: "templates/journal.logfiles.j2"
+    dest: "/etc/logcheck/logcheck.logfiles.d/journal.logfiles"
+    mode: "0644"
+
+- name: "Configure syslog logfiles"
+  ansible.builtin.template:
+    src: "templates/syslog.logfiles.j2"
+    dest: "/etc/logcheck/logcheck.logfiles.d/syslog.logfiles"
     mode: "0644"
 
 - name: "Run and test"

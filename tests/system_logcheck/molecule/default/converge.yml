@@ -5,3 +5,6 @@
     - name: "Apply role under test"
       ansible.builtin.include_role:
         name: "system_logcheck"
+      vars:
+        system_logcheck_enable_journal: true
+        system_logcheck_enable_syslog: false
