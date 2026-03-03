@@ -48,7 +48,10 @@ def run_test(path: Path, no_capture: bool):
             env=env,
             text=True,
         )
-    return path, result.returncode, result.stdout if no_capture else ""
+    failed = result.returncode != 0
+    print_output_to_console = no_capture or failed
+
+    return path, result.returncode, result.stdout if print_output_to_console else ""
 
 
 def main():
@@ -68,7 +71,7 @@ def main():
     if args.name:
         scenarios = [s for s in scenarios if args.name in str(s.relative_to(TESTS_DIR))]
 
-    print(f"Found {len(scenarios)} molecule scenarios. Running tests...")
+    print(f"Found {len(scenarios)} molecule scenarios...")
 
     if not scenarios:
         print("No molecule scenarios found.")
