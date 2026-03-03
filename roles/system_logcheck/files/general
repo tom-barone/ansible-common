@@ -10,4 +10,6 @@
 .* .*systemd.*: Finish.* .* - .*\.$
 .* .*systemd.*: .*: Deactivated successfully\.$
 .* .*wpa_supplicant.*: .*: CTRL-EVENT-BEACON-LOSS.*$
+.* .*dmeventd.*: No longer monitoring thin pool.*$
+.* .*dmeventd.*: Monitoring thin pool.*$
 .*I am a logcheck test that should be filtered out.*$

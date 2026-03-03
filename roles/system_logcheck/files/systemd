@@ -26,3 +26,4 @@
 .* .*systemd.*: Data hash table of .* suggesting rotation.*$
 .* .*systemd.*: .* limits reached .* rotating\.$
 .* .*systemd.*: Reloading.*$
+.* .*systemd.*: Duplicate line for path "/run/lock".*$

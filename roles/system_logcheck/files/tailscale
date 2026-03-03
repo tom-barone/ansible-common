@@ -1,1 +1,4 @@
 .* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
+.* .*tailscaled.*: control: .* got new dial plan.*$
+.* .*tailscaled.*: control: sleeping for server.*$
+.* .*tailscaled.*:.*health.*warnable.*ok.*$

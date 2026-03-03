@@ -145,6 +145,7 @@ Mar 02 22:52:31 quilava systemd[1]: Reloaded ssh.service - OpenBSD Secure Shell 
 Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: Data hash table of /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal has a fill level at 75.0 (174764 of 233016 items, 50331648 file size, 287 bytes per hash table item), suggesting rotation.
 Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal: Journal header limits reached or header out-of-date, rotating.
 2025-07-02T06:53:54.069858+00:00 au-melbourne systemd[1]: Reloading.
+2026-03-03T01:34:58.688267+10:30 quilava systemd-tmpfiles[292502]: /usr/lib/tmpfiles.d/legacy.conf:14: Duplicate line for path "/run/lock", ignoring.
 
 # PackageKit
  2025-02-19T06:16:45.742606+00:00 jqc-production dbus-daemon[557]: [system] Activating via systemd: service name='org.freedesktop.PackageKit' unit='packagekit.service' requested by ':1.656' (uid=0 pid=912195 comm="/usr/bin/gdbus call --system --dest org.freedeskto")
@@ -169,6 +170,8 @@ Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2
 2025-03-05T17:45:15.415234+00:00 au-melbourne systemd[1]: apt-daily.service: Deactivated successfully.
 2025-03-05T17:45:15.416836+00:00 au-melbourne systemd[1]: Finished apt-daily.service - Daily apt download activities.
 2025-03-27T01:11:42.560576+10:30 au-adelaide wpa_supplicant[1341]: wlp0s20f3: CTRL-EVENT-BEACON-LOSS
+2026-03-03T01:22:06.647786+10:30 quilava dmeventd[339]: No longer monitoring thin pool pve-data-tpool.
+2026-03-03T01:22:06.680550+10:30 quilava dmeventd[339]: Monitoring thin pool pve-data-tpool.
 
 # GPG
 2025-03-18T13:08:11.987212+10:30 au-adelaide systemd[613761]: Closed dirmngr.socket - GnuPG network certificate management daemon.
@@ -198,6 +201,7 @@ Mar 06 06:56:26 au-adelaide polkitd[444192]: Acquired the name org.freedesktop.P
 2025-11-15T13:15:01.895608+00:00 dokku-sandbox sshd-session[255648]: syslogin_perform_logout: logout() returned an error
 2025-11-15T13:15:03.227986+00:00 dokku-sandbox python3[259435]: ansible-ansible.builtin.systemd Invoked with enabled=True name=logcheck state=restarted daemon_reload=False daemon_reexec=False scope=system no_block=False force=None masked=None
 expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None argv=None chdir=None executable=None creates=None removes=None stdin=None
+expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None argv=None chdir=None executable=None creates=None removes=None stdin=None
 2026-03-02T23:56:12.281308+10:30 quilava python3[253359]: ansible-community.general.locale_gen Invoked with name=['en_AU.UTF-8'] state=present
 
 # Proxmox
@@ -212,9 +216,19 @@ Mar 02 22:43:27 quilava pveproxy[1097]: worker 192878 finished
 Mar 02 22:43:27 quilava pveproxy[1097]: starting 1 worker(s)
 Mar 02 22:43:27 quilava pveproxy[1097]: worker 225950 started
 Mar 02 22:49:10 quilava pveproxy[226892]: got inotify poll request in wrong process - disabling inotify
+2026-03-03T01:21:57.331727+10:30 quilava qm[290224]: <root@pam> starting task UPID:quilava:00046DB1:0084213F:69A5A40D:qmcreate:9000:root@pam:
+2026-03-03T01:22:05.219463+10:30 quilava qm[290224]: <root@pam> end task UPID:quilava:00046DB1:0084213F:69A5A40D:qmcreate:9000:root@pam: OK
+2026-03-03T01:22:06.620853+10:30 quilava qm[290326]: <root@pam> update VM 9000: resize --disk scsi0 --size 5G
+Mar 03 04:38:15 quilava pveupdate[324667]: <root@pam> starting task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam:
+Mar 03 04:38:17 quilava pveupdate[324674]: update new package list: /var/lib/pve-manager/pkgupdates
+Mar 03 04:38:19 quilava pveupdate[324667]: <root@pam> end task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam: OK
 
 # Tailscale
 Mar 02 22:16:30 quilava tailscaled[197800]: magicsock: disco: node [8JL4V] d:261022aade5f34a9 now using 192.168.50.181:41641 mtu=1360 tx=b848c682815f
+Mar 03 03:31:53 quilava tailscaled[197800]: control: netmap: got new dial plan from control
+Mar 03 10:58:55 quilava tailscaled[197800]: control: sleeping for server-requested 5.022355638s ...
+Mar 03 11:00:38 quilava tailscaled[197800]: [RATELIMIT] format("health(warnable=%s): ok") (2 dropped)
+Mar 03 11:00:38 quilava tailscaled[197800]: health(warnable=not-in-map-poll): ok
 
 # Put in bulk output from the last report below to double check it filters everything
 
