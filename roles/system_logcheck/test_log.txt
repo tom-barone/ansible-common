@@ -244,6 +244,8 @@ Mar 03 23:24:39 quilava qmeventd[542265]: Starting cleanup for 100
 Mar 03 23:24:39 quilava qmeventd[542265]: Finished cleanup for 100
 Mar 03 23:24:36 quilava pvedaemon[542192]: shutdown VM 100: UPID:quilava:000845F0:00FD38D2:69A6DA0C:qmshutdown:100:root@pam:
 Mar 03 23:24:42 quilava pvedaemon[542386]: destroy VM 100: UPID:quilava:000846B2:00FD3B68:69A6DA12:qmdestroy:100:root@pam:
+Mar 04 23:55:39 quilava pvedaemon[610977]: VM 100 qga command failed - VM 100 qga command 'guest-ping' failed - client closed connection
+Mar 04 23:56:16 quilava qm[856886]: VM 100 qga command failed - VM 100 qga command 'guest-ping' failed - got timeout
 
 # QEMU
 Mar 03 15:54:50 forgejo qemu-ga[1046]: info: guest-ping called

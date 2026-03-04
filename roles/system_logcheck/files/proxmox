@@ -21,3 +21,5 @@
 .* .*pve.*: starting vnc proxy.*$
 .* .*pve.*: shutdown VM.*$
 .* .*pve.*: destroy VM.*$
+.* .*pve.*: .* qga command failed.*guest-ping.*$
+.* .*qm.*: .* qga command failed.*guest-ping.*$
