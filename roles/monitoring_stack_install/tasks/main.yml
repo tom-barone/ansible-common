@@ -21,9 +21,6 @@
       }}/grafana/provisioning/datasources
     - >-
       {{ monitoring_stack_install_dir
-      }}/grafana/provisioning/dashboards/json
-    - >-
-      {{ monitoring_stack_install_dir
       }}/grafana/provisioning/alerting
 
 - name: "Deploy docker-compose.yml"
@@ -59,30 +56,6 @@
     dest: >-
       {{ monitoring_stack_install_prov_dir
       }}/datasources/datasources.yml
-    mode: "0644"
-  notify: "Restart monitoring stack"
-
-- name: "Deploy Grafana dashboard provider"
-  vars:
-    monitoring_stack_install_prov_dir: >-
-      {{ monitoring_stack_install_dir }}/grafana/provisioning
-  ansible.builtin.template:
-    src: "grafana-dashboards.yml.j2"
-    dest: >-
-      {{ monitoring_stack_install_prov_dir
-      }}/dashboards/dashboards.yml
-    mode: "0644"
-  notify: "Restart monitoring stack"
-
-- name: "Deploy system dashboard"
-  vars:
-    monitoring_stack_install_prov_dir: >-
-      {{ monitoring_stack_install_dir }}/grafana/provisioning
-  ansible.builtin.template:
-    src: "system-dashboard.json.j2"
-    dest: >-
-      {{ monitoring_stack_install_prov_dir
-      }}/dashboards/json/system-dashboard.json
     mode: "0644"
   notify: "Restart monitoring stack"
 
@@ -139,3 +112,40 @@
   until: "monitoring_stack_install_health.status == 200"
   retries: 30
   delay: 5
+
+- name: "Check if Node Exporter Full dashboard exists"
+  ansible.builtin.uri:
+    url: "http://localhost:3000/api/search?query=Node%20Exporter%20Full"
+    method: "GET"
+    user: "{{ monitoring_stack_install_grafana_admin_user }}"
+    password: "{{ monitoring_stack_install_grafana_admin_password }}"
+    force_basic_auth: true
+  register: "monitoring_stack_install_dashboard_search"
+
+- name: "Download Node Exporter Full dashboard JSON"
+  ansible.builtin.uri:
+    url: "https://grafana.com/api/dashboards/1860/revisions/latest/download"
+    method: "GET"
+    return_content: true
+  register: "monitoring_stack_install_dashboard_json"
+  when: "monitoring_stack_install_dashboard_search.json | length == 0"
+
+- name: "Import Node Exporter Full dashboard"
+  ansible.builtin.uri:
+    url: "http://localhost:3000/api/dashboards/import"
+    method: "POST"
+    user: "{{ monitoring_stack_install_grafana_admin_user }}"
+    password: "{{ monitoring_stack_install_grafana_admin_password }}"
+    force_basic_auth: true
+    body_format: "json"
+    body:
+      # Inject the downloaded JSON into the 'dashboard' key
+      dashboard: "{{ monitoring_stack_install_dashboard_json.json }}"
+      overwrite: true
+      inputs:
+        - name: "DS_PROMETHEUS"
+          type: "datasource"
+          pluginId: "prometheus"
+          value: "Prometheus"
+    status_code: 200
+  when: "monitoring_stack_install_dashboard_search.json | length == 0"

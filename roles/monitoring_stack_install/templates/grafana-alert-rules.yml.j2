@@ -6,43 +6,6 @@ groups:
     folder: "alerts"
     interval: "1m"
     rules:
-      - uid: "cpu-too-high"
-        title: "CPU too high"
-        condition: "threshold"
-        data:
-          - refId: "query"
-            relativeTimeRange:
-              from: 300
-              to: 0
-            datasourceUid: "prometheus"
-            model:
-              expr: "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)"
-              intervalMs: 1000
-              maxDataPoints: 43200
-              refId: "query"
-          - refId: "threshold"
-            relativeTimeRange:
-              from: 300
-              to: 0
-            datasourceUid: "__expr__"
-            model:
-              conditions:
-                - evaluator:
-                    params:
-                      - {{ monitoring_stack_install_cpu_threshold }}
-                    type: "gt"
-                  operator:
-                    type: "and"
-                  reducer:
-                    type: "last"
-              refId: "threshold"
-              type: "classic_conditions"
-        for: "5m"
-        labels:
-          severity: "warning"
-        annotations:
-          summary: "CPU usage is above {{ monitoring_stack_install_cpu_threshold }}%"
-
       - uid: "ram-too-high"
         title: "RAM too high"
         condition: "threshold"
@@ -70,7 +33,11 @@ groups:
                     type: "gt"
                   operator:
                     type: "and"
+                  query:                  # <-- ADDED: Links to the PromQL query
+                    params:
+                      - "query"
                   reducer:
+                    params: []            # <-- ADDED: Empty params required for 'last'
                     type: "last"
               refId: "threshold"
               type: "classic_conditions"
@@ -107,7 +74,11 @@ groups:
                     type: "gt"
                   operator:
                     type: "and"
+                  query:                  # <-- ADDED: Links to the PromQL query
+                    params:
+                      - "query"
                   reducer:
+                    params: []            # <-- ADDED: Empty params required for 'last'
                     type: "last"
               refId: "threshold"
               type: "classic_conditions"
