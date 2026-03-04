@@ -65,9 +65,10 @@
     - >-
       _tailscale_install_matching_device.id is defined
     - >-
-      _tailscale_install_current_ip.stdout not in
-      _tailscale_install_matching_device.addresses
-    - "_tailscale_install_current_ip.stdout | length > 0"
+      (_tailscale_install_current_ip.stdout | length == 0) or
+      (_tailscale_install_current_ip.rc != 0) or
+      (_tailscale_install_current_ip.stdout
+      not in _tailscale_install_matching_device.addresses)
 
 - name: "Apply artis3n.tailscale.machine"
   ansible.builtin.include_role:
