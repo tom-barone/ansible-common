@@ -1,0 +1,16 @@
+---
+# Purpose: assert that system tools are installed correctly.
+# Molecule calls this playbook with `molecule verify`.
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check btm is installed"
+      ansible.builtin.command: "dpkg -s btm"
+      register: "btm_status"
+      changed_when: false
+
+    - name: "Assert btm package is installed"
+      ansible.builtin.assert:
+        that:
+          - "btm_status.rc == 0"
+        msg: "btm package is not installed"

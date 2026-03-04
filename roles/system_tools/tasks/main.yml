@@ -1,0 +1,9 @@
+---
+# Ansible role to install helpful system tools
+
+- name: "Install system tools"
+  ansible.builtin.apt:
+    name:
+      - "btm"
+    state: "present"
+    update_cache: true
