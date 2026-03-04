@@ -1,16 +1,13 @@
 ---
 - name: "Converge"
   hosts: "all"
-  tasks:
-    - name: "Apply role under test"
-      ansible.builtin.include_role:
-        name: "artis3n.tailscale.machine"
+  roles:
+    - role: "tailscale_install"
       vars:
-        verbose: true
-        state: "latest"
-        tailscale_authkey: >-
+        tailscale_install_oauth_client_id: >-
+          {{ lookup('env', 'TAILSCALE_ANSIBLE_TEST_OAUTH_CLIENT_ID') }}
+        tailscale_install_oauth_client_secret: >-
           {{ lookup('env', 'TAILSCALE_ANSIBLE_TEST_OAUTH_CLIENT_SECRET') }}
-        tailscale_tags:
+        tailscale_install_tags:
           - "ansible-test"
-        tailscale_oauth_ephemeral: true
-        tailscale_oauth_preauthorized: false
+        tailscale_install_oauth_ephemeral: true

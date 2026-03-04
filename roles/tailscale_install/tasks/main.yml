@@ -1,0 +1,81 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "tailscale_install_oauth_client_id | length > 0"
+      - "tailscale_install_oauth_client_secret | length > 0"
+      - "tailscale_install_oauth_ephemeral is defined"
+    msg: >-
+      tailscale_install_oauth_client_id and
+      tailscale_install_oauth_client_secret are required
+
+- name: "Get hostname"
+  ansible.builtin.command: "hostname"
+  register: "_tailscale_install_hostname"
+  changed_when: false
+
+- name: "Get current Tailscale IPv4 (if already connected)"
+  ansible.builtin.command: "tailscale ip --4"
+  register: "_tailscale_install_current_ip"
+  changed_when: false
+  failed_when: false # Gracefully handles: not installed, not connected, etc.
+
+- name: "Get OAuth access token"
+  ansible.builtin.uri:
+    url: "https://api.tailscale.com/api/v2/oauth/token"
+    method: "POST"
+    url_username: "{{ tailscale_install_oauth_client_id }}"
+    url_password: "{{ tailscale_install_oauth_client_secret }}"
+    force_basic_auth: true
+    body_format: "form-urlencoded"
+    body:
+      grant_type: "client_credentials"
+  register: "_tailscale_install_oauth_token"
+  no_log: true
+
+- name: "List devices on tailnet"
+  ansible.builtin.uri:
+    url: "https://api.tailscale.com/api/v2/tailnet/-/devices"
+    method: "GET"
+    headers:
+      Authorization: >-
+        Bearer {{ _tailscale_install_oauth_token.json.access_token }}
+  register: "_tailscale_install_devices"
+
+- name: "Find device with matching hostname"
+  ansible.builtin.set_fact:
+    _tailscale_install_matching_device: >-
+      {{ _tailscale_install_devices.json.devices
+         | selectattr('hostname', 'equalto',
+                      _tailscale_install_hostname.stdout)
+         | first | default({}) }}
+
+- name: "Delete stale matching device"
+  ansible.builtin.uri:
+    url: >-
+      https://api.tailscale.com/api/v2/device/{{
+      _tailscale_install_matching_device.id }}
+    method: "DELETE"
+    headers:
+      Authorization: >-
+        Bearer {{
+        _tailscale_install_oauth_token.json.access_token }}
+    status_code: [200, 204]
+  when:
+    - >-
+      _tailscale_install_matching_device.id is defined
+    - >-
+      _tailscale_install_current_ip.stdout not in
+      _tailscale_install_matching_device.addresses
+    - "_tailscale_install_current_ip.stdout | length > 0"
+
+- name: "Apply artis3n.tailscale.machine"
+  ansible.builtin.include_role:
+    name: "artis3n.tailscale.machine"
+  vars:
+    state: "latest"
+    tailscale_authkey: "{{ tailscale_install_oauth_client_secret }}"
+    tailscale_tags: "{{ tailscale_install_tags }}"
+    tailscale_oauth_ephemeral: "{{ tailscale_install_oauth_ephemeral }}"
+    tailscale_oauth_preauthorized: >-
+      {{ tailscale_install_oauth_preauthorized }}
