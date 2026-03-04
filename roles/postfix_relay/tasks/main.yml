@@ -10,6 +10,19 @@
       - "postfix_relay_root_alias is defined"
     msg: "Missing a required variable"
 
+- name: "Completely purge all exim4 related packages"
+  # Don't need em because we're going with postfix
+  ansible.builtin.apt:
+    pkg:
+      - "exim4"
+      - "exim4-base"
+      - "exim4-config"
+      - "exim4-daemon-light"
+      - "exim4-daemon-heavy"
+    state: "absent"
+    purge: true
+    autoremove: true
+
 - name: "Install postfix and dependencies"
   ansible.builtin.apt:
     pkg:
