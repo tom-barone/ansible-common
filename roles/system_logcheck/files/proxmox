@@ -23,3 +23,5 @@
 .* .*pve.*: destroy VM.*$
 .* .*pve.*: .* qga command failed.*guest-ping.*$
 .* .*qm.*: .* qga command failed.*guest-ping.*$
+.* .*pve.*: auth key pair too old.*$
+.* cloud-init.*: .*$
