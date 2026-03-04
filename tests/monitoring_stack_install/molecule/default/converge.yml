@@ -9,4 +9,5 @@
         monitoring_stack_install_gmail_username: "test@gmail.com"
         monitoring_stack_install_gmail_app_password: "testpassword"
         monitoring_stack_install_alert_email_to: "alerts@example.com"
-        monitoring_stack_install_grafana_admin_password: "testadmin"
+        monitoring_stack_install_grafana_admin_user: "testuser"
+        monitoring_stack_install_grafana_admin_password: "testpassword"

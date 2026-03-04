@@ -5,6 +5,7 @@
       - "monitoring_stack_install_gmail_username is defined"
       - "monitoring_stack_install_gmail_app_password is defined"
       - "monitoring_stack_install_alert_email_to is defined"
+      - "monitoring_stack_install_grafana_admin_user is defined"
       - "monitoring_stack_install_grafana_admin_password is defined"
     msg: "Missing a required variable"
 
