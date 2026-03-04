@@ -149,3 +149,40 @@
           value: "Prometheus"
     status_code: 200
   when: "monitoring_stack_install_dashboard_search.json | length == 0"
+
+- name: "Check if cAdvisor dashboard exists"
+  ansible.builtin.uri:
+    url: "http://localhost:3000/api/search?query=cAdvisor"
+    method: "GET"
+    user: "{{ monitoring_stack_install_grafana_admin_user }}"
+    password: "{{ monitoring_stack_install_grafana_admin_password }}"
+    force_basic_auth: true
+  register: "monitoring_stack_install_cadvisor_search"
+
+- name: "Download cAdvisor dashboard JSON"
+  ansible.builtin.uri:
+    url: "https://grafana.com/api/dashboards/19724/revisions/latest/download"
+    method: "GET"
+    return_content: true
+  register: "monitoring_stack_install_cadvisor_json"
+  when: "monitoring_stack_install_cadvisor_search.json | length == 0"
+
+- name: "Import cAdvisor dashboard"
+  ansible.builtin.uri:
+    url: "http://localhost:3000/api/dashboards/import"
+    method: "POST"
+    user: "{{ monitoring_stack_install_grafana_admin_user }}"
+    password: "{{ monitoring_stack_install_grafana_admin_password }}"
+    force_basic_auth: true
+    body_format: "json"
+    body:
+      # Inject the downloaded JSON into the 'dashboard' key
+      dashboard: "{{ monitoring_stack_install_cadvisor_json.json }}"
+      overwrite: true
+      inputs:
+        - name: "DS_PROMETHEUS"
+          type: "datasource"
+          pluginId: "prometheus"
+          value: "Prometheus"
+    status_code: 200
+  when: "monitoring_stack_install_cadvisor_search.json | length == 0"

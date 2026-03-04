@@ -35,8 +35,6 @@
       register: "provisioning_files"
       loop:
         - "/opt/monitoring/grafana/provisioning/datasources/datasources.yml"
-        - "/opt/monitoring/grafana/provisioning/dashboards/dashboards.yml"
-        - "/opt/monitoring/grafana/provisioning/dashboards/json/system-dashboard.json"
         - "/opt/monitoring/grafana/provisioning/alerting/contact-points.yml"
         - "/opt/monitoring/grafana/provisioning/alerting/notification-policies.yml"
         - "/opt/monitoring/grafana/provisioning/alerting/alert-rules.yml"
