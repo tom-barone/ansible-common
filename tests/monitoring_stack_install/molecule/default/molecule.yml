@@ -5,7 +5,6 @@ platforms:
   - name: "${TEST_NAME}"
     image: "${MOLECULE_DOCKER_IMAGE}"
     pre_build_image: true
-    # Necessary for systemd to work properly
     privileged: true
     cgroupns_mode: "host"
     command: ""
@@ -13,7 +12,6 @@ platforms:
       - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
 provisioner:
   name: "ansible"
-
 scenario:
   test_sequence:
     # - dependency
@@ -21,7 +19,7 @@ scenario:
     - "destroy"
     - "syntax"
     - "create"
-    # - "prepare"
+    - "prepare"
     - "converge"
     - "idempotence"
     # - side_effect

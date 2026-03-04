@@ -1,0 +1,88 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check install directory exists"
+      ansible.builtin.stat:
+        path: "/opt/monitoring"
+      register: "install_dir"
+
+    - name: "Assert install directory exists"
+      ansible.builtin.assert:
+        that:
+          - "install_dir.stat.exists"
+          - "install_dir.stat.isdir"
+
+    - name: "Read docker-compose.yml"
+      ansible.builtin.slurp:
+        src: "/opt/monitoring/docker-compose.yml"
+      register: "compose_file"
+
+    - name: "Assert docker-compose.yml contains expected services"
+      vars:
+        content: "{{ compose_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'prometheus' in content"
+          - "'node-exporter' in content"
+          - "'cadvisor' in content"
+          - "'grafana' in content"
+          - "'loki' in content"
+
+    - name: "Check Grafana provisioning files exist"
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: "provisioning_files"
+      loop:
+        - "/opt/monitoring/grafana/provisioning/datasources/datasources.yml"
+        - "/opt/monitoring/grafana/provisioning/dashboards/dashboards.yml"
+        - "/opt/monitoring/grafana/provisioning/dashboards/json/system-dashboard.json"
+        - "/opt/monitoring/grafana/provisioning/alerting/contact-points.yml"
+        - "/opt/monitoring/grafana/provisioning/alerting/notification-policies.yml"
+        - "/opt/monitoring/grafana/provisioning/alerting/alert-rules.yml"
+
+    - name: "Assert all provisioning files exist"
+      ansible.builtin.assert:
+        that:
+          - "item.stat.exists"
+      loop: "{{ provisioning_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: "Validate compose config"
+      ansible.builtin.command:
+        cmd: "docker compose config --quiet"
+        chdir: "/opt/monitoring"
+      changed_when: false
+
+    - name: "Check containers are running"
+      ansible.builtin.command:
+        cmd: "docker compose ps"
+        chdir: "/opt/monitoring"
+      register: "compose_ps"
+      changed_when: false
+
+    - name: "Assert containers are listed"
+      ansible.builtin.assert:
+        that:
+          - "'prometheus' in compose_ps.stdout"
+          - "'grafana' in compose_ps.stdout"
+          - "'loki' in compose_ps.stdout"
+
+    - name: "Check Prometheus responds"
+      ansible.builtin.uri:
+        url: "http://localhost:9090/-/healthy"
+        status_code: 200
+      register: "prometheus_health"
+      until: "prometheus_health.status == 200"
+      retries: 15
+      delay: 5
+
+    - name: "Check Grafana responds"
+      ansible.builtin.uri:
+        url: "http://localhost:3000/api/health"
+        status_code: 200
+      register: "grafana_health"
+      until: "grafana_health.status == 200"
+      retries: 15
+      delay: 5

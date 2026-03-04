@@ -1,0 +1,12 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "monitoring_stack_install"
+      vars:
+        monitoring_stack_install_gmail_username: "test@gmail.com"
+        monitoring_stack_install_gmail_app_password: "testpassword"
+        monitoring_stack_install_alert_email_to: "alerts@example.com"
+        monitoring_stack_install_grafana_admin_password: "testadmin"

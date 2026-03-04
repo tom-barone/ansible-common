@@ -1,4 +1,19 @@
 ---
+- name: "Create Docker config directory"
+  ansible.builtin.file:
+    path: "/etc/docker"
+    state: "directory"
+    mode: "0755"
+  when: "docker_install_storage_driver | length > 0"
+
+- name: "Set Docker storage driver"
+  ansible.builtin.copy:
+    content: >-
+      {"storage-driver": "{{ docker_install_storage_driver }}"}
+    dest: "/etc/docker/daemon.json"
+    mode: "0644"
+  when: "docker_install_storage_driver | length > 0"
+
 - name: "Install dependencies"
   ansible.builtin.apt:
     name:

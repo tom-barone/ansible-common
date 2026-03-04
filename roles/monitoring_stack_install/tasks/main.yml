@@ -1,0 +1,140 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "monitoring_stack_install_gmail_username is defined"
+      - "monitoring_stack_install_gmail_app_password is defined"
+      - "monitoring_stack_install_alert_email_to is defined"
+      - "monitoring_stack_install_grafana_admin_password is defined"
+    msg: "Missing a required variable"
+
+- name: "Create monitoring directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "{{ monitoring_stack_install_dir }}"
+    - >-
+      {{ monitoring_stack_install_dir
+      }}/grafana/provisioning/datasources
+    - >-
+      {{ monitoring_stack_install_dir
+      }}/grafana/provisioning/dashboards/json
+    - >-
+      {{ monitoring_stack_install_dir
+      }}/grafana/provisioning/alerting
+
+- name: "Deploy docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_dir }}/docker-compose.yml
+    mode: "0600"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Prometheus config"
+  ansible.builtin.template:
+    src: "prometheus.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_dir }}/prometheus.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Loki config"
+  ansible.builtin.template:
+    src: "loki-config.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_dir }}/loki-config.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Grafana datasources"
+  vars:
+    monitoring_stack_install_prov_dir: >-
+      {{ monitoring_stack_install_dir }}/grafana/provisioning
+  ansible.builtin.template:
+    src: "grafana-datasources.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_prov_dir
+      }}/datasources/datasources.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Grafana dashboard provider"
+  vars:
+    monitoring_stack_install_prov_dir: >-
+      {{ monitoring_stack_install_dir }}/grafana/provisioning
+  ansible.builtin.template:
+    src: "grafana-dashboards.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_prov_dir
+      }}/dashboards/dashboards.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy system dashboard"
+  vars:
+    monitoring_stack_install_prov_dir: >-
+      {{ monitoring_stack_install_dir }}/grafana/provisioning
+  ansible.builtin.template:
+    src: "system-dashboard.json.j2"
+    dest: >-
+      {{ monitoring_stack_install_prov_dir
+      }}/dashboards/json/system-dashboard.json
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Grafana contact points"
+  vars:
+    monitoring_stack_install_prov_dir: >-
+      {{ monitoring_stack_install_dir }}/grafana/provisioning
+  ansible.builtin.template:
+    src: "grafana-contact-points.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_prov_dir
+      }}/alerting/contact-points.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Grafana notification policies"
+  vars:
+    monitoring_stack_install_prov_dir: >-
+      {{ monitoring_stack_install_dir }}/grafana/provisioning
+  ansible.builtin.template:
+    src: "grafana-notification-policies.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_prov_dir
+      }}/alerting/notification-policies.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Deploy Grafana alert rules"
+  vars:
+    monitoring_stack_install_prov_dir: >-
+      {{ monitoring_stack_install_dir }}/grafana/provisioning
+  ansible.builtin.template:
+    src: "grafana-alert-rules.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_prov_dir
+      }}/alerting/alert-rules.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
+- name: "Start monitoring stack"
+  ansible.builtin.command:
+    cmd: "docker compose up -d"
+    chdir: "{{ monitoring_stack_install_dir }}"
+  register: "monitoring_stack_install_up"
+  changed_when: >
+    'Started' in monitoring_stack_install_up.stderr or
+    'Created' in monitoring_stack_install_up.stderr
+
+- name: "Wait for Grafana to be ready"
+  ansible.builtin.uri:
+    url: "http://localhost:3000/api/health"
+    status_code: 200
+  register: "monitoring_stack_install_health"
+  until: "monitoring_stack_install_health.status == 200"
+  retries: 30
+  delay: 5

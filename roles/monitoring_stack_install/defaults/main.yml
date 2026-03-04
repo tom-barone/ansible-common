@@ -1,0 +1,5 @@
+---
+monitoring_stack_install_dir: "/opt/monitoring"
+monitoring_stack_install_cpu_threshold: 90
+monitoring_stack_install_memory_threshold: 90
+monitoring_stack_install_disk_threshold: 85

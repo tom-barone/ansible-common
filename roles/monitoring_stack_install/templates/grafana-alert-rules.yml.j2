@@ -1,0 +1,118 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: "system"
+    folder: "alerts"
+    interval: "1m"
+    rules:
+      - uid: "cpu-too-high"
+        title: "CPU too high"
+        condition: "threshold"
+        data:
+          - refId: "query"
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: "prometheus"
+            model:
+              expr: "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: "query"
+          - refId: "threshold"
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: "__expr__"
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - {{ monitoring_stack_install_cpu_threshold }}
+                    type: "gt"
+                  operator:
+                    type: "and"
+                  reducer:
+                    type: "last"
+              refId: "threshold"
+              type: "classic_conditions"
+        for: "5m"
+        labels:
+          severity: "warning"
+        annotations:
+          summary: "CPU usage is above {{ monitoring_stack_install_cpu_threshold }}%"
+
+      - uid: "ram-too-high"
+        title: "RAM too high"
+        condition: "threshold"
+        data:
+          - refId: "query"
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: "prometheus"
+            model:
+              expr: "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: "query"
+          - refId: "threshold"
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: "__expr__"
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - {{ monitoring_stack_install_memory_threshold }}
+                    type: "gt"
+                  operator:
+                    type: "and"
+                  reducer:
+                    type: "last"
+              refId: "threshold"
+              type: "classic_conditions"
+        for: "5m"
+        labels:
+          severity: "warning"
+        annotations:
+          summary: "RAM usage is above {{ monitoring_stack_install_memory_threshold }}%"
+
+      - uid: "disk-almost-full"
+        title: "Disk almost full"
+        condition: "threshold"
+        data:
+          - refId: "query"
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: "prometheus"
+            model:
+              expr: "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: "query"
+          - refId: "threshold"
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: "__expr__"
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - {{ monitoring_stack_install_disk_threshold }}
+                    type: "gt"
+                  operator:
+                    type: "and"
+                  reducer:
+                    type: "last"
+              refId: "threshold"
+              type: "classic_conditions"
+        for: "5m"
+        labels:
+          severity: "critical"
+        annotations:
+          summary: "Disk usage is above {{ monitoring_stack_install_disk_threshold }}%"
