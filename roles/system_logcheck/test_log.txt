@@ -152,6 +152,8 @@ Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: Data hash table of /var/
 Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal: Journal header limits reached or header out-of-date, rotating.
 2025-07-02T06:53:54.069858+00:00 au-melbourne systemd[1]: Reloading.
 2026-03-03T01:34:58.688267+10:30 quilava systemd-tmpfiles[292502]: /usr/lib/tmpfiles.d/legacy.conf:14: Duplicate line for path "/run/lock", ignoring.
+Mar 03 15:54:56 forgejo systemd[1]: Reload requested from client PID 48752 ('systemctl') (unit session-37.scope)...
+Mar 04 00:55:50 forgejo systemd-resolved[374]: Flushed all caches.
 
 # PackageKit
  2025-02-19T06:16:45.742606+00:00 jqc-production dbus-daemon[557]: [system] Activating via systemd: service name='org.freedesktop.PackageKit' unit='packagekit.service' requested by ':1.656' (uid=0 pid=912195 comm="/usr/bin/gdbus call --system --dest org.freedeskto")
@@ -209,6 +211,8 @@ Mar 06 06:56:26 au-adelaide polkitd[444192]: Acquired the name org.freedesktop.P
 expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None argv=None chdir=None executable=None creates=None removes=None stdin=None
 expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None argv=None chdir=None executable=None creates=None removes=None stdin=None
 2026-03-02T23:56:12.281308+10:30 quilava python3[253359]: ansible-community.general.locale_gen Invoked with name=['en_AU.UTF-8'] state=present
+Mar 03 15:48:56 forgejo ansible-ansible.legacy.command[46903]: Invoked with _raw_params=su -s /bin/bash -c "/usr/sbin/logcheck" logcheck
+Mar 03 15:48:59 forgejo ansible-ansible.builtin.apt[48017]: Invoked with cache_valid_time=3600 name=['gnupg',
 
 # Proxmox
 Mar 02 22:15:34 quilava proxmox-mail-forward[219055]: notified via target `mail-to-root`
@@ -241,6 +245,9 @@ Mar 03 23:24:39 quilava qmeventd[542265]: Finished cleanup for 100
 Mar 03 23:24:36 quilava pvedaemon[542192]: shutdown VM 100: UPID:quilava:000845F0:00FD38D2:69A6DA0C:qmshutdown:100:root@pam:
 Mar 03 23:24:42 quilava pvedaemon[542386]: destroy VM 100: UPID:quilava:000846B2:00FD3B68:69A6DA12:qmdestroy:100:root@pam:
 
+# QEMU
+Mar 03 15:54:50 forgejo qemu-ga[1046]: info: guest-ping called
+
 # Tailscale
 Mar 02 22:16:30 quilava tailscaled[197800]: magicsock: disco: node [8JL4V] d:261022aade5f34a9 now using 192.168.50.181:41641 mtu=1360 tx=b848c682815f
 Mar 03 03:31:53 quilava tailscaled[197800]: control: netmap: got new dial plan from control
@@ -261,6 +268,16 @@ Mar 03 17:39:01 quilava tailscaled[197800]: dns: Resolvercfg: {Routes:{.:[192.16
 Mar 03 17:39:01 quilava tailscaled[197800]: dns: OScfg: {Nameservers:[100.100.100.100] SearchDomains:[taile4f997.ts.net. tombarone.net.] }
 Mar 03 18:58:45 quilava tailscaled[197800]: magicsock: derp-5 does not know about peer [8JL4V], removing route
 Mar 03 21:20:44 quilava tailscaled[197800]: control: NetInfo: NetInfo{varies=false ipv6=false ipv6os=true udp=true icmpv4=false derp=#5 portmap=active-UMC link="" firewallmode="ipt-default"}
+Mar 04 02:10:20 quilava tailscaled[197800]: control: lite map update error after 31.151s: Post "https://controlplane.tailscale.com/machine/map": read tcp 192.168.50.91:50222->192.200.0.107:443: read: connection reset by peer
+Mar 04 02:10:20 quilava tailscaled[197800]: Received error: PollNetMap: read tcp 192.168.50.91:50222->192.200.0.107:443: read: connection reset by peer
+Mar 04 02:10:20 quilava tailscaled[197800]: control: controlhttp: forcing port 443 dial due to recent noise dial
+Mar 04 02:10:20 quilava tailscaled[197800]: logtail: upload: log upload of 339 bytes not-compressed failed: Post "https://log.tailscale.com/c/tailnode.log.tailscale.io/6846ebbddea705e32b460e78adb8cea3024cb72501872ee8facac094ac9aa040": context deadline exceeded
+Mar 04 02:11:12 quilava tailscaled[197800]: logtail: upload succeeded after 1 failures and 52s
+Mar 04 00:55:50 forgejo tailscaled[32695]: LinkChange: major, rebinding: old: interfaces.State{defaultRoute=eth0 ifs={eth0:[192.168.50.250/24 llu6]} v4=true v6=false} new: interfaces.State{defaultRoute=eth0 ifs={eth0:[192.168.50.250/24 llu6] tailscale0:[100.96.155.23/32 fd7a:115c:a1e0::963b:9b17/128 llu6]} v4=true v6=false}
+Mar 04 00:55:50 forgejo tailscaled[32695]: wgengine: set DNS config again after major link change
+Mar 04 00:55:50 forgejo tailscaled[32695]: router: portUpdate(port=41641, network=udp6)
+Mar 04 00:55:50 forgejo tailscaled[32695]: Rebind; defIf="eth0", ips=[192.168.50.250/24 fe80::be24:11ff:fec9:8387/64]
+Mar 04 00:55:50 forgejo tailscaled[32695]: magicsock: 1 active derp conns: derp-5=cr10h3m0s,wr9h43m0s
+Mar 04 00:55:50 forgejo tailscaled[32695]: post-rebind ping of DERP region 5 okay
 
 # Put in bulk output from the last report below to double check it filters everything
-

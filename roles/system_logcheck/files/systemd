@@ -28,3 +28,5 @@
 .* .*systemd.*: Reloading.*$
 .* .*systemd.*: Duplicate line for path "/run/lock".*$
 .* .*systemd.*: Started .*scope.*$
+.* .*systemd.*: Reload requested from.*$
+.* .*systemd.*: Flushed all .*$

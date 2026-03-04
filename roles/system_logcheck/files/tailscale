@@ -16,3 +16,14 @@
 .* .*tailscaled.*: dns: Set: \{.*\}$
 .* .*tailscaled.*: dns: Resolvercfg: \{.*\}$
 .* .*tailscaled.*: dns: OScfg: \{.*\}$
+.* .*tailscaled.*: control: lite map update error after .*$
+.* .*tailscaled.*: Received error: PollNetMap: .* connection reset by peer.*$
+.* .*tailscaled.*: control: controlhttp: forcing port 443 dial due to recent noise dial$
+.* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed: .*$
+.* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$
+.* .*tailscaled.*: LinkChange: .*, rebinding: .*$
+.* .*tailscaled.*: wgengine: set DNS config again after major link change$
+.* .*tailscaled.*: router: portUpdate\(port=.*, network=.*\)$
+.* .*tailscaled.*: Rebind; defIf=.*$
+.* .*tailscaled.*: magicsock: .* active derp conns: .*$
+.* .*tailscaled.*: post-rebind ping of DERP region .* okay$

@@ -41,6 +41,7 @@
     - "polkit"
     - "postfix"
     - "proxmox"
+    - "qemu"
     - "ssh"
     - "systemd"
     - "tailscale"
