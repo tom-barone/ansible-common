@@ -10,13 +10,15 @@ services:
       - "prometheus_data:/prometheus"
     networks:
       - "monitoring"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   node-exporter:
     image: "prom/node-exporter"
     container_name: "node-exporter"
     restart: "unless-stopped"
-    ports:
-      - "127.0.0.1:9100:9100"
+    pid: "host"
+    network_mode: "host"
     volumes:
       - "/proc:/host/proc:ro"
       - "/sys:/host/sys:ro"
@@ -26,8 +28,6 @@ services:
       - "--path.sysfs=/host/sys"
       - "--path.rootfs=/rootfs"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
-    networks:
-      - "monitoring"
 
   cadvisor:
     image: "gcr.io/cadvisor/cadvisor"
