@@ -1,32 +1,33 @@
-.* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
-.* .*tailscaled.*: magicsock: endpoints changed.*$
-.* .*tailscaled.*: magicsock: derp.* does not know about peer
-.* .*tailscaled.*: control: .* got new dial plan.*$
-.* .*tailscaled.*: control: sleeping for server.*$
-.* .*tailscaled.*: control: NetInfo: NetInfo.*$
-.* .*tailscaled.*:.*health.*warnable.*ok.*$
-.* .*tailscaled.*: netcheck: DetectCaptivePortal.*$
-.* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$
-.* .*tailscaled.*: localapi: \[PATCH\] /localapi/v0/prefs$
 .* .*tailscaled.*: EditPrefs: MaskedPrefs\{.*\}$
+.* .*tailscaled.*: LinkChange: .*, rebinding: .*$
+.* .*tailscaled.*: Rebind; defIf=.*$
+.* .*tailscaled.*: Received error: PollNetMap: .*$
+.* .*tailscaled.*: control: .* got new dial plan.*$
+.* .*tailscaled.*: control: NetInfo: NetInfo.*$
+.* .*tailscaled.*: control: controlhttp: forcing port 443 dial due to recent noise dial$
+.* .*tailscaled.*: control: lite map update error after .*$
+.* .*tailscaled.*: control: map response long-poll timed out!$
+.* .*tailscaled.*: control: sleeping for server.*$
+.* .*tailscaled.*: dns: OScfg: \{.*\}$
+.* .*tailscaled.*: dns: Resolvercfg: \{.*\}$
+.* .*tailscaled.*: dns: Set: \{.*\}$
+.* .*tailscaled.*: localapi: \[PATCH\] /localapi/v0/prefs$
+.* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$
+.* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$
+.* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed: .*$
+.* .*tailscaled.*: magicsock: .* active derp conns: .*$
+.* .*tailscaled.*: magicsock: .* in peerMap for node.*$
+.* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
+.* .*tailscaled.*: magicsock: derp.* does not know about peer
+.* .*tailscaled.*: magicsock: endpoints changed.*$
+.* .*tailscaled.*: monitor: RTM_DELROUTE: .*$
+.* .*tailscaled.*: netcheck: DetectCaptivePortal.*$
+.* .*tailscaled.*: post-rebind ping of DERP region .* okay$
+.* .*tailscaled.*: router: portUpdate\(port=.*, network=.*\)$
+.* .*tailscaled.*: tsdial: bart table size: .*$
+.* .*tailscaled.*: wgengine: Reconfig: .*"$
+.* .*tailscaled.*: wgengine: Reconfig: configuring DNS$
 .* .*tailscaled.*: wgengine: Reconfig: configuring router$
 .* .*tailscaled.*: wgengine: Reconfig: user dialer$
-.* .*tailscaled.*: tsdial: bart table size: .*$
-.* .*tailscaled.*: wgengine: Reconfig: configuring DNS$
-.* .*tailscaled.*: dns: Set: \{.*\}$
-.* .*tailscaled.*: dns: Resolvercfg: \{.*\}$
-.* .*tailscaled.*: dns: OScfg: \{.*\}$
-.* .*tailscaled.*: control: lite map update error after .*$
-.* .*tailscaled.*: Received error: PollNetMap: .*$
-.* .*tailscaled.*: control: map response long-poll timed out!$
-.* .*tailscaled.*: control: controlhttp: forcing port 443 dial due to recent noise dial$
-.* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed: .*$
-.* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$
-.* .*tailscaled.*: LinkChange: .*, rebinding: .*$
 .* .*tailscaled.*: wgengine: set DNS config again after major link change$
-.* .*tailscaled.*: router: portUpdate\(port=.*, network=.*\)$
-.* .*tailscaled.*: Rebind; defIf=.*$
-.* .*tailscaled.*: magicsock: .* active derp conns: .*$
-.* .*tailscaled.*: post-rebind ping of DERP region .* okay$
-.* .*tailscaled.*: monitor: RTM_DELROUTE: .*$
-.* .*tailscaled.*: wgengine: Reconfig: .*"$
+.* .*tailscaled.*:.*health.*warnable.*ok.*$
