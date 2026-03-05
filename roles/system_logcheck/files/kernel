@@ -9,3 +9,5 @@
 .* .*kernel.*:.*port.*entered forwarding state.*$
 .* .*kernel.*:.*tap.*entered allmulticast mode.*$
 .* .*kernel.*:.*tap.*left allmulticast mode.*$
+.* .*kernel.*:.*veth.*entered allmulticast mode.*$
+.* .*kernel.*:.*veth.*left allmulticast mode.*$

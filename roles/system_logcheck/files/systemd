@@ -30,3 +30,6 @@
 .* .*systemd.*: Started .*scope.*$
 .* .*systemd.*: Reload requested from.*$
 .* .*systemd.*: Flushed all .*$
+.* .*systemd-networkd.*: Foreign process .* changed sysctl .*$
+.* .*systemctl.*: Removed .*$
+.* .*systemd.*: Stopp.* .* - .*\.$

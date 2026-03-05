@@ -27,3 +27,5 @@
 .* .*tailscaled.*: Rebind; defIf=.*$
 .* .*tailscaled.*: magicsock: .* active derp conns: .*$
 .* .*tailscaled.*: post-rebind ping of DERP region .* okay$
+.* .*tailscaled.*: monitor: RTM_DELROUTE: .*$
+.* .*tailscaled.*: wgengine: Reconfig: .*"$

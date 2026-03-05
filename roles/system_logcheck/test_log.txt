@@ -69,6 +69,7 @@ Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered disabled state
 Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered forwarding state
 Mar 03 23:00:28 quilava kernel: tap100i0: entered allmulticast mode
 Mar 03 23:24:38 quilava kernel: tap100i0: left allmulticast mode
+Mar 03 23:24:38 quilava kernel: veth301e9c6(unregistering): left allmulticast mode
 
 # Containerd
 2025-02-19T05:04:43.419981+00:00 jqc-production containerd[16080]: time="2025-02-19T05:04:43.419578510Z" level=info msg="shim disconnected" id=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db namespace=moby
@@ -154,6 +155,10 @@ Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: /var/log/journal/139e847
 2026-03-03T01:34:58.688267+10:30 quilava systemd-tmpfiles[292502]: /usr/lib/tmpfiles.d/legacy.conf:14: Duplicate line for path "/run/lock", ignoring.
 Mar 03 15:54:56 forgejo systemd[1]: Reload requested from client PID 48752 ('systemctl') (unit session-37.scope)...
 Mar 04 00:55:50 forgejo systemd-resolved[374]: Flushed all caches.
+Mar 04 01:00:00 forgejo systemd-networkd[123]: Foreign process 456 changed sysctl /proc/sys/net/ipv6/conf/br-abc123/disable_ipv6
+Mar 04 01:00:00 forgejo systemctl[789]: Removed /etc/systemd/system/timers.target.wants/apt-daily.timer.
+Mar 04 01:00:00 forgejo systemd[1]: Stopped apt-daily.timer - Daily apt download activities.
+Mar 04 01:00:00 forgejo systemd[1]: Stopping apt-daily.timer - Daily apt download activities.
 
 # PackageKit
  2025-02-19T06:16:45.742606+00:00 jqc-production dbus-daemon[557]: [system] Activating via systemd: service name='org.freedesktop.PackageKit' unit='packagekit.service' requested by ':1.656' (uid=0 pid=912195 comm="/usr/bin/gdbus call --system --dest org.freedeskto")
@@ -282,5 +287,7 @@ Mar 04 00:55:50 forgejo tailscaled[32695]: router: portUpdate(port=41641, networ
 Mar 04 00:55:50 forgejo tailscaled[32695]: Rebind; defIf="eth0", ips=[192.168.50.250/24 fe80::be24:11ff:fec9:8387/64]
 Mar 04 00:55:50 forgejo tailscaled[32695]: magicsock: 1 active derp conns: derp-5=cr10h3m0s,wr9h43m0s
 Mar 04 00:55:50 forgejo tailscaled[32695]: post-rebind ping of DERP region 5 okay
+Mar 04 00:55:50 forgejo tailscaled[32695]: monitor: RTM_DELROUTE: dst=100.64.0.0/10 gw=<nil> ifname="tailscale0" type=unicast table=52
+Mar 04 00:55:50 forgejo tailscaled[32695]: wgengine: Reconfig: 1 peers changed from "discokey:abc123" to "discokey:def456"
 
 # Put in bulk output from the last report below to double check it filters everything
