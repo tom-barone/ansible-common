@@ -35,17 +35,23 @@
     - "tailscale_subnet_router_routes | length == 0"
     - "_tailscale_subnet_router_discovered.stdout | length == 0"
 
-- name: "Set routes fact"
+- name: "Set desired routes fact"
   ansible.builtin.set_fact:
     _tailscale_subnet_router_routes: >-
       {{ (tailscale_subnet_router_routes
           if tailscale_subnet_router_routes | length > 0
           else _tailscale_subnet_router_discovered.stdout)
-         .split(',') | sort | join(',') }}
+         .split(',') | map('trim') | reject('match', '^$') | sort | join(',') }}
 
-- name: "Record advertised routes"
-  ansible.builtin.copy:
-    content: "{{ _tailscale_subnet_router_routes | trim }}"
-    dest: "/var/lib/tailscale/ansible-advertised-routes"
-    mode: "0600"
-  notify: "Advertise routes"
+- name: "Get currently configured Tailscale preferences"
+  ansible.builtin.command: "tailscale debug prefs"
+  register: "_tailscale_prefs"
+  changed_when: false
+  check_mode: false
+
+- name: "Update Tailscale advertised routes"
+  ansible.builtin.command:
+    cmd: "tailscale set --advertise-routes={{ _tailscale_subnet_router_routes }}"
+  when: >-
+    ((_tailscale_prefs.stdout | from_json).AdvertiseRoutes | default([], true)) | sort | join(',')
+    != _tailscale_subnet_router_routes
