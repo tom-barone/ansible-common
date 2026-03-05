@@ -17,7 +17,8 @@
 .* .*tailscaled.*: dns: Resolvercfg: \{.*\}$
 .* .*tailscaled.*: dns: OScfg: \{.*\}$
 .* .*tailscaled.*: control: lite map update error after .*$
-.* .*tailscaled.*: Received error: PollNetMap: .* connection reset by peer.*$
+.* .*tailscaled.*: Received error: PollNetMap: .*$
+.* .*tailscaled.*: control: map response long-poll timed out!$
 .* .*tailscaled.*: control: controlhttp: forcing port 443 dial due to recent noise dial$
 .* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed: .*$
 .* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$

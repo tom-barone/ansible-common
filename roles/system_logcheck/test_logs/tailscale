@@ -19,6 +19,8 @@ Mar 03 18:58:45 quilava tailscaled[197800]: magicsock: derp-5 does not know abou
 Mar 03 21:20:44 quilava tailscaled[197800]: control: NetInfo: NetInfo{varies=false ipv6=false ipv6os=true udp=true icmpv4=false derp=#5 portmap=active-UMC link="" firewallmode="ipt-default"}
 Mar 04 02:10:20 quilava tailscaled[197800]: control: lite map update error after 31.151s: Post "https://controlplane.tailscale.com/machine/map": read tcp 192.168.50.91:50222->192.200.0.107:443: read: connection reset by peer
 Mar 04 02:10:20 quilava tailscaled[197800]: Received error: PollNetMap: read tcp 192.168.50.91:50222->192.200.0.107:443: read: connection reset by peer
+Mar 05 02:25:01 quilava tailscaled[197800]: control: map response long-poll timed out!
+Mar 05 02:25:01 quilava tailscaled[197800]: Received error: PollNetMap: Post "https://controlplane.tailscale.com/machine/map": context canceled
 Mar 04 02:10:20 quilava tailscaled[197800]: control: controlhttp: forcing port 443 dial due to recent noise dial
 Mar 04 02:10:20 quilava tailscaled[197800]: logtail: upload: log upload of 339 bytes not-compressed failed: Post "https://log.tailscale.com/c/tailnode.log.tailscale.io/6846ebbddea705e32b460e78adb8cea3024cb72501872ee8facac094ac9aa040": context deadline exceeded
 Mar 04 02:11:12 quilava tailscaled[197800]: logtail: upload succeeded after 1 failures and 52s
