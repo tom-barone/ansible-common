@@ -47,6 +47,14 @@
     mode: "0644"
   notify: "Restart monitoring stack"
 
+- name: "Deploy Alloy config"
+  ansible.builtin.template:
+    src: "alloy-config.alloy.j2"
+    dest: >-
+      {{ monitoring_stack_install_dir }}/alloy-config.alloy
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
 - name: "Deploy Grafana datasources"
   vars:
     monitoring_stack_install_prov_dir: >-

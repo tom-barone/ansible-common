@@ -81,6 +81,18 @@ services:
     networks:
       - "monitoring"
 
+  alloy:
+    image: "grafana/alloy"
+    container_name: "alloy"
+    restart: "unless-stopped"
+    volumes:
+      - "./alloy-config.alloy:/etc/alloy/config.alloy:ro"
+      - "/var/log/journal:/var/log/journal:ro"
+      - "/run/log/journal:/run/log/journal:ro"
+      - "/etc/machine-id:/etc/machine-id:ro"
+    networks:
+      - "monitoring"
+
 volumes:
   prometheus_data:
   grafana_data:
