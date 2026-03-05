@@ -1,0 +1,18 @@
+2025-02-19T03:24:09.808383+00:00 jqc-production (systemd): pam_unix(systemd-user:session): session opened for user dokku(uid=1002) by (uid=0)
+2025-02-19T03:25:09.664759+00:00 jqc-production (sd-pam): pam_unix(systemd-user:session): session closed for user dokku
+2025-02-19T05:50:40.371755+00:00 jqc-production dokku[906603]:        Attempting to retire jqc-kdcertifiers.au container 20b572f15b1dc4acfb243b5ae1722465e50e9c4d001a797f25fffe3f804937a8
+2025-02-19T05:05:40.266159+00:00 jqc-production dokku[867655]: -----> Retiring old containers and images
+2025-02-19T05:45:54.153797+00:00 jqc-production crontab[905092]: (dokku) REPLACE (dokku)
+Feb 19 05:45:54 jqc-production crontab[905092]: (dokku) REPLACE (dokku)
+2025-02-19T05:50:41.770849+00:00 jqc-production dokku[906603]:  !     Image 5b0ca5a465b76f9d639c08a091b8d086a0383e8d2747982186a97dd585384efa has children images and is untagged, skipping rm and marking dead
+2025-02-19T06:25:02.853489+00:00 jqc-production dokku[947019]: 8b58c18d2a98dcc60c5c70844f0066e633bfed44e11482ba3f1991fd71cce394
+2025-02-19T06:25:03.267914+00:00 jqc-production dokku[947019]:  !     Image 647b71ca7859440d31b7c047366f1ea9e373869e6b924ece0fa2611e08ba642f has running containers, skipping rm
+2025-02-19T13:08:06.559622+00:00 jqc-production sshd[980260]: Accepted publickey for dokku from 144.6.17.85 port 52285 ssh2: ED25519 SHA256:PX+zAk6kynIQtfFsKtjKAQ+JE1kM6VEpebqLHxkBVqQ
+2025-03-06T13:09:57.563059+10:30 au-adelaide dokku-event-listener.service[677]: {"level":"info","container_id":"ebd2bd278","time":1741228797,"message":"dead_container"}
+2025-03-06T13:14:26.146478+10:30 au-adelaide dokku-event-listener.service[677]: {"level":"info","container_id":"3b6b6544e","app":"panel.tombarone.net","ip_address":"172.17.0.6","time":1741229066,"message":"new_container"}
+2025-03-14T10:26:19.829641+10:30 au-adelaide dokku-event[1916791]: INVOKED: scheduler-logs( docker-local staging.jqc-kdcertifiers.au  true false 100 ) NAME=admin FINGERPRINT=SHA256:BVqQ DOKKU_PID=1916380
+2025-03-14T10:05:04.472939+10:30 au-adelaide dokku-event[1914955]: INVOKED: scheduler-detect( --global ) NAME= FINGERPRINT= DOKKU_PID=1914839
+2025-03-14T10:05:04.509870+10:30 au-adelaide dokku-event[1915071]: INVOKED: scheduler-retire( docker-local  ) NAME= FINGERPRINT= DOKKU_PID=1914839
+2025-03-05T01:05:14.321012+00:00 au-melbourne systemd[1]: Starting dokku-retire.service - Dokku retire service...
+2025-03-05T01:05:14.447332+00:00 au-melbourne systemd[1]: dokku-retire.service: Deactivated successfully.
+2025-03-05T01:05:14.447545+00:00 au-melbourne systemd[1]: Finished dokku-retire.service - Dokku retire service.

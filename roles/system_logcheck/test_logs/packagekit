@@ -1,0 +1,4 @@
+ 2025-02-19T06:16:45.742606+00:00 jqc-production dbus-daemon[557]: [system] Activating via systemd: service name='org.freedesktop.PackageKit' unit='packagekit.service' requested by ':1.656' (uid=0 pid=912195 comm="/usr/bin/gdbus call --system --dest org.freedeskto")
+2025-02-19T06:16:45.760481+00:00 jqc-production PackageKit: daemon start
+2025-02-19T06:16:45.797789+00:00 jqc-production dbus-daemon[557]: [system] Successfully activated service 'org.freedesktop.PackageKit'
+2025-02-19T06:21:55.734637+00:00 jqc-production PackageKit: daemon quit

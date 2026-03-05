@@ -1,0 +1,32 @@
+Mar 02 22:15:34 quilava proxmox-mail-forward[219055]: notified via target `mail-to-root`
+Mar 02 22:15:47 quilava pvedaemon[1085]: <root@pam> successful auth for user 'root@pam'
+Mar 02 22:53:08 quilava pvedaemon[1087]: <root@pam> end task UPID:quilava:00037144:00757120:69A57E73:vncshell::root@pam: OK
+Mar 03 22:53:09 quilava pveproxy[226892]: worker exit
+Mar 03 23:18:19 quilava pvedaemon[277441]: worker exit
+Mar 02 22:41:31 quilava pvedaemon[225604]: starting termproxy UPID:quilava:00037144:00757120:69A57E73:vncshell::root@pam:
+Mar 02 22:41:31 quilava pvedaemon[1087]: <root@pam> starting task UPID:quilava:00037144:00757120:69A57E73:vncshell::root@pam:
+Mar 02 22:41:31 quilava login[225611]: ROOT LOGIN ON pts/0
+Mar 02 22:43:27 quilava pveproxy[1097]: worker 192878 finished
+Mar 02 22:43:27 quilava pveproxy[1097]: starting 1 worker(s)
+Mar 02 22:43:27 quilava pveproxy[1097]: worker 225950 started
+Mar 02 22:49:10 quilava pveproxy[226892]: got inotify poll request in wrong process - disabling inotify
+2026-03-03T01:21:57.331727+10:30 quilava qm[290224]: <root@pam> starting task UPID:quilava:00046DB1:0084213F:69A5A40D:qmcreate:9000:root@pam:
+2026-03-03T01:22:05.219463+10:30 quilava qm[290224]: <root@pam> end task UPID:quilava:00046DB1:0084213F:69A5A40D:qmcreate:9000:root@pam: OK
+2026-03-03T01:22:06.620853+10:30 quilava qm[290326]: <root@pam> update VM 9000: resize --disk scsi0 --size 5G
+Mar 03 04:38:15 quilava pveupdate[324667]: <root@pam> starting task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam:
+Mar 03 04:38:17 quilava pveupdate[324674]: update new package list: /var/lib/pve-manager/pkgupdates
+Mar 03 04:38:19 quilava pveupdate[324667]: <root@pam> end task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam: OK
+Mar 03 23:00:27 quilava qm[535897]: start VM 100: UPID:quilava:00082D59:00FB02EF:69A6D463:qmstart:100:root@pam:
+Mar 03 23:00:28 quilava qm[535897]: VM 100 started with PID 535922.
+Mar 03 23:07:59 quilava pvedaemon[538363]: starting vnc proxy UPID:quilava:000836FB:00FBB36F:69A6D627:vncproxy:100:root@pam:
+Mar 03 23:18:19 quilava pvedaemon[1084]: worker 277441 finished
+Mar 03 23:18:19 quilava pvedaemon[1084]: starting 1 worker(s)
+Mar 03 23:18:19 quilava pvedaemon[1084]: worker 540318 started
+Mar 03 23:24:38 quilava qmeventd[724]: read: Connection reset by peer
+Mar 03 23:24:39 quilava qmeventd[542265]: Starting cleanup for 100
+Mar 03 23:24:39 quilava qmeventd[542265]: Finished cleanup for 100
+Mar 03 23:24:36 quilava pvedaemon[542192]: shutdown VM 100: UPID:quilava:000845F0:00FD38D2:69A6DA0C:qmshutdown:100:root@pam:
+Mar 03 23:24:42 quilava pvedaemon[542386]: destroy VM 100: UPID:quilava:000846B2:00FD3B68:69A6DA12:qmdestroy:100:root@pam:
+Mar 04 23:55:39 quilava pvedaemon[610977]: VM 100 qga command failed - VM 100 qga command 'guest-ping' failed - client closed connection
+Mar 04 23:56:16 quilava qm[856886]: VM 100 qga command failed - VM 100 qga command 'guest-ping' failed - got timeout
+Mar 05 01:15:33 quilava pvestatd[1059]: auth key pair too old, rotating..

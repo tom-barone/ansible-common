@@ -1,0 +1,8 @@
+2025-02-19T05:02:08.422772+00:00 jqc-production postfix/qmgr[639199]: 77C2465FE1: removed
+Feb 19 05:02:03 jqc-production postfix/qmgr[639199]: 73FDC65FE7: removed
+Mar 02 23:24:16 quilava systemd[1]: Stopping postfix.service - Postfix Mail Transport Agent (main/default instance)...
+Mar 02 23:24:16 quilava postfix[238444]: postfix/postlog: stopping the Postfix mail system
+Mar 02 23:24:16 quilava postfix/postfix-script[238444]: stopping the Postfix mail system
+Mar 02 23:24:16 quilava postfix/master[215550]: terminating on signal 15
+Mar 02 23:24:16 quilava systemd[1]: Stopped postfix.service - Postfix Mail Transport Agent (main/default instance).
+Mar 02 23:24:16 quilava postfix/master[238561]: daemon started -- version 3.10.5, configuration /etc/postfix

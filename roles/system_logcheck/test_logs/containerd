@@ -1,0 +1,2 @@
+2025-02-19T05:04:43.419981+00:00 jqc-production containerd[16080]: time="2025-02-19T05:04:43.419578510Z" level=info msg="shim disconnected" id=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db namespace=moby
+2025-02-19T05:04:43.420054+00:00 jqc-production containerd[16080]: time="2025-02-19T05:04:43.419636700Z" level=warning msg="cleaning up after shim disconnected" id=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db namespace=moby

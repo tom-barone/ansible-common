@@ -1,0 +1,2 @@
+2025-03-24T19:11:48.684979+10:30 au-adelaide collectd[807525]: processes plugin: read_file_contents: Reading file "/proc/2369663/stat" failed.
+2025-04-21T03:00:25.210251+00:00 au-melbourne collectd[2280106]: processes plugin: Failed to read from `/proc/587385/cmdline': No such process.

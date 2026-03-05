@@ -1,0 +1,35 @@
+2025-03-05T13:54:00.087664+00:00 au-melbourne systemd[1]: Stopping user@0.service - User Manager for UID 0...
+2025-03-05T13:54:00.088115+00:00 au-melbourne systemd[2239057]: Activating special unit exit.target...
+2025-03-05T13:54:00.088180+00:00 au-melbourne systemd[2239057]: Stopped target default.target - Main User Target.
+2025-03-05T13:54:00.088523+00:00 au-melbourne systemd[2239057]: Closed dbus.socket - D-Bus User Message Bus Socket.
+2025-03-05T13:54:00.090180+00:00 au-melbourne systemd[2239057]: Removed slice app.slice - User Application Slice.
+2025-03-05T13:54:00.090242+00:00 au-melbourne systemd[2239057]: Reached target shutdown.target - Shutdown.
+2025-03-05T13:54:00.090289+00:00 au-melbourne systemd[2239057]: Finished systemd-exit.service - Exit the Session.
+2025-03-05T13:54:00.090324+00:00 au-melbourne systemd[2239057]: Reached target exit.target - Exit the Session.
+2025-03-05T13:54:00.097763+00:00 au-melbourne systemd[1]: user@0.service: Deactivated successfully.
+2025-03-05T13:54:00.098060+00:00 au-melbourne systemd[1]: Stopped user@0.service - User Manager for UID 0.
+2025-03-05T13:54:00.108569+00:00 au-melbourne systemd[1]: Stopping user-ru@0.service: Deactivated successfully.
+2025-03-05T13:54:00.115248+00:00 au-melbourne systemd[1]: Stopped user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+2025-03-05T13:54:00.116172+00:00 au-melbourne systemd[1]: Removed slice user-0.slice - User Slice of UID 0.
+2025-03-05T14:13:55.207259+00:00 au-melbourne systemd[2243400]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+2025-03-05T14:13:55.207316+00:00 au-melbourne systemd[2243400]: Reached target sockets.target - Sockets.
+2025-03-05T14:13:55.207365+00:00 au-melbourne systemd[2243400]: Reached target basic.target - Basic System.
+2025-03-05T14:13:55.207403+00:00 au-melbourne systemd[1]: Started user@0.service - User Manager for UID 0.
+2025-03-05T14:13:55.208018+00:00 au-melbourne systemd[2243400]: Reached target default.target - Main User Target.
+2025-03-05T14:13:55.208427+00:00 au-melbourne systemd[1]: Started session-11487.scope - Session 11487 of User root.
+2025-03-05T14:13:55.208634+00:00 au-melbourne systemd[2243400]: Startup finished in 92ms.
+2025-03-05T17:45:13.908955+00:00 au-melbourne systemd[1]: Starting packagekit.service - PackageKit Daemon...
+2025-03-05T17:45:13.936328+00:00 au-melbourne systemd[1]: Started packagekit.service - PackageKit Daemon.
+2025-03-05T17:50:19.044880+00:00 au-melbourne systemd[1]: packagekit.service: Deactivated successfully.
+2025-03-09T00:00:04.284660+10:30 au-adelaide systemd[1]: rsyslog.service: Sent signal SIGHUP to main process 680 (rsyslogd) on client request.
+Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: Data hash table of /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal has a fill level at 75.0 (174764 of 233016 items, 50331648 file size, 287 bytes per hash table item), suggesting rotation.
+Mar 09 09:17:04 au-melbourne systemd-journald[2176327]: /var/log/journal/139e8470cdcb45a6841982d6f2165f90/system.journal: Journal header limits reached or header out-of-date, rotating.
+2025-07-02T06:53:54.069858+00:00 au-melbourne systemd[1]: Reloading.
+2026-03-03T01:34:58.688267+10:30 quilava systemd-tmpfiles[292502]: /usr/lib/tmpfiles.d/legacy.conf:14: Duplicate line for path "/run/lock", ignoring.
+Mar 03 15:54:56 forgejo systemd[1]: Reload requested from client PID 48752 ('systemctl') (unit session-37.scope)...
+Mar 04 00:55:50 forgejo systemd-resolved[374]: Flushed all caches.
+Mar 04 01:00:00 forgejo systemd-networkd[123]: Foreign process 456 changed sysctl /proc/sys/net/ipv6/conf/br-abc123/disable_ipv6
+Mar 04 01:00:00 forgejo systemctl[789]: Removed /etc/systemd/system/timers.target.wants/apt-daily.timer.
+Mar 04 01:00:00 forgejo systemd[1]: Stopped apt-daily.timer - Daily apt download activities.
+Mar 04 01:00:00 forgejo systemd[1]: Stopping apt-daily.timer - Daily apt download activities.
+Mar 03 23:00:27 quilava systemd[1]: Started 100.scope.

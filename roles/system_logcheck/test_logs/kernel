@@ -1,0 +1,13 @@
+2025-02-19T05:04:41.662344+00:00 jqc-production kernel: [526407.289681] device veth301e9c6 entered promiscuous mode
+2025-02-19T05:04:41.809138+00:00 jqc-production kernel: [526407.434910] eth0: renamed from veth6da1c53
+2025-02-19T05:04:43.446062+00:00 jqc-production kernel: [526409.073607] veth6da1c53: renamed from eth0
+2025-02-19T05:04:41.826017+00:00 jqc-production kernel: [526407.450523] IPv6: ADDRCONF(NETDEV_CHANGE): veth301e9c6: link becomes ready
+2025-02-19T05:44:59.069255+00:00 jqc-production kernel: [528824.671587] device veth8995f1b left promiscuous mode
+Mar 07 21:45:07 au-adelaide kernel: perf: interrupt took too long (3134 > 3128), lowering kernel.perf_event_max_sample_rate to 63750
+2025-03-10T13:01:02.655403+10:30 au-adelaide kernel: [399592.532630] perf: interrupt took too long (4921 > 4918), lowering kernel.perf_event_max_sample_rate to 40500
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered blocking state
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered disabled state
+Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered forwarding state
+Mar 03 23:00:28 quilava kernel: tap100i0: entered allmulticast mode
+Mar 03 23:24:38 quilava kernel: tap100i0: left allmulticast mode
+Mar 03 23:24:38 quilava kernel: veth301e9c6(unregistering): left allmulticast mode

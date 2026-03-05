@@ -1,0 +1,17 @@
+2025-02-19T04:05:40.377451+00:00 jqc-production docker[791697]: Total:#0111.079MB
+2025-02-19T05:04:41.662333+00:00 jqc-production kernel: [526407.286555] docker0: port 3(veth301e9c6) entered blocking state
+Feb 19 05:04:41 jqc-production kernel: docker0: port 3(veth301e9c6) entered blocking state
+2025-02-19T05:04:43.418402+00:00 jqc-production dockerd[16165]: time="2025-02-19T05:04:43.418050567Z" level=info msg="ignoring event" container=2187827c9ee5dbb0efcd4ad51dbeb16ce345595fd91b3f1588b889f8a4d899db module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+2025-02-19T06:22:33.200698+00:00 jqc-production dockerd[16165]: 2025/02/19 06:22:33 http2: server: error reading preface from client @: read unix /run/docker.sock->@: read: connection reset by peer
+2025-02-20T04:05:40.356178+00:00 jqc-production docker[1119384]: ID#011#011#011#011#011#011RECLAIMABLE#011SIZE#011#011LAST ACCESSED
+2025-02-20T04:05:40.356279+00:00 jqc-production docker[1119384]: 5ozlyla4ohgy04x8aggllwq9c*              #011true #011#0110B        #01123 hours ago
+Feb 20 04:05:40 jqc-production docker[1119384]: ID                                                RECLAIMABLE        SIZE                LAST ACCESSED
+Feb 20 04:05:40 jqc-production docker[1119384]: 5ozlyla4ohgy04x8aggllwq9c*                      true                 0B                23 hours ago
+2025-02-24T04:05:43.034966+00:00 jqc-production docker[1806506]: n98hmnql1ixeacx97edc96ebx               #011true #0110B        #0113 days ago
+Feb 24 04:05:40 jqc-production docker[1806506]: sx33amszgfwp7wwlrxm4dn5xr*                      true                 600B              40 minutes ago
+Mar 06 02:57:42 eu-central dockerd[1053]: time="2025-03-06T02:57:42.785524143Z" level=error msg="[resolver] failed to query external DNS server" client-addr="udp:[2a01:4f8:c2c:411e::1]:39229" dns-server="udp:[2a01:4ff:ff00::add:1]:53" error="read udp [2a01:4f8:c2c:411e::1]:39229->[2a01:4ff:ff00::add:1]:53: i/o timeout" question=";grafana.com.\tIN\t A" spanID=853348240ec88829 traceID=20ce7dcb6987f11bf81d172d23f64c66
+Mar 06 12:54:30 eu-central dockerd[1053]: time="2025-03-06T12:54:30.846694363Z" level=error msg="[resolver] failed to query external DNS server" client-addr="udp:[2a01:4f8:c2c:411e::1]:42409" dns-server="udp:[2a01:4ff:ff00::add:1]:53" error="read udp [2a01:4f8:c2c:411e::1]:42409->[2a01:4ff:ff00::add:1]:53: i/o timeout" question=";api.ipify.org.\tIN\t A" spanID=3b0abea3e8618f6d traceID=35bcae32df1aa531024e87341bc06d5d
+2025-03-05T13:00:02.904770+00:00 au-melbourne systemd[1]: var-lib-docker-overlay2-a8f548cb61b62baad08839e4fdf636776b29d64e2099a572f81e61b0acfba0c7\x2dinit-merged.mount: Deactivated successfully.
+2025-03-05T13:00:03.007841+00:00 au-melbourne systemd[1]: Started docker-3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.scope - libcontainer container 3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.
+2025-03-05T13:00:08.941065+00:00 au-melbourne systemd[1]: docker-3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.scope: Deactivated successfully.
+2025-03-05T13:00:09.041842+00:00 au-melbourne systemd[1]: run-docker-netns-63e3fc07fccc.mount: Deactivated successfully.

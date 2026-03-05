@@ -1,0 +1,19 @@
+Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2606:4700:f1::1 (2.debian.pool.ntp.org)
+2025-02-23T00:00:09.290326+00:00 jqc-production rsyslogd: [origin software="rsyslogd" swVersion="8.2302.0" x-pid="637974" x-info="https://www.rsyslog.com"] rsyslogd was HUPed
+2025-02-24T01:29:50.302800+00:00 jqc-production fstrim[1757955]: /: 8.9 GiB (9510797312 bytes) trimmed on /dev/sda
+2025-03-05T01:10:12.825004+00:00 au-melbourne systemd[1]: Starting sysstat-collect.service - system activity accounting tool...
+2025-03-05T01:10:12.825154+00:00 au-melbourne systemd[1]: sysstat-collect.service: Deactivated successfully.
+2025-03-05T01:10:12.825323+00:00 au-melbourne systemd[1]: Finished sysstat-collect.service - system activity accounting tool.
+2025-03-05T00:45:21.324405+00:00 au-melbourne systemd[1]: session-11333.scope: Deactivated successfully.
+2025-03-05T00:45:21.324483+00:00 au-melbourne systemd[1]: session-11333.scope: Consumed 3.362s CPU time.
+2025-03-05T13:00:08.941173+00:00 au-melbourne systemd[1]: docker-3eefad8912d270364d45a7a6c111837203338161899b02986cdea50815d904e3.scope: Consumed 1.860s CPU time.
+2025-03-05T13:54:00.116231+00:00 au-melbourne systemd[1]: user-0.slice: Consumed 2.068s CPU time.
+2025-03-06T02:32:34.141371+10:30 au-adelaide systemd[1]: Starting man-db.service - Daily man-db regeneration...
+2025-03-06T02:32:34.376352+10:30 au-adelaide systemd[1]: man-db.service: Deactivated successfully.
+2025-03-06T02:32:34.376457+10:30 au-adelaide systemd[1]: Finished man-db.service - Daily man-db regeneration.
+2025-03-05T17:45:11.356276+00:00 au-melbourne systemd[1]: Starting apt-daily.service - Daily apt download activities...
+2025-03-05T17:45:15.415234+00:00 au-melbourne systemd[1]: apt-daily.service: Deactivated successfully.
+2025-03-05T17:45:15.416836+00:00 au-melbourne systemd[1]: Finished apt-daily.service - Daily apt download activities.
+2025-03-27T01:11:42.560576+10:30 au-adelaide wpa_supplicant[1341]: wlp0s20f3: CTRL-EVENT-BEACON-LOSS
+2026-03-03T01:22:06.647786+10:30 quilava dmeventd[339]: No longer monitoring thin pool pve-data-tpool.
+2026-03-03T01:22:06.680550+10:30 quilava dmeventd[339]: Monitoring thin pool pve-data-tpool.
