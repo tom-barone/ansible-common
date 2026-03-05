@@ -45,13 +45,24 @@
 
 - name: "Get currently configured Tailscale preferences"
   ansible.builtin.command: "tailscale debug prefs"
-  register: "_tailscale_prefs"
+  register: "_tailscale_subnet_router_prefs"
   changed_when: false
   check_mode: false
 
+- name: "Set current routes fact"
+  ansible.builtin.set_fact:
+    _tailscale_subnet_router_current: >-
+      {{ (_tailscale_subnet_router_prefs.stdout
+          | from_json).AdvertiseRoutes
+         | default([], true)
+         | sort | join(',') }}
+
 - name: "Update Tailscale advertised routes"
   ansible.builtin.command:
-    cmd: "tailscale set --advertise-routes={{ _tailscale_subnet_router_routes }}"
+    cmd: >-
+      tailscale set
+      --advertise-routes={{ _tailscale_subnet_router_routes }}
   when: >-
-    ((_tailscale_prefs.stdout | from_json).AdvertiseRoutes | default([], true)) | sort | join(',')
+    _tailscale_subnet_router_current
     != _tailscale_subnet_router_routes
+  changed_when: true
