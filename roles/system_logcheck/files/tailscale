@@ -14,7 +14,7 @@
 .* .*tailscaled.*: localapi: \[PATCH\] /localapi/v0/prefs$
 .* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$
 .* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$
-.* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed: .*$
+.* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed.*: .*$
 .* .*tailscaled.*: magicsock: .* active derp conns: .*$
 .* .*tailscaled.*: magicsock: .* in peerMap for node.*$
 .* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
