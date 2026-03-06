@@ -33,3 +33,5 @@ Mar 04 01:00:00 forgejo systemctl[789]: Removed /etc/systemd/system/timers.targe
 Mar 04 01:00:00 forgejo systemd[1]: Stopped apt-daily.timer - Daily apt download activities.
 Mar 04 01:00:00 forgejo systemd[1]: Stopping apt-daily.timer - Daily apt download activities.
 Mar 03 23:00:27 quilava systemd[1]: Started 100.scope.
+Mar 06 00:36:59 quilava systemd[1]: Reloaded pveproxy.service - PVE API Proxy Server.
+Mar 06 00:37:00 quilava systemd[1]: Reloaded spiceproxy.service - PVE SPICE Proxy Server.

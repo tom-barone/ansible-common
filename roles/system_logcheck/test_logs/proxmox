@@ -30,3 +30,20 @@ Mar 03 23:24:42 quilava pvedaemon[542386]: destroy VM 100: UPID:quilava:000846B2
 Mar 04 23:55:39 quilava pvedaemon[610977]: VM 100 qga command failed - VM 100 qga command 'guest-ping' failed - client closed connection
 Mar 04 23:56:16 quilava qm[856886]: VM 100 qga command failed - VM 100 qga command 'guest-ping' failed - got timeout
 Mar 05 01:15:33 quilava pvestatd[1059]: auth key pair too old, rotating..
+Mar 06 00:36:59 quilava pveproxy[1152366]: send HUP to 1097
+Mar 06 00:36:59 quilava pveproxy[1097]: received signal HUP
+Mar 06 00:36:59 quilava pveproxy[1097]: server closing
+Mar 06 00:36:59 quilava pveproxy[1097]: server shutdown (restart)
+Mar 06 00:37:00 quilava spiceproxy[1152369]: send HUP to 1106
+Mar 06 00:37:00 quilava spiceproxy[1106]: received signal HUP
+Mar 06 00:37:00 quilava spiceproxy[1106]: server closing
+Mar 06 00:37:00 quilava spiceproxy[1106]: server shutdown (restart)
+Mar 06 00:37:00 quilava pvefw-logger[866465]: received terminate request (signal)
+Mar 06 00:37:00 quilava pvefw-logger[866465]: stopping pvefw logger
+Mar 06 00:37:00 quilava pvefw-logger[1152380]: starting pvefw logger
+Mar 06 00:37:00 quilava spiceproxy[1106]: restarting server
+Mar 06 00:37:00 quilava spiceproxy[1106]: starting 1 worker(s)
+Mar 06 00:37:00 quilava spiceproxy[1106]: worker 1152386 started
+Mar 06 00:37:00 quilava pveproxy[1097]: restarting server
+Mar 06 00:37:05 quilava spiceproxy[866471]: worker exit
+Mar 06 00:37:05 quilava spiceproxy[1106]: worker 866471 finished

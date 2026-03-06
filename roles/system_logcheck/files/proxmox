@@ -24,4 +24,16 @@
 .* .*pve.*: .* qga command failed.*guest-ping.*$
 .* .*qm.*: .* qga command failed.*guest-ping.*$
 .* .*pve.*: auth key pair too old.*$
+.* .*(pveproxy|spiceproxy).*: send HUP to .*$
+.* .*(pveproxy|spiceproxy).*: received signal HUP$
+.* .*(pveproxy|spiceproxy).*: server closing$
+.* .*(pveproxy|spiceproxy).*: server shutdown \(restart\)$
+.* .*(pveproxy|spiceproxy).*: restarting server$
+.* .*spiceproxy.*: worker exit.*$
+.* .*spiceproxy.*: worker .* finished.*$
+.* .*spiceproxy.*: worker .* started.*$
+.* .*spiceproxy.*: starting .* worker.*$
+.* .*pvefw-logger.*: received terminate request \(signal\)$
+.* .*pvefw-logger.*: stopping pvefw logger$
+.* .*pvefw-logger.*: starting pvefw logger$
 .* cloud-init.*: .*$
