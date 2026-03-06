@@ -33,3 +33,5 @@ Mar 04 00:55:50 forgejo tailscaled[32695]: post-rebind ping of DERP region 5 oka
 Mar 04 00:55:50 forgejo tailscaled[32695]: monitor: RTM_DELROUTE: dst=100.64.0.0/10 gw=<nil> ifname="tailscale0" type=unicast table=52
 Mar 04 00:55:50 forgejo tailscaled[32695]: wgengine: Reconfig: 1 peers changed from "discokey:abc123" to "discokey:def456"
 Mar 05 06:07:17 forgejo tailscaled[3288]: magicsock: lazyEndpoint.FromPeer([8JL4V]) setting epAddr(123.136.51.83:1063) in peerMap for node(100.116.20.108)
+Mar 05 18:53:36 quilava tailscaled[197800]: wgengine: Reconfig: configuring userspace WireGuard config (with 0/1 peers)
+Mar 05 18:53:39 quilava tailscaled[197800]: wgengine: idle peer [8JL4V] now active, reconfiguring WireGuard
