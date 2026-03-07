@@ -1,0 +1,16 @@
+---
+- name: "Verify"
+  hosts: "all"
+  gather_facts: false
+  tasks:
+    - name: "Check hostname"
+      ansible.builtin.command:
+        argv:
+          - "hostname"
+      changed_when: false
+      register: "_hostname"
+
+    - name: "Assert hostname is set"
+      ansible.builtin.assert:
+        that:
+          - "_hostname.stdout == 'test-vm'"

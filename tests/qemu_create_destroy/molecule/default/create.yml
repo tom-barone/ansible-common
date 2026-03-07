@@ -1,0 +1,13 @@
+---
+- name: "Create QEMU VM"
+  hosts: "localhost"
+  connection: "local"
+  gather_facts: false
+  tasks:
+    - name: "Create VM"
+      ansible.builtin.include_role:
+        name: "qemu_vm_create"
+      vars:
+        qemu_vm_create_name: "test-vm"
+        qemu_vm_create_ssh_public_key: >-
+          {{ lookup('file', '~/.ssh/id_ed25519.pub') }}

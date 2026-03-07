@@ -1,0 +1,44 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "qemu_vm_destroy_dir is defined"
+      - "qemu_vm_destroy_name is defined"
+    msg: "Missing required variables for VM destruction."
+
+- name: "Set VM directory path"
+  ansible.builtin.set_fact:
+    qemu_vm_destroy_vm_dir: >-
+      {{ qemu_vm_destroy_dir }}/{{ qemu_vm_destroy_name }}
+
+- name: "Find QEMU process for this VM"
+  ansible.builtin.shell:
+    cmd: >-
+      pgrep -f 'qemu-system.*{{ qemu_vm_destroy_vm_dir | trim }}/disk.qcow2'
+      || true
+  register: "_qemu_vm_destroy_pids"
+  changed_when: false
+
+- name: "Stop QEMU VM process"
+  ansible.builtin.command:
+    argv:
+      - "kill"
+      - "{{ item }}"
+  loop: "{{ _qemu_vm_destroy_pids.stdout_lines }}"
+  when: "_qemu_vm_destroy_pids.stdout_lines | length > 0"
+  changed_when: true
+
+- name: "Wait for QEMU process to exit"
+  ansible.builtin.shell:
+    cmd: >-
+      while kill -0 {{ item }} 2>/dev/null; do sleep 1; done
+  loop: "{{ _qemu_vm_destroy_pids.stdout_lines }}"
+  when: "_qemu_vm_destroy_pids.stdout_lines | length > 0"
+  changed_when: false
+  timeout: 30
+
+- name: "Remove VM directory"
+  ansible.builtin.file:
+    path: "{{ qemu_vm_destroy_vm_dir }}"
+    state: "absent"
+  when: "qemu_vm_destroy_remove_files"

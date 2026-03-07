@@ -1,0 +1,4 @@
+---
+qemu_vm_destroy_dir: "/tmp/qemu-vms"
+qemu_vm_destroy_name: "qemu-vm"
+qemu_vm_destroy_remove_files: true
