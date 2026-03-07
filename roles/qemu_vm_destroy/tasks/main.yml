@@ -27,6 +27,7 @@
   loop: "{{ _qemu_vm_destroy_pids.stdout_lines }}"
   when: "_qemu_vm_destroy_pids.stdout_lines | length > 0"
   changed_when: true
+  failed_when: false
 
 - name: "Wait for QEMU process to exit"
   ansible.builtin.shell:
