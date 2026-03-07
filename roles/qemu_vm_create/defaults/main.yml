@@ -1,0 +1,11 @@
+---
+qemu_vm_create_image_url: >-
+  https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-arm64-daily.qcow2
+qemu_vm_create_dir: "/tmp/qemu-vms"
+qemu_vm_create_name: "qemu-vm"
+qemu_vm_create_disk_size: "20G"
+qemu_vm_create_memory: "2G"
+qemu_vm_create_cpus: 2
+qemu_vm_create_ssh_port: 2222
+qemu_vm_create_ssh_public_key: >-
+  {{ lookup('file', '~/.ssh/id_ed25519.pub') }}

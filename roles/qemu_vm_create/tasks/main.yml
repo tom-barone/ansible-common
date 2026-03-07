@@ -1,0 +1,160 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "qemu_vm_create_image_url is defined"
+      - "qemu_vm_create_dir is defined"
+      - "qemu_vm_create_name is defined"
+      - "qemu_vm_create_disk_size is defined"
+      - "qemu_vm_create_memory is defined"
+      - "qemu_vm_create_cpus is defined"
+      - "qemu_vm_create_ssh_port is defined"
+      - "qemu_vm_create_ssh_public_key is defined"
+    msg: "Missing required variables for VM creation or boot."
+
+- name: "Set paths for image creation"
+  ansible.builtin.set_fact:
+    qemu_vm_create_images_dir: >-
+      {{ qemu_vm_create_dir }}/images
+    qemu_vm_create_vm_dir: >-
+      {{ qemu_vm_create_dir }}/{{ qemu_vm_create_name }}
+    qemu_vm_create_base_image: >-
+      {{ qemu_vm_create_dir }}/images/{{
+        qemu_vm_create_image_url | basename
+      }}
+    qemu_vm_create_disk_image: >-
+      {{ qemu_vm_create_dir }}/{{
+        qemu_vm_create_name
+      }}/disk.qcow2
+    qemu_vm_create_seed_dir: >-
+      {{ qemu_vm_create_dir }}/{{
+        qemu_vm_create_name
+      }}/seed
+    qemu_vm_create_seed_iso: >-
+      {{ qemu_vm_create_dir }}/{{
+        qemu_vm_create_name
+      }}/cidata.iso
+
+- name: "Create directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "{{ qemu_vm_create_images_dir }}"
+    - "{{ qemu_vm_create_vm_dir }}"
+    - "{{ qemu_vm_create_seed_dir }}"
+
+- name: "Download cloud base image"
+  ansible.builtin.get_url:
+    url: "{{ qemu_vm_create_image_url }}"
+    dest: "{{ qemu_vm_create_base_image }}"
+    mode: "0644"
+
+- name: "Create COW overlay from base image"
+  ansible.builtin.command:
+    argv:
+      - "qemu-img"
+      - "create"
+      - "-F"
+      - "qcow2"
+      - "-b"
+      - "{{ qemu_vm_create_base_image }}"
+      - "-f"
+      - "qcow2"
+      - "{{ qemu_vm_create_disk_image }}"
+    creates: "{{ qemu_vm_create_disk_image }}"
+
+- name: "Resize VM image to specified disk size"
+  ansible.builtin.command:
+    argv:
+      - "qemu-img"
+      - "resize"
+      - "{{ qemu_vm_create_disk_image }}"
+      - "{{ qemu_vm_create_disk_size }}"
+  changed_when: false
+
+- name: "Generate cloud-init meta-data"
+  ansible.builtin.copy:
+    dest: "{{ qemu_vm_create_seed_dir }}/meta-data"
+    mode: "0644"
+    content: |
+      instance-id: {{ qemu_vm_create_name }}
+      local-hostname: {{ qemu_vm_create_name }}
+
+- name: "Generate cloud-init user-data"
+  ansible.builtin.copy:
+    dest: "{{ qemu_vm_create_seed_dir }}/user-data"
+    mode: "0644"
+    content: |
+      #cloud-config
+      disable_root: false
+      ssh_pwauth: false
+      users:
+        - name: root
+          ssh_authorized_keys:
+            - "{{ qemu_vm_create_ssh_public_key }}"
+
+- name: "Generate cidata ISO for cloud-init (macOS native)"
+  ansible.builtin.command:
+    argv:
+      - "hdiutil"
+      - "makehybrid"
+      - "-iso"
+      - "-joliet"
+      - "-default-volume-name"
+      - "cidata"
+      - "-o"
+      - "{{ qemu_vm_create_seed_iso }}"
+      - "{{ qemu_vm_create_seed_dir }}"
+    creates: "{{ qemu_vm_create_seed_iso }}"
+
+- name: "Launch QEMU VM"
+  ansible.builtin.command:
+    argv:
+      - "qemu-system-aarch64"
+      - "-machine"
+      - "virt"
+      - "-cpu"
+      - "host"
+      - "-accel"
+      - "hvf"
+      - "-bios"
+      - "/opt/homebrew/share/qemu/edk2-aarch64-code.fd"
+      - "-m"
+      - "{{ qemu_vm_create_memory }}"
+      - "-smp"
+      - "{{ qemu_vm_create_cpus }}"
+      - "-drive"
+      - "file={{ qemu_vm_create_disk_image }},if=virtio,format=qcow2"
+      - "-netdev"
+      - "user,id=net0,hostfwd=tcp::{{ qemu_vm_create_ssh_port }}-:22"
+      - "-device"
+      - "virtio-net-pci,netdev=net0"
+      - "-drive"
+      - "file={{ qemu_vm_create_seed_iso }},media=cdrom,readonly=on"
+      - "-display"
+      - "none"
+      - "-daemonize"
+  changed_when: true
+
+- name: "Wait for SSH"
+  ansible.builtin.wait_for:
+    host: "127.0.0.1"
+    port: "{{ qemu_vm_create_ssh_port }}"
+    delay: 15
+    timeout: 300
+    search_regex: "OpenSSH"
+
+- name: "Add host to inventory"
+  ansible.builtin.add_host:
+    name: "{{ qemu_vm_create_name }}"
+    groups: "{{ qemu_vm_create_groups | default([]) }}"
+    ansible_host: "127.0.0.1"
+    ansible_port: "{{ qemu_vm_create_ssh_port }}"
+    ansible_user: "root"
+    ansible_python_interpreter: "/usr/bin/python3"
+    ansible_ssh_common_args: >-
+      -o StrictHostKeyChecking=no
+      -o UserKnownHostsFile=/dev/null
+  changed_when: false
