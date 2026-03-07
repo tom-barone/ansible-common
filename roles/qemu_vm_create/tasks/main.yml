@@ -20,10 +20,6 @@
     qemu_vm_create_debian_arch: "amd64"
     qemu_vm_create_qemu_binary: "qemu-system-x86_64"
     qemu_vm_create_machine: "q35"
-    qemu_vm_create_bios_path_darwin: >-
-      /opt/homebrew/share/qemu/edk2-x86_64-code.fd
-    qemu_vm_create_bios_path_linux: >-
-      /usr/share/OVMF/OVMF_CODE.fd
   when: "ansible_architecture == 'x86_64'"
 
 - name: "Set platform-specific variables"
@@ -35,6 +31,9 @@
         ~ qemu_vm_create_debian_arch
         ~ '-daily.qcow2')
       }}
+
+- name: "Set BIOS path for aarch64"
+  ansible.builtin.set_fact:
     qemu_vm_create_bios_path: >-
       {{ qemu_vm_create_bios_path | default(
         (ansible_system == 'Darwin')
@@ -42,6 +41,7 @@
             qemu_vm_create_bios_path_darwin,
             qemu_vm_create_bios_path_linux))
       }}
+  when: "ansible_architecture in ['aarch64', 'arm64']"
 
 - name: "Validate required variables"
   ansible.builtin.assert:
@@ -168,33 +168,40 @@
     creates: "{{ qemu_vm_create_seed_iso }}"
   when: "ansible_system == 'Linux'"
 
+- name: "Build QEMU command arguments"
+  ansible.builtin.set_fact:
+    qemu_vm_create_argv: >-
+      {{ [
+        qemu_vm_create_qemu_binary,
+        '-machine', qemu_vm_create_machine,
+        '-cpu', 'host',
+        '-accel',
+        (ansible_system == 'Darwin') | ternary('hvf', 'kvm')
+      ]
+      + (qemu_vm_create_bios_path is defined)
+        | ternary(
+            ['-bios', qemu_vm_create_bios_path],
+            [])
+      + [
+        '-m', qemu_vm_create_memory,
+        '-smp', qemu_vm_create_cpus | string,
+        '-drive',
+        'file=' ~ qemu_vm_create_disk_image
+          ~ ',if=virtio,format=qcow2',
+        '-netdev',
+        'user,id=net0,hostfwd=tcp::'
+          ~ qemu_vm_create_ssh_port ~ '-:22',
+        '-device', 'virtio-net-pci,netdev=net0',
+        '-drive',
+        'file=' ~ qemu_vm_create_seed_iso
+          ~ ',media=cdrom,readonly=on',
+        '-display', 'none',
+        '-daemonize'
+      ] }}
+
 - name: "Launch QEMU VM"
   ansible.builtin.command:
-    argv:
-      - "{{ qemu_vm_create_qemu_binary }}"
-      - "-machine"
-      - "{{ qemu_vm_create_machine }}"
-      - "-cpu"
-      - "host"
-      - "-accel"
-      - "{{ (ansible_system == 'Darwin') | ternary('hvf', 'kvm') }}"
-      - "-bios"
-      - "{{ qemu_vm_create_bios_path }}"
-      - "-m"
-      - "{{ qemu_vm_create_memory }}"
-      - "-smp"
-      - "{{ qemu_vm_create_cpus }}"
-      - "-drive"
-      - "file={{ qemu_vm_create_disk_image }},if=virtio,format=qcow2"
-      - "-netdev"
-      - "user,id=net0,hostfwd=tcp::{{ qemu_vm_create_ssh_port }}-:22"
-      - "-device"
-      - "virtio-net-pci,netdev=net0"
-      - "-drive"
-      - "file={{ qemu_vm_create_seed_iso }},media=cdrom,readonly=on"
-      - "-display"
-      - "none"
-      - "-daemonize"
+    argv: "{{ qemu_vm_create_argv }}"
   changed_when: true
 
 - name: "Wait for SSH"
