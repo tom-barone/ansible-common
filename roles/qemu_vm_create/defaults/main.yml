@@ -1,6 +1,4 @@
 ---
-qemu_vm_create_image_url: >-
-  https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-arm64-daily.qcow2
 qemu_vm_create_dir: "/tmp/qemu-vms"
 qemu_vm_create_name: "qemu-vm"
 qemu_vm_create_disk_size: "20G"

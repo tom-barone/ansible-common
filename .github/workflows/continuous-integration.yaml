@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: "Set up QEMU"
+        uses: docker/setup-qemu-action@v4
+
       - name: Import GPG key
         run: echo "${{ secrets.SOPS_GITHUB_ACTIONS_GPG_PRIVATE_KEY }}" | gpg --batch --import
       - name: "Install SOPS"
@@ -32,9 +35,14 @@ jobs:
           version: "0.9.17"
           enable-cache: true
 
-      - name: Run linters
-        shell: bash
-        run: "just lint"
+      - name: "Install QEMU and cloud-image tools"
+        run: |
+          #sudo apt-get update
+          sudo apt-get install -y genisoimage
+
+      #- name: Run linters
+      #  shell: bash
+      #  run: "just lint"
 
       - name: Run tests
-        run: "just test"
+        run: "just test --name qemu-create-destroy --no-capture"

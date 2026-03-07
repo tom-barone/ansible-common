@@ -1,4 +1,48 @@
 ---
+- name: "Gather facts if needed"
+  ansible.builtin.setup:
+    gather_subset: "min"
+  when: "ansible_system is not defined"
+
+- name: "Set architecture-specific defaults (aarch64)"
+  ansible.builtin.set_fact:
+    qemu_vm_create_debian_arch: "arm64"
+    qemu_vm_create_qemu_binary: "qemu-system-aarch64"
+    qemu_vm_create_machine: "virt"
+    qemu_vm_create_bios_path_darwin: >-
+      /opt/homebrew/share/qemu/edk2-aarch64-code.fd
+    qemu_vm_create_bios_path_linux: >-
+      /usr/share/qemu-efi-aarch64/QEMU_EFI.fd
+  when: "ansible_architecture in ['aarch64', 'arm64']"
+
+- name: "Set architecture-specific defaults (x86_64)"
+  ansible.builtin.set_fact:
+    qemu_vm_create_debian_arch: "amd64"
+    qemu_vm_create_qemu_binary: "qemu-system-x86_64"
+    qemu_vm_create_machine: "q35"
+    qemu_vm_create_bios_path_darwin: >-
+      /opt/homebrew/share/qemu/edk2-x86_64-code.fd
+    qemu_vm_create_bios_path_linux: >-
+      /usr/share/OVMF/OVMF_CODE.fd
+  when: "ansible_architecture == 'x86_64'"
+
+- name: "Set platform-specific variables"
+  ansible.builtin.set_fact:
+    qemu_vm_create_image_url: >-
+      {{ qemu_vm_create_image_url | default(
+        'https://cloud.debian.org/images/cloud/trixie/daily'
+        ~ '/latest/debian-13-generic-'
+        ~ qemu_vm_create_debian_arch
+        ~ '-daily.qcow2')
+      }}
+    qemu_vm_create_bios_path: >-
+      {{ qemu_vm_create_bios_path | default(
+        (ansible_system == 'Darwin')
+        | ternary(
+            qemu_vm_create_bios_path_darwin,
+            qemu_vm_create_bios_path_linux))
+      }}
+
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
@@ -95,7 +139,7 @@
           ssh_authorized_keys:
             - "{{ qemu_vm_create_ssh_public_key }}"
 
-- name: "Generate cidata ISO for cloud-init (macOS native)"
+- name: "Generate cidata ISO for cloud-init (macOS)"
   ansible.builtin.command:
     argv:
       - "hdiutil"
@@ -108,19 +152,34 @@
       - "{{ qemu_vm_create_seed_iso }}"
       - "{{ qemu_vm_create_seed_dir }}"
     creates: "{{ qemu_vm_create_seed_iso }}"
+  when: "ansible_system == 'Darwin'"
+
+- name: "Generate cidata ISO for cloud-init (Linux)"
+  ansible.builtin.command:
+    argv:
+      - "genisoimage"
+      - "-output"
+      - "{{ qemu_vm_create_seed_iso }}"
+      - "-volid"
+      - "cidata"
+      - "-joliet"
+      - "-rock"
+      - "{{ qemu_vm_create_seed_dir }}"
+    creates: "{{ qemu_vm_create_seed_iso }}"
+  when: "ansible_system == 'Linux'"
 
 - name: "Launch QEMU VM"
   ansible.builtin.command:
     argv:
-      - "qemu-system-aarch64"
+      - "{{ qemu_vm_create_qemu_binary }}"
       - "-machine"
-      - "virt"
+      - "{{ qemu_vm_create_machine }}"
       - "-cpu"
       - "host"
       - "-accel"
-      - "hvf"
+      - "{{ (ansible_system == 'Darwin') | ternary('hvf', 'kvm') }}"
       - "-bios"
-      - "/opt/homebrew/share/qemu/edk2-aarch64-code.fd"
+      - "{{ qemu_vm_create_bios_path }}"
       - "-m"
       - "{{ qemu_vm_create_memory }}"
       - "-smp"
