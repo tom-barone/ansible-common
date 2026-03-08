@@ -42,8 +42,7 @@ jobs:
 
       - name: "Generate SSH key for tests"
         run: >-
-          ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519
-          -N "" -q
+          ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
 
       - name: "Run linters"
         shell: bash
