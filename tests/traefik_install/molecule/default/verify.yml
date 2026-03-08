@@ -1,0 +1,73 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given traefik was installed
+    # When we check for the binary
+    # Then it exists and is executable
+    - name: "Check binary exists"
+      ansible.builtin.stat:
+        path: "/usr/local/bin/traefik"
+      register: "_traefik_binary"
+
+    - name: "Assert binary exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "_traefik_binary.stat.exists"
+          - "_traefik_binary.stat.executable"
+
+    # Given traefik was installed
+    # When we check the systemd service
+    # Then it is active
+    - name: "Check service status"
+      ansible.builtin.systemd:
+        name: "traefik"
+      register: "_traefik_service"
+
+    - name: "Assert service is running"
+      ansible.builtin.assert:
+        that:
+          - "_traefik_service.status.ActiveState == 'active'"
+
+    # Given traefik was installed with web entrypoint
+    # When we check port 80
+    # Then it is listening
+    - name: "Check port 80 is listening"
+      ansible.builtin.wait_for:
+        port: 80
+        timeout: 5
+
+    # Given traefik was installed with websecure entrypoint
+    # When we check port 443
+    # Then it is listening
+    - name: "Check port 443 is listening"
+      ansible.builtin.wait_for:
+        port: 443
+        timeout: 5
+
+    # Given traefik was installed with dashboard enabled
+    # When we check port 8080
+    # Then it is listening
+    - name: "Check port 8080 is listening"
+      ansible.builtin.wait_for:
+        port: 8080
+        timeout: 5
+
+    # Given traefik was installed with routes
+    # When we read the routes config
+    # Then it contains the configured domains
+    - name: "Read routes config"
+      ansible.builtin.slurp:
+        src: "/etc/traefik/routes.yml"
+      register: "_traefik_routes"
+
+    - name: "Assert routes contain configured domains"
+      vars:
+        _routes_content: >-
+          {{ _traefik_routes.content | b64decode }}
+      ansible.builtin.assert:
+        that:
+          - "'app.example.com' in _routes_content"
+          - "'api.example.com' in _routes_content"
+          - "'10.0.0.10' in _routes_content"
+          - "'10.0.0.20' in _routes_content"

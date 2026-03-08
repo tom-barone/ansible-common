@@ -1,0 +1,89 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "traefik_install_version is defined"
+    msg: "traefik_install_version must be defined"
+
+- name: "Detect architecture"
+  ansible.builtin.set_fact:
+    traefik_install_arch: >-
+      {{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}
+
+- name: "Check if binary exists"
+  ansible.builtin.stat:
+    path: "{{ traefik_install_binary_path }}"
+  register: "traefik_install_binary"
+
+- name: "Build download URL"
+  vars:
+    traefik_install_base: >-
+      https://github.com/traefik/traefik
+    traefik_install_file: >-
+      traefik_v{{ traefik_install_version
+      }}_linux_{{ traefik_install_arch }}.tar.gz
+  ansible.builtin.set_fact:
+    traefik_install_url: >-
+      {{ traefik_install_base }}/releases/download/v{{
+      traefik_install_version }}/{{ traefik_install_file }}
+
+- name: "Download tarball"
+  ansible.builtin.get_url:
+    url: "{{ traefik_install_url }}"
+    dest: "/tmp/traefik.tar.gz"
+    mode: "0644"
+  when: "not traefik_install_binary.stat.exists"
+
+- name: "Extract binary"
+  ansible.builtin.unarchive:
+    src: "/tmp/traefik.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: true
+    include:
+      - "traefik"
+  when: "not traefik_install_binary.stat.exists"
+  notify: "Restart traefik"
+
+- name: "Set binary permissions"
+  ansible.builtin.file:
+    path: "{{ traefik_install_binary_path }}"
+    mode: "0755"
+
+- name: "Create config directory"
+  ansible.builtin.file:
+    path: "{{ traefik_install_config_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy traefik.yml"
+  ansible.builtin.template:
+    src: "traefik.yml.j2"
+    dest: "{{ traefik_install_config_dir }}/traefik.yml"
+    mode: "0644"
+  notify: "Restart traefik"
+
+- name: "Deploy routes.yml"
+  ansible.builtin.template:
+    src: "routes.yml.j2"
+    dest: "{{ traefik_install_config_dir }}/routes.yml"
+    mode: "0644"
+  notify: "Restart traefik"
+
+- name: "Deploy systemd service"
+  ansible.builtin.template:
+    src: "traefik.service.j2"
+    dest: "/etc/systemd/system/traefik.service"
+    mode: "0644"
+  notify: "Restart traefik"
+
+- name: "Start and enable traefik"
+  ansible.builtin.systemd:
+    name: "traefik"
+    state: "started"
+    enabled: true
+    daemon_reload: true
+
+- name: "Wait for traefik to be ready"
+  ansible.builtin.wait_for:
+    port: 80
+    timeout: 30

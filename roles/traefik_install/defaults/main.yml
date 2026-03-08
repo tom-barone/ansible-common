@@ -1,0 +1,5 @@
+---
+traefik_install_version: "3.6.10"
+traefik_install_config_dir: "/etc/traefik"
+traefik_install_binary_path: "/usr/local/bin/traefik"
+traefik_install_routes: []

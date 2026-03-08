@@ -1,0 +1,13 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply traefik_install role"
+      ansible.builtin.include_role:
+        name: "traefik_install"
+      vars:
+        traefik_install_routes:
+          - domain: "app.example.com"
+            destination: "10.0.0.10"
+          - domain: "api.example.com"
+            destination: "10.0.0.20"

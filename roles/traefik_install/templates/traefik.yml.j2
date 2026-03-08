@@ -1,0 +1,15 @@
+api:
+  dashboard: true
+  insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+    asDefault: true
+
+providers:
+  file:
+    filename: {{ traefik_install_config_dir }}/routes.yml
+    watch: true
