@@ -15,7 +15,7 @@
 .* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$
 .* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$
 .* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed.*: .*$
-.* .*tailscaled.*: magicsock: .* active derp conns: .*$
+.* .*tailscaled.*: magicsock: [0-9]+ active derp conns.*$
 .* .*tailscaled.*: magicsock: .* in peerMap for node.*$
 .* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
 .* .*tailscaled.*: magicsock: derp.* does not know about peer
@@ -32,4 +32,49 @@
 .* .*tailscaled.*: wgengine: Reconfig: user dialer$
 .* .*tailscaled.*: wgengine: idle peer \[.*\] now active, reconfiguring WireGuard$
 .* .*tailscaled.*: wgengine: set DNS config again after major link change$
+.* .*tailscaled.*: health\(warnable=.*\): .*$
 .* .*tailscaled.*:.*health.*warnable.*ok.*$
+.* .*tailscaled.*: TPM: .*$
+.* .*tailscaled.*: logtail started$
+.* .*tailscaled.*: Program starting: .*$
+.* .*tailscaled.*: LogID: .*$
+.* .*tailscaled.*: logpolicy: .*$
+.* .*tailscaled.*: dns: \[.*\]$
+.* .*tailscaled.*: dns: using .*$
+.* .*tailscaled.*: creating dns cleanup: .*$
+.* .*tailscaled.*: wgengine\.NewUserspaceEngine.*$
+.* .*tailscaled.*: link state: .*$
+.* .*tailscaled.*: router: .*$
+.* .*tailscaled.*: magicsock: disco key = .*$
+.* .*tailscaled.*: Creating WireGuard device\.\.\.$
+.* .*tailscaled.*: Bringing WireGuard device up\.\.\.$
+.* .*tailscaled.*: Bringing router up\.\.\.$
+.* .*tailscaled.*: external route: .*$
+.* .*tailscaled.*: Clearing router settings\.\.\.$
+.* .*tailscaled.*: Starting network monitor\.\.\.$
+.* .*tailscaled.*: Engine created\.$
+.* .*tailscaled.*: pm: .*$
+.* .*tailscaled.*: envknob: .*$
+.* .*tailscaled.*: linkChange: .*$
+.* .*tailscaled.*: got LocalBackend in .*$
+.* .*tailscaled.*: Start$
+.* .*tailscaled.*: offline auto-update: .*$
+.* .*tailscaled.*: ipnext: active extensions: .*$
+.* .*tailscaled.*: Backend: logs: .*$
+.* .*tailscaled.*: control: client\.Login\(.*\)$
+.* .*tailscaled.*: monitor: gateway and self IP changed: .*$
+.* .*tailscaled.*: control: doLogin\(.*\)$
+.* .*tailscaled.*: control: control server key from .*$
+.* .*tailscaled.*: control: RegisterReq: .*$
+.* .*tailscaled.*: monitor: RTM_NEWROUTE: .*$
+.* .*tailscaled.*: active login: .*$
+.* .*tailscaled.*: Switching ipn state .*$
+.* .*tailscaled.*: magicsock: SetPrivateKey called .*$
+.* .*tailscaled.*: portmapper: .*$
+.* .*tailscaled.*: peerapi: serving on .*$
+.* .*tailscaled.*: \[RATELIMIT\] .*$
+.* .*tailscaled.*: magicsock: home DERP changing .*$
+.* .*tailscaled.*: magicsock: home is now .*$
+.* .*tailscaled.*: magicsock: adding connection to .*$
+.* .*tailscaled.*: derphttp\.Client\.Connect: .*$
+.* .*tailscaled.*: magicsock: derp-.* connected; .*$

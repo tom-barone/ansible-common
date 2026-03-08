@@ -34,3 +34,11 @@
 .* .*systemd-networkd.*: Foreign process .* changed sysctl .*$
 .* .*systemctl.*: Removed .*$
 .* .*systemd.*: Stopp.* .* - .*\.$
+.* .*systemd.*: Listening on .* - .*$
+.* .*systemd.*: .* was skipped because of an unmet condition check .*$
+.* .*systemd.*: System is tainted: .*$
+.* .*systemd-logind.*: New seat .*$
+.* .*systemd-logind.*: Watching system buttons on .*$
+.* .*systemd-hostnamed.*: Hostname set to .*$
+.* .*systemd-resolved.*: .*: Bus client set .*$
+.* .*systemd-resolved.*: Clock change detected\. Flushing caches\.$

@@ -2,5 +2,6 @@
 .* .*polkitd.*: Loading rules from.*$
 .* .*polkitd.*: Finished loading.*$
 .* .*polkitd.*: Acquired the name.*$
-.* .*dbus-daemon.*: .*Activating via systemd.*org\.freedesktop\.hostname1.*$
-.* .*dbus-daemon.*: .*Successfully activated service.*org\.freedesktop\.hostname1.*$
+.* .*dbus-daemon.*: .*Activating .*systemd.*org\.freedesktop\..*$
+.* .*dbus-daemon.*: .*Successfully activated service.*org\.freedesktop\..*$
+.* .*polkitd.*: Error opening rules directory: .*$

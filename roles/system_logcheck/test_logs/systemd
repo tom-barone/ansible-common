@@ -35,3 +35,26 @@ Mar 04 01:00:00 forgejo systemd[1]: Stopping apt-daily.timer - Daily apt downloa
 Mar 03 23:00:27 quilava systemd[1]: Started 100.scope.
 Mar 06 00:36:59 quilava systemd[1]: Reloaded pveproxy.service - PVE API Proxy Server.
 Mar 06 00:37:00 quilava systemd[1]: Reloaded spiceproxy.service - PVE SPICE Proxy Server.
+Mar 08 09:32:55 forgejo systemd[1]: Listening on cloud-init-hotplugd.socket - cloud-init hotplug hook socket.
+Mar 08 09:32:55 forgejo systemd[1]: Listening on sshd-unix-local.socket - OpenSSH Server Socket (systemd-ssh-generator, AF_UNIX Local).
+Mar 08 09:32:55 forgejo systemd[1]: Listening on sshd-vsock.socket - OpenSSH Server Socket (systemd-ssh-generator, AF_VSOCK).
+Mar 08 09:32:55 forgejo systemd[1]: Listening on systemd-hostnamed.socket - Hostname Service Socket.
+Mar 08 09:32:55 forgejo systemd[1]: Listening on uuidd.socket - UUID daemon activation socket.
+Mar 08 09:32:55 forgejo systemd[1]: systemd-pcrphase-sysinit.service - TPM PCR Barrier (Initialization) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+Mar 08 09:32:55 forgejo systemd[1]: Listening on docker.socket - Docker Socket for the API.
+Mar 08 09:32:55 forgejo systemd[1]: System is tainted: unmerged-bin
+Mar 08 09:32:55 forgejo systemd[1]: getty-static.service - getty on tty2-tty6 if dbus and logind are not available was skipped because of an unmet condition check (ConditionPathExists=!/usr/bin/dbus-daemon).
+Mar 08 09:32:55 forgejo systemd[1]: sshd-keygen.service - Generate sshd host keys on first boot was skipped because of an unmet condition check (ConditionFirstBoot=yes).
+Mar 08 09:32:55 forgejo systemd[1]: systemd-pcrphase.service - TPM PCR Barrier (User) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+Mar 08 09:32:55 forgejo systemd-logind[653]: New seat seat0.
+Mar 08 09:32:55 forgejo systemd-logind[653]: Watching system buttons on /dev/input/event4 (Power Button)
+Mar 08 09:32:55 forgejo systemd-logind[653]: Watching system buttons on /dev/input/event0 (AT Translated Set 2 keyboard)
+Mar 08 09:32:56 forgejo systemd-hostnamed[671]: Hostname set to <forgejo> (static)
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set DNS server list to: 100.100.100.100
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set search domain list to: taile4f997.ts.net.
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set default route setting: no
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set LLMNR setting: no
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set MulticastDNS setting: no
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set DNSSEC setting: no
+Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set DNSOverTLS setting: no
+Mar 08 09:33:01 forgejo systemd-resolved[329]: Clock change detected. Flushing caches.

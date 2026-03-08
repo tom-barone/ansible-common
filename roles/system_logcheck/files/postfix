@@ -5,3 +5,8 @@
 .* .*postfix.*: terminating on signal.*$
 .* .*systemd.*: Stopped postfix service.*$
 .* .*postfix.*: daemon started.*$
+.* .*postfix.*: .*Postfix is using backwards-compatible default settings$
+.* .*postfix.*: .*See https://www\.postfix\.org/COMPATIBILITY_README\.html for details$
+.* .*postfix.*: .*To disable backwards compatibility use .*$
+.* .*postfix.*: updating .* => .*$
+.* .*postfix.*: .*warning: not owned by root: .*$

@@ -17,3 +17,6 @@ Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2
 2025-03-27T01:11:42.560576+10:30 au-adelaide wpa_supplicant[1341]: wlp0s20f3: CTRL-EVENT-BEACON-LOSS
 2026-03-03T01:22:06.647786+10:30 quilava dmeventd[339]: No longer monitoring thin pool pve-data-tpool.
 2026-03-03T01:22:06.680550+10:30 quilava dmeventd[339]: Monitoring thin pool pve-data-tpool.
+Mar 08 09:32:55 forgejo sh[645]: Completed socket interaction for boot stage config
+Mar 08 09:33:06 forgejo cloud-init[551]:
+Mar 08 09:33:07 forgejo sh[1879]: Completed socket interaction for boot stage final
