@@ -22,6 +22,9 @@ jobs:
           cache_key: "mise-{{platform}}-{{version}}-{{file_hash}}"
           version: "2026.3.1"
 
+      - name: "Install dependencies"
+        run: "just install"
+
       - name: "Run linters"
         shell: bash
         run: "just lint"
@@ -75,6 +78,9 @@ jobs:
       - name: "Generate SSH key for tests"
         run: >-
           ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
+
+      - name: "Install dependencies"
+        run: "just install"
 
       - name: "Run test: ${{ matrix.test }}"
         run: "just test --no-capture --name ${{ matrix.test }}"
