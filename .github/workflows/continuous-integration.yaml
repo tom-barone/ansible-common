@@ -49,4 +49,4 @@ jobs:
         run: "just lint"
 
       - name: Run tests
-        run: "just test --name qemu_create_destroy --no-capture"
+        run: "just test --no-capture"
