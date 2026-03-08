@@ -4,11 +4,12 @@ name: "continuous integration"
 on:
   push:
     branches: ["main"]
+  pull_request:
 
 # Run only one CI workflow at a time
 concurrency:
-  group: "main"
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   continuous-integration:
