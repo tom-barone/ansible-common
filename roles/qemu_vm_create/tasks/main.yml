@@ -2,7 +2,7 @@
 - name: "Gather facts if needed"
   ansible.builtin.setup:
     gather_subset: "min"
-  when: "ansible_system is not defined"
+  when: "ansible_facts['system'] is not defined"
 
 - name: "Set architecture-specific defaults (aarch64)"
   ansible.builtin.set_fact:
@@ -13,14 +13,14 @@
       /opt/homebrew/share/qemu/edk2-aarch64-code.fd
     qemu_vm_create_bios_path_linux: >-
       /usr/share/qemu-efi-aarch64/QEMU_EFI.fd
-  when: "ansible_architecture in ['aarch64', 'arm64']"
+  when: "ansible_facts['architecture'] in ['aarch64', 'arm64']"
 
 - name: "Set architecture-specific defaults (x86_64)"
   ansible.builtin.set_fact:
     qemu_vm_create_debian_arch: "amd64"
     qemu_vm_create_qemu_binary: "qemu-system-x86_64"
     qemu_vm_create_machine: "q35"
-  when: "ansible_architecture == 'x86_64'"
+  when: "ansible_facts['architecture'] == 'x86_64'"
 
 - name: "Set platform-specific variables"
   ansible.builtin.set_fact:
@@ -36,12 +36,12 @@
   ansible.builtin.set_fact:
     qemu_vm_create_bios_path: >-
       {{ qemu_vm_create_bios_path | default(
-        (ansible_system == 'Darwin')
+        (ansible_facts['system'] == 'Darwin')
         | ternary(
             qemu_vm_create_bios_path_darwin,
             qemu_vm_create_bios_path_linux))
       }}
-  when: "ansible_architecture in ['aarch64', 'arm64']"
+  when: "ansible_facts['architecture'] in ['aarch64', 'arm64']"
 
 - name: "Validate required variables"
   ansible.builtin.assert:
@@ -152,7 +152,7 @@
       - "{{ qemu_vm_create_seed_iso }}"
       - "{{ qemu_vm_create_seed_dir }}"
     creates: "{{ qemu_vm_create_seed_iso }}"
-  when: "ansible_system == 'Darwin'"
+  when: "ansible_facts['system'] == 'Darwin'"
 
 - name: "Generate cidata ISO for cloud-init (Linux)"
   ansible.builtin.command:
@@ -166,7 +166,7 @@
       - "-rock"
       - "{{ qemu_vm_create_seed_dir }}"
     creates: "{{ qemu_vm_create_seed_iso }}"
-  when: "ansible_system == 'Linux'"
+  when: "ansible_facts['system'] == 'Linux'"
 
 - name: "Build QEMU command arguments"
   ansible.builtin.set_fact:
@@ -176,7 +176,7 @@
         '-machine', qemu_vm_create_machine,
         '-cpu', 'host',
         '-accel',
-        (ansible_system == 'Darwin') | ternary('hvf', 'kvm')
+        (ansible_facts['system'] == 'Darwin') | ternary('hvf', 'kvm')
       ]
       + (qemu_vm_create_bios_path is defined)
         | ternary(
