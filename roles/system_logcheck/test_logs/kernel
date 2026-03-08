@@ -11,3 +11,220 @@ Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered forwarding state
 Mar 03 23:00:28 quilava kernel: tap100i0: entered allmulticast mode
 Mar 03 23:24:38 quilava kernel: tap100i0: left allmulticast mode
 Mar 03 23:24:38 quilava kernel: veth301e9c6(unregistering): left allmulticast mode
+Mar 08 09:08:40 localhost kernel: Command line: BOOT_IMAGE=/boot/vmlinuz-6.12.73+deb13-amd64 root=PARTUUID=963632fe-f867-4df5-b27f-36d6d6fb629c ro console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200 consoleblank=0
+Mar 08 09:08:40 localhost kernel: Kernel command line: BOOT_IMAGE=/boot/vmlinuz-6.12.73+deb13-amd64 root=PARTUUID=963632fe-f867-4df5-b27f-36d6d6fb629c ro console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200 consoleblank=0
+Mar 08 09:08:40 localhost kernel: BIOS-provided physical RAM map:
+Mar 08 09:08:40 localhost kernel: BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+Mar 08 09:08:40 localhost kernel: BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+Mar 08 09:08:40 localhost kernel: printk: legacy bootconsole [earlyser0] enabled
+Mar 08 09:08:40 localhost kernel: printk: legacy console [tty0] enabled
+Mar 08 09:08:40 localhost kernel: printk: legacy console [ttyS0] enabled
+Mar 08 09:08:40 localhost kernel: printk: legacy bootconsole [earlyser0] disabled
+Mar 08 09:08:40 localhost kernel: NX (Execute Disable) protection: active
+Mar 08 09:08:40 localhost kernel: SMBIOS 2.8 present.
+Mar 08 09:08:40 localhost kernel: DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+Mar 08 09:08:40 localhost kernel: DMI: Memory slots populated: 1/1
+Mar 08 09:08:40 localhost kernel: Hypervisor detected: KVM
+Mar 08 09:08:40 localhost kernel: APIC: Static calls initialized
+Mar 08 09:08:40 localhost kernel: APIC: Switch to symmetric I/O mode setup
+Mar 08 09:08:40 localhost kernel: APIC: Switched APIC routing to: physical x2apic
+Mar 08 09:08:40 localhost kernel: x2apic enabled
+Mar 08 09:08:40 localhost kernel: IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+Mar 08 09:08:40 localhost kernel: last_pfn = 0x7ffda max_arch_pfn = 0x400000000
+Mar 08 09:08:40 localhost kernel: e820: update [mem 0x00000000-0x00000fff] usable ==> reserved
+Mar 08 09:08:40 localhost kernel: e820: remove [mem 0x000a0000-0x000fffff] usable
+Mar 08 09:08:40 localhost kernel: e820: reserve RAM buffer [mem 0x0009fc00-0x0009ffff]
+Mar 08 09:08:40 localhost kernel: MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+Mar 08 09:08:40 localhost kernel: Using GB pages for direct mapping
+Mar 08 09:08:40 localhost kernel: RAMDISK: [mem 0x339e5000-0x35ce9fff]
+Mar 08 09:08:40 localhost kernel: No NUMA configuration found
+Mar 08 09:08:40 localhost kernel: Faking a node at [mem 0x0000000000000000-0x000000007ffd9fff]
+Mar 08 09:08:40 localhost kernel: NODE_DATA(0) allocated [mem 0x7ffaf680-0x7ffd9fff]
+Mar 08 09:08:40 localhost kernel: Zone ranges:
+Mar 08 09:08:40 localhost kernel:   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+Mar 08 09:08:40 localhost kernel:   DMA32    [mem 0x0000000001000000-0x000000007ffd9fff]
+Mar 08 09:08:40 localhost kernel:   Normal   empty
+Mar 08 09:08:40 localhost kernel:   Device   empty
+Mar 08 09:08:40 localhost kernel: Movable zone start for each node
+Mar 08 09:08:40 localhost kernel: Early memory node ranges
+Mar 08 09:08:40 localhost kernel:   node   0: [mem 0x0000000000001000-0x000000000009efff]
+Mar 08 09:08:40 localhost kernel: Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffd9fff]
+Mar 08 09:08:40 localhost kernel: On node 0, zone DMA: 1 pages in unavailable ranges
+Mar 08 09:08:40 localhost kernel: On node 0, zone DMA32: 38 pages in unavailable ranges
+Mar 08 09:08:40 localhost kernel: [mem 0x80000000-0xfeffbfff] available for PCI devices
+Mar 08 09:08:40 localhost kernel: Memory: 1974396K/2096608K available (16384K kernel code, 2497K rwdata, 11800K rodata, 4164K init, 4920K bss, 118196K reserved, 0K cma-reserved)
+Mar 08 09:08:40 localhost kernel: Fallback order for Node 0: 0
+Mar 08 09:08:40 localhost kernel: Built 1 zonelists, mobility grouping on.  Total pages: 524152
+Mar 08 09:08:40 localhost kernel: Policy zone: DMA32
+Mar 08 09:08:40 localhost kernel: mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+Mar 08 09:08:40 localhost kernel: Freeing SMP alternatives memory: 40K
+Mar 08 09:08:40 localhost kernel: kvm-clock: Using msrs 4b564d01 and 4b564d00
+Mar 08 09:08:40 localhost kernel: kvm-guest: PV spinlocks enabled
+Mar 08 09:08:40 localhost kernel: kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+Mar 08 09:08:40 localhost kernel: kvm-guest: setup PV IPIs
+Mar 08 09:08:40 localhost kernel: Booting paravirtualized kernel on KVM
+Mar 08 09:08:40 localhost kernel: clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+Mar 08 09:08:40 localhost kernel: clocksource: Switched to clocksource kvm-clock
+Mar 08 09:08:40 localhost kernel: tsc: Detected 2111.998 MHz processor
+Mar 08 09:08:40 localhost kernel: TSC deadline timer available
+Mar 08 09:08:40 localhost kernel: ACPI: Early table checksum verification disabled
+Mar 08 09:08:40 localhost kernel: ACPI: RSDP 0x00000000000F52B0 000014 (v00 BOCHS )
+Mar 08 09:08:40 localhost kernel: ACPI: Reserving FACP table memory at [mem 0x7ffe2cb0-0x7ffe2d23]
+Mar 08 09:08:40 localhost kernel: ACPI: PM-Timer IO Port: 0x608
+Mar 08 09:08:40 localhost kernel: ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+Mar 08 09:08:40 localhost kernel: ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+Mar 08 09:08:40 localhost kernel: ACPI: Using ACPI (MADT) for SMP configuration information
+Mar 08 09:08:40 localhost kernel: ACPI: HPET id: 0x8086a201 base: 0xfed00000
+Mar 08 09:08:40 localhost kernel: ACPI: Core revision 20240827
+Mar 08 09:08:40 localhost kernel: ACPI: Added _OSI(Module Device)
+Mar 08 09:08:40 localhost kernel: ACPI: 2 ACPI AML tables successfully acquired and loaded
+Mar 08 09:08:40 localhost kernel: ACPI: Interpreter enabled
+Mar 08 09:08:40 localhost kernel: ACPI: PM: (supports S0 S5)
+Mar 08 09:08:40 localhost kernel: ACPI: Using IOAPIC for interrupt routing
+Mar 08 09:08:40 localhost kernel: ACPI: Enabled 3 GPEs in block 00 to 0F
+Mar 08 09:08:40 localhost kernel: ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+Mar 08 09:08:40 localhost kernel: ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+Mar 08 09:08:40 localhost kernel: ACPI: \_SB_.LNKD: Enabled at IRQ 11
+Mar 08 09:08:40 localhost kernel: acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
+Mar 08 09:08:40 localhost kernel: acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
+Mar 08 09:08:40 localhost kernel: acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+Mar 08 09:08:40 localhost kernel: acpiphp: Slot [3] registered
+Mar 08 09:08:40 localhost kernel: acpiphp: Slot [1-2] registered
+Mar 08 09:08:40 localhost kernel: PCI: Using configuration type 1 for base access
+Mar 08 09:08:40 localhost kernel: PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+Mar 08 09:08:40 localhost kernel: PCI: Using ACPI for IRQ routing
+Mar 08 09:08:40 localhost kernel: PCI: pci_cache_line_size set to 64 bytes
+Mar 08 09:08:40 localhost kernel: PCI: CLS 0 bytes, default 64
+Mar 08 09:08:40 localhost kernel: PCI host bridge to bus 0000:00
+Mar 08 09:08:40 localhost kernel: pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+Mar 08 09:08:40 localhost kernel: pci_bus 0000:01: extended config space not accessible
+Mar 08 09:08:40 localhost kernel: pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+Mar 08 09:08:40 localhost kernel: pci 0000:00:01.1: BAR 4 [io  0xe120-0xe12f]
+Mar 08 09:08:40 localhost kernel: pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+Mar 08 09:08:40 localhost kernel: pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+Mar 08 09:08:40 localhost kernel: pci 0000:00:1e.0: PCI bridge to [bus 01]
+Mar 08 09:08:40 localhost kernel: pci 0000:00:1e.0:   bridge window [io  0xd000-0xdfff]
+Mar 08 09:08:40 localhost kernel: pci 0000:00:01.0: PIIX3: Enabling Passive Release
+Mar 08 09:08:40 localhost kernel: pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+Mar 08 09:08:40 localhost kernel: CPU topo: Max. logical packages:   1
+Mar 08 09:08:40 localhost kernel: CPU topo: Num. cores per package:     2
+Mar 08 09:08:40 localhost kernel: CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
+Mar 08 09:08:40 localhost kernel: setup_percpu: NR_CPUS:8192 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+Mar 08 09:08:40 localhost kernel: percpu: Embedded 66 pages/cpu s233472 r8192 d28672 u1048576
+Mar 08 09:08:40 localhost kernel: pcpu-alloc: s233472 r8192 d28672 u1048576 alloc=1*2097152
+Mar 08 09:08:40 localhost kernel: pcpu-alloc: [0] 0 1
+Mar 08 09:08:40 localhost kernel: smpboot: CPU0: Intel(R) Core(TM) i5-8500T CPU @ 2.10GHz (family: 0x6, model: 0x9e, stepping: 0xa)
+Mar 08 09:08:40 localhost kernel: smpboot: x86: Booting SMP configuration:
+Mar 08 09:08:40 localhost kernel: smpboot: Total of 2 processors activated (8447.99 BogoMIPS)
+Mar 08 09:08:40 localhost kernel: smp: Bringing up secondary CPUs ...
+Mar 08 09:08:40 localhost kernel: smp: Brought up 1 node, 2 CPUs
+Mar 08 09:08:40 localhost kernel: found SMP MP-table at [mem 0x000f5490-0x000f549f]
+Mar 08 09:08:40 localhost kernel: .... node  #0, CPUs:      #1
+Mar 08 09:08:40 localhost kernel: node 0 deferred pages initialised in 4ms
+Mar 08 09:08:40 localhost kernel: x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT
+Mar 08 09:08:40 localhost kernel: x86/cpu: User Mode Instruction Prevention (UMIP) activated
+Mar 08 09:08:40 localhost kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+Mar 08 09:08:40 localhost kernel: x86/fpu: Enabled xstate features 0x1f, context size is 960 bytes, using 'compacted' format.
+Mar 08 09:08:40 localhost kernel: x86/mm: Memory block size: 128MB
+Mar 08 09:08:40 localhost kernel: Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+Mar 08 09:08:40 localhost kernel: Spectre V2 : Mitigation: IBRS
+Mar 08 09:08:40 localhost kernel: RETBleed: Mitigation: IBRS
+Mar 08 09:08:40 localhost kernel: Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
+Mar 08 09:08:40 localhost kernel: MDS: Mitigation: Clear CPU buffers
+Mar 08 09:08:40 localhost kernel: MMIO Stale Data: Mitigation: Clear CPU buffers
+Mar 08 09:08:40 localhost kernel: SRBDS: Unknown: Dependent on hypervisor status
+Mar 08 09:08:40 localhost kernel: GDS: Unknown: Dependent on hypervisor status
+Mar 08 09:08:40 localhost kernel: Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Mar 08 09:08:40 localhost kernel: Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Mar 08 09:08:40 localhost kernel: rcu: Preemptible hierarchical RCU implementation.
+Mar 08 09:08:40 localhost kernel: rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+Mar 08 09:08:40 localhost kernel: rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Mar 08 09:08:40 localhost kernel:         Trampoline variant of Tasks RCU enabled.
+Mar 08 09:08:40 localhost kernel:         Rude variant of Tasks RCU enabled.
+Mar 08 09:08:40 localhost kernel:         Tracing variant of Tasks RCU enabled.
+Mar 08 09:08:40 localhost kernel: RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+Mar 08 09:08:40 localhost kernel: RCU Tasks Rude: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+Mar 08 09:08:40 localhost kernel: RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+Mar 08 09:08:40 localhost kernel: PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Mar 08 09:08:40 localhost kernel: Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Mar 08 09:08:40 localhost kernel: Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Mar 08 09:08:40 localhost kernel: Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mar 08 09:08:40 localhost kernel: Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mar 08 09:08:40 localhost kernel: futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+Mar 08 09:08:40 localhost kernel: IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+Mar 08 09:08:40 localhost kernel: TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+Mar 08 09:08:40 localhost kernel: TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
+Mar 08 09:08:40 localhost kernel: MPTCP token hash table entries: 2048 (order: 4, 49152 bytes, linear)
+Mar 08 09:08:40 localhost kernel: UDP hash table entries: 1024 (order: 3, 32768 bytes, linear)
+Mar 08 09:08:40 localhost kernel: UDP-Lite hash table entries: 1024 (order: 3, 32768 bytes, linear)
+Mar 08 09:08:40 localhost kernel: SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+Mar 08 09:08:40 localhost kernel: DMA: preallocated 256 KiB GFP_KERNEL pool for atomic allocations
+Mar 08 09:08:40 localhost kernel: DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+Mar 08 09:08:40 localhost kernel: DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+Mar 08 09:08:40 localhost kernel: Dynamic Preempt: voluntary
+Mar 08 09:08:40 localhost kernel: Calibrating delay loop (skipped) preset value.. 4223.99 BogoMIPS (lpj=8447992)
+Mar 08 09:08:40 localhost kernel: Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+Mar 08 09:08:40 localhost kernel: ftrace: allocating 45731 entries in 179 pages
+Mar 08 09:08:40 localhost kernel: ftrace: allocated 179 pages with 5 groups
+Mar 08 09:08:40 localhost kernel: NR_IRQS: 524544, nr_irqs: 440, preallocated irqs: 16
+Mar 08 09:08:40 localhost kernel: Console: colour VGA+ 80x25
+Mar 08 09:08:40 localhost kernel: ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+Mar 08 09:08:40 localhost kernel: LSM: initializing lsm=lockdown,capability,landlock,yama,apparmor,tomoyo,bpf,ipe,ima,evm
+Mar 08 09:08:40 localhost kernel: LSM support for eBPF active
+Mar 08 09:08:40 localhost kernel: landlock: Up and running.
+Mar 08 09:08:40 localhost kernel: Yama: disabled by default; enable with sysctl kernel.yama.*
+Mar 08 09:08:40 localhost kernel: AppArmor: AppArmor initialized
+Mar 08 09:08:40 localhost kernel: AppArmor: AppArmor Filesystem Enabled
+Mar 08 09:08:40 localhost kernel: TOMOYO Linux initialized
+Mar 08 09:08:40 localhost kernel: Kernel/User page tables isolation: enabled
+Mar 08 09:08:40 localhost kernel: Performance Events: Skylake events, full-width counters, Intel PMU driver.
+Mar 08 09:08:40 localhost kernel: ... version:                2
+Mar 08 09:08:40 localhost kernel: ... bit width:              48
+Mar 08 09:08:40 localhost kernel: ... generic registers:      8
+Mar 08 09:08:40 localhost kernel: ... value mask:             0000ffffffffffff
+Mar 08 09:08:40 localhost kernel: ... max period:             00007fffffffffff
+Mar 08 09:08:40 localhost kernel: ... fixed-purpose events:   3
+Mar 08 09:08:40 localhost kernel: ... event mask:             00000007000000ff
+Mar 08 09:08:40 localhost kernel: signal: max sigframe size: 2032
+Mar 08 09:08:40 localhost kernel: pid_max: default: 32768 minimum: 301
+Mar 08 09:08:40 localhost kernel: random: crng init done
+Mar 08 09:08:40 localhost kernel: devtmpfs: initialized
+Mar 08 09:08:40 localhost kernel: pinctrl core: initialized pinctrl subsystem
+Mar 08 09:08:40 localhost kernel: kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+Mar 08 09:08:40 localhost kernel: PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+Mar 08 09:08:40 localhost kernel: NET: Registered PF_NETLINK/PF_ROUTE protocol family
+Mar 08 09:08:40 localhost kernel: NET: Registered PF_INET protocol family
+Mar 08 09:08:40 localhost kernel: NET: Registered PF_UNIX/PF_LOCAL protocol family
+Mar 08 09:08:40 localhost kernel: NET: Registered PF_XDP protocol family
+Mar 08 09:08:40 localhost kernel: TCP: Hash tables configured (established 16384 bind 16384)
+Mar 08 09:08:40 localhost kernel: pps_core: LinuxPPS API ver. 1 registered
+Mar 08 09:08:40 localhost kernel: pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+Mar 08 09:08:40 localhost kernel: PTP clock support registered
+Mar 08 09:08:40 localhost kernel: NetLabel: Initializing
+Mar 08 09:08:40 localhost kernel: NetLabel:  domain hash size = 128
+Mar 08 09:08:40 localhost kernel: NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+Mar 08 09:08:40 localhost kernel: NetLabel:  unlabeled traffic allowed by default
+Mar 08 09:08:40 localhost kernel: HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+Mar 08 09:08:40 localhost kernel: HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+Mar 08 09:08:40 localhost kernel: iommu: Default domain type: Translated
+Mar 08 09:08:40 localhost kernel: iommu: DMA domain TLB invalidation policy: lazy mode
+Mar 08 09:08:40 localhost kernel: EDAC MC: Ver: 3.0.0
+Mar 08 09:08:40 localhost kernel: vgaarb: loaded
+Mar 08 09:08:40 localhost kernel: pci 0000:00:02.0: vgaarb: setting as boot VGA device
+Mar 08 09:08:40 localhost kernel: hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+Mar 08 09:08:40 localhost kernel: hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+Mar 08 09:08:40 localhost kernel: VFS: Disk quotas dquot_6.6.0
+Mar 08 09:08:40 localhost kernel: VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+Mar 08 09:08:40 localhost kernel: pnp: PnP ACPI init
+Mar 08 09:08:40 localhost kernel: pnp: PnP ACPI: found 4 devices
+Mar 08 09:08:40 localhost kernel: pnp 00:02: [dma 2]
+Mar 08 09:08:40 localhost kernel: audit: initializing netlink subsys (disabled)
+Mar 08 09:08:40 localhost kernel: audit: type=2000 audit(1772960917.969:1): state=initialized audit_enabled=0 res=1
+Mar 08 09:08:40 localhost kernel: thermal_sys: Registered thermal governor 'fair_share'
+Mar 08 09:08:40 localhost kernel: thermal_sys: Registered thermal governor 'step_wise'
+Mar 08 09:08:40 localhost kernel: cpuidle: using governor ladder
+Mar 08 09:08:40 localhost kernel: cpuidle: using governor menu
+Mar 08 09:08:40 localhost kernel: clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+Mar 08 09:08:40 localhost kernel: tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
+Mar 08 09:08:40 localhost kernel: Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+Mar 08 09:08:40 localhost kernel: PCI: Using E820 reservations for host bridge windows
