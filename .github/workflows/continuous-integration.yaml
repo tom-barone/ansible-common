@@ -12,8 +12,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  continuous-integration:
+  lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: "jdx/mise-action@v3"
+        with:
+          cache_key: "mise-{{platform}}-{{version}}-{{file_hash}}"
+          version: "2026.3.1"
+
+      - name: "Install dependencies"
+        run: "just install"
+
+      - name: "Run linters"
+        shell: bash
+        run: "just lint"
+
+  test-discover:
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.discover.outputs.tests }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: "Discover tests"
+        id: discover
+        run: |
+          tests=$(find tests -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "tests=$tests" >> "$GITHUB_OUTPUT"
+
+  test-run:
+    needs: [test-discover]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: ${{ fromJson(needs.test-discover.outputs.tests) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -44,9 +79,8 @@ jobs:
         run: >-
           ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
 
-      - name: "Run linters"
-        shell: bash
-        run: "just lint"
+      - name: "Install dependencies"
+        run: "just install"
 
-      - name: Run tests
-        run: "just test --no-capture"
+      - name: "Run test: ${{ matrix.test }}"
+        run: "just test --no-capture --name ${{ matrix.test }}"
