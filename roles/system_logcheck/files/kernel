@@ -123,3 +123,7 @@
 .* .*kernel.*: audit: .*$
 .* .*kernel.*: thermal_sys: .*$
 .* .*kernel.*: cpuidle: .*$
+.* .*kernel.*: tun: Universal TUN/TAP device driver.*$
+.* .*kernel.*: Initializing XFRM netlink socket$
+.* .*kernel.*: bridge: filtering via arp/ip/ip6tables is no longer available by default\..*$
+.* .*kernel.*: evm: overlay not supported$

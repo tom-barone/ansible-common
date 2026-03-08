@@ -12,4 +12,6 @@
 .* .*wpa_supplicant.*: .*: CTRL-EVENT-BEACON-LOSS.*$
 .* .*dmeventd.*: No longer monitoring thin pool.*$
 .* .*dmeventd.*: Monitoring thin pool.*$
+.* .*sh\[.*\]: Completed socket interaction for boot stage .*$
+.* .*cloud-init\[.*\]:.*$
 .*I am a logcheck test that should be filtered out.*$

@@ -228,3 +228,7 @@ Mar 08 09:08:40 localhost kernel: clocksource: acpi_pm: mask: 0xffffff max_cycle
 Mar 08 09:08:40 localhost kernel: tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
 Mar 08 09:08:40 localhost kernel: Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
 Mar 08 09:08:40 localhost kernel: PCI: Using E820 reservations for host bridge windows
+Mar 08 09:32:56 forgejo kernel: tun: Universal TUN/TAP device driver, 1.6
+Mar 08 09:32:57 forgejo kernel: Initializing XFRM netlink socket
+Mar 08 09:32:57 forgejo kernel: bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+Mar 08 09:32:59 forgejo kernel: evm: overlay not supported

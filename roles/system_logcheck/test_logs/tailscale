@@ -37,3 +37,65 @@ Mar 05 18:53:36 quilava tailscaled[197800]: wgengine: Reconfig: configuring user
 Mar 05 18:53:39 quilava tailscaled[197800]: wgengine: idle peer [8JL4V] now active, reconfiguring WireGuard
 Mar 06 08:55:21 quilava tailscaled[197800]: logtail: upload: log upload of 285 bytes not-compressed failed 500: failed to persist logs
 Mar 06 08:58:16 quilava tailscaled[197800]: logtail: upload: log upload of 285 bytes not-compressed failed 503: server is shutting down
+Mar 08 09:32:56 forgejo tailscaled[655]: TPM: error opening: stat /dev/tpmrm0: no such file or directory
+Mar 08 09:32:56 forgejo tailscaled[655]: logtail started
+Mar 08 09:32:56 forgejo tailscaled[655]: Program starting: v1.94.2-t0a29cf18b-g3f044c9f6, Go 1.25.5: []string{"/usr/sbin/tailscaled", "--state=/var/lib/tailscale/tailscaled.state", "--socket=/run/tailscale/tailscaled.sock", "--port=41641"}
+Mar 08 09:32:56 forgejo tailscaled[655]: LogID: 6463f8c56c4c2e0bd087a02234edd02b7216a0b2dde2b3b0327875035c0ec5bb
+Mar 08 09:32:56 forgejo tailscaled[655]: logpolicy: using $STATE_DIRECTORY, "/var/lib/tailscale"
+Mar 08 09:32:56 forgejo tailscaled[655]: dns: [resolved-ping=yes rc=resolved resolved=nss nm=no resolv-conf-mode=stub ret=systemd-resolved]
+Mar 08 09:32:56 forgejo tailscaled[655]: dns: using "systemd-resolved" mode
+Mar 08 09:32:56 forgejo tailscaled[655]: creating dns cleanup: route ip+net: no such network interface
+Mar 08 09:32:56 forgejo tailscaled[655]: wgengine.NewUserspaceEngine(tun "tailscale0") ...
+Mar 08 09:32:56 forgejo tailscaled[655]: dns: using *dns.resolvedManager
+Mar 08 09:32:56 forgejo tailscaled[655]: link state: interfaces.State{defaultRoute=eth0 ifs={eth0:[192.168.50.24/24 llu6]} v4=true v6=false}
+Mar 08 09:32:56 forgejo tailscaled[655]: router: using firewall mode pref
+Mar 08 09:32:56 forgejo tailscaled[655]: magicsock: disco key = d:82cb9c5df6f5651f
+Mar 08 09:32:56 forgejo tailscaled[655]: Creating WireGuard device...
+Mar 08 09:32:56 forgejo tailscaled[655]: Bringing WireGuard device up...
+Mar 08 09:32:56 forgejo tailscaled[655]: Bringing router up...
+Mar 08 09:32:56 forgejo tailscaled[655]: router: default choosing iptables
+Mar 08 09:32:56 forgejo tailscaled[655]: external route: up
+Mar 08 09:32:56 forgejo tailscaled[655]: router: netfilter running in iptables mode v6 = true, v6filter = true, v6nat = true
+Mar 08 09:32:56 forgejo tailscaled[655]: Clearing router settings...
+Mar 08 09:32:56 forgejo tailscaled[655]: Starting network monitor...
+Mar 08 09:32:56 forgejo tailscaled[655]: Engine created.
+Mar 08 09:32:56 forgejo tailscaled[655]: pm: using backend prefs for "profile-77e8": Prefs{ra=false dns=true want=true routes=[] statefulFiltering=false tags=tag:proxmox-vm nf=on update=on Persist{o=, n=[QgpkZ] u="forgejo.taile4f997.ts.net" ak=-}}
+Mar 08 09:32:56 forgejo tailscaled[655]: envknob: PORT="41641"
+Mar 08 09:32:56 forgejo tailscaled[655]: linkChange: in state NoState; PAC or proxyConfig changed; updating routes
+Mar 08 09:32:56 forgejo tailscaled[655]: got LocalBackend in 62ms
+Mar 08 09:32:56 forgejo tailscaled[655]: Start
+Mar 08 09:32:56 forgejo tailscaled[655]: offline auto-update: starting update checks
+Mar 08 09:32:56 forgejo tailscaled[655]: ipnext: active extensions: relayserver, taildrop, conn25, portlist, posture, clientupdate
+Mar 08 09:32:56 forgejo tailscaled[655]: Backend: logs: be:6463f8c56c4c2e0bd087a02234edd02b7216a0b2dde2b3b0327875035c0ec5bb fe:
+Mar 08 09:32:56 forgejo tailscaled[655]: control: client.Login(0)
+Mar 08 09:32:56 forgejo tailscaled[655]: monitor: gateway and self IP changed: gw=192.168.50.1 self=192.168.50.24
+Mar 08 09:32:56 forgejo tailscaled[655]: health(warnable=warming-up): error: Tailscale is starting. Please wait.
+Mar 08 09:32:56 forgejo tailscaled[655]: control: doLogin(regen=false, hasUrl=false)
+Mar 08 09:32:57 forgejo tailscaled[655]: control: control server key from https://controlplane.tailscale.com: ts2021=[fSeS+], legacy=[nlFWp]
+Mar 08 09:32:57 forgejo tailscaled[655]: control: RegisterReq: onode= node=[QgpkZ] fup=false nks=false
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.18.0.1/0, dst=172.18.0.1/32, gw=, outif=4, table=255
+Mar 08 09:32:57 forgejo tailscaled[655]: magicsock: 0 active derp conns
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.18.0.1/0, dst=172.18.255.255/32, gw=, outif=4, table=255
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.18.0.1/0, dst=172.18.0.0/16, gw=, outif=4, table=254
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.19.0.1/0, dst=172.19.0.1/32, gw=, outif=5, table=255
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.19.0.1/0, dst=172.19.255.255/32, gw=, outif=5, table=255
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.19.0.1/0, dst=172.19.0.0/16, gw=, outif=5, table=254
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.17.0.1/0, dst=172.17.0.1/32, gw=, outif=6, table=255
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.17.0.1/0, dst=172.17.255.255/32, gw=, outif=6, table=255
+Mar 08 09:32:57 forgejo tailscaled[655]: monitor: RTM_NEWROUTE: src=172.17.0.1/0, dst=172.17.0.0/16, gw=, outif=6, table=254
+Mar 08 09:32:58 forgejo tailscaled[655]: control: RegisterReq: got response; nodeKeyExpired=false, machineAuthorized=true; authURL=false
+Mar 08 09:32:58 forgejo tailscaled[655]: active login: forgejo.taile4f997.ts.net
+Mar 08 09:32:58 forgejo tailscaled[655]: offline auto-update: stopping update checks
+Mar 08 09:32:58 forgejo tailscaled[655]: Switching ipn state NoState -> Starting (WantRunning=true, nm=true)
+Mar 08 09:32:58 forgejo tailscaled[655]: magicsock: SetPrivateKey called (init)
+Mar 08 09:32:58 forgejo tailscaled[655]: portmapper: UPnP meta changed: [{Location:http://192.168.50.1:38741/rootDesc.xml Server:AsusWRT/388 UPnP/1.1 MiniUPnPd/2.2.0 USN:uuid:3ddcd1d3-2380-45f5-b069-bcfce72c5140::urn:schemas-upnp-org:device:InternetGatewayDevice:1}]
+Mar 08 09:32:58 forgejo tailscaled[655]: peerapi: serving on http://100.112.28.96:36167
+Mar 08 09:32:58 forgejo tailscaled[655]: peerapi: serving on http://[fd7a:115c:a1e0::f53b:1c60]:61286
+Mar 08 09:32:58 forgejo tailscaled[655]: [RATELIMIT] format("router: portUpdate(port=%v, network=%s)")
+Mar 08 09:32:59 forgejo tailscaled[655]: magicsock: 0 active derp conns
+Mar 08 09:33:03 forgejo tailscaled[655]: magicsock: home DERP changing from derp-0 [0ms] to derp-5 [36ms]
+Mar 08 09:33:03 forgejo tailscaled[655]: magicsock: home is now derp-5 (syd)
+Mar 08 09:33:03 forgejo tailscaled[655]: magicsock: adding connection to derp-5 for home-keep-alive
+Mar 08 09:33:03 forgejo tailscaled[655]: derphttp.Client.Connect: connecting to derp-5 (syd)
+Mar 08 09:33:03 forgejo tailscaled[655]: Switching ipn state Starting -> Running (WantRunning=true, nm=true)
+Mar 08 09:33:03 forgejo tailscaled[655]: magicsock: derp-5 connected; connGen=1
