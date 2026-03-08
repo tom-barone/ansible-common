@@ -11,3 +11,115 @@
 .* .*kernel.*:.*tap.*left allmulticast mode.*$
 .* .*kernel.*:.*veth.*entered allmulticast mode.*$
 .* .*kernel.*:.*veth.*left allmulticast mode.*$
+.* .*kernel.*: (Kernel )?[Cc]ommand line: .*$
+.* .*kernel.*: BIOS-provided physical RAM map:$
+.* .*kernel.*: BIOS-e820: \[mem 0x[0-9a-f]+-0x[0-9a-f]+\] (usable|reserved)$
+.* .*kernel.*: printk: legacy (bootconsole|console) \[.*\] (enabled|disabled)$
+.* .*kernel.*: NX \(Execute Disable\) protection: active$
+.* .*kernel.*: SMBIOS [0-9.]+ present\.$
+.* .*kernel.*: DMI: .*$
+.* .*kernel.*: Hypervisor detected: .*$
+.* .*kernel.*: APIC: .*$
+.* .*kernel.*: x2apic enabled$
+.* .*kernel.*: IOAPIC\[[0-9]+\]: .*$
+.* .*kernel.*: last_pfn = .*$
+.* .*kernel.*: e820: .*$
+.* .*kernel.*: MTRR map: .*$
+.* .*kernel.*: Using GB pages for direct mapping$
+.* .*kernel.*: RAMDISK: \[mem 0x[0-9a-f]+-0x[0-9a-f]+\]$
+.* .*kernel.*: No NUMA configuration found$
+.* .*kernel.*: Faking a node at \[mem .*\]$
+.* .*kernel.*: NODE_DATA\([0-9]+\) allocated \[mem .*\]$
+.* .*kernel.*: Zone ranges:$
+.* .*kernel.*:   (DMA|DMA32|Normal|Device) .*$
+.* .*kernel.*: Movable zone start for each node$
+.* .*kernel.*: Early memory node ranges$
+.* .*kernel.*:   node   [0-9]+: \[mem 0x[0-9a-f]+-0x[0-9a-f]+\]$
+.* .*kernel.*: Initmem setup node [0-9]+ \[mem 0x[0-9a-f]+-0x[0-9a-f]+\]$
+.* .*kernel.*: On node [0-9]+, zone DMA[0-9]*: [0-9]+ pages in unavailable ranges$
+.* .*kernel.*: \[mem 0x[0-9a-f]+-0x[0-9a-f]+\] available for PCI devices$
+.* .*kernel.*: Memory: .*$
+.* .*kernel.*: Fallback order for Node [0-9]+: .*$
+.* .*kernel.*: Built [0-9]+ zonelists, .*$
+.* .*kernel.*: Policy zone: .*$
+.* .*kernel.*: mem auto-init: .*$
+.* .*kernel.*: Freeing SMP alternatives memory: .*$
+.* .*kernel.*: kvm-clock: .*$
+.* .*kernel.*: kvm-guest: .*$
+.* .*kernel.*: Booting paravirtualized kernel on .*$
+.* .*kernel.*: clocksource: .*$
+.* .*kernel.*: tsc: Detected .* MHz processor$
+.* .*kernel.*: TSC deadline timer available$
+.* .*kernel.*: ACPI: .*$
+.* .*kernel.*: acpi PNP[0-9A-Z]+:[0-9]+: .*$
+.* .*kernel.*: acpiphp: .*$
+.* .*kernel.*: PCI: .*$
+.* .*kernel.*: PCI host bridge to bus .*$
+.* .*kernel.*: pci_bus [0-9a-f:]+: .*$
+.* .*kernel.*: pci [0-9a-f:]+\.[0-9]+: .*$
+.* .*kernel.*: CPU topo: .*$
+.* .*kernel.*: setup_percpu: .*$
+.* .*kernel.*: percpu: .*$
+.* .*kernel.*: pcpu-alloc: .*$
+.* .*kernel.*: smpboot: .*$
+.* .*kernel.*: smp: .*$
+.* .*kernel.*: found SMP MP-table at .*$
+.* .*kernel.*: \.\.\.\. node  #[0-9]+, CPUs: .*$
+.* .*kernel.*: node [0-9]+ deferred pages initialised in .*$
+.* .*kernel.*: x86/PAT: .*$
+.* .*kernel.*: x86/cpu: .*$
+.* .*kernel.*: x86/fpu: .*$
+.* .*kernel.*: x86/mm: .*$
+.* .*kernel.*: Spectre V[12] : .*$
+.* .*kernel.*: RETBleed: .*$
+.* .*kernel.*: Speculative Store Bypass: .*$
+.* .*kernel.*: MDS: .*$
+.* .*kernel.*: MMIO Stale Data: .*$
+.* .*kernel.*: SRBDS: .*$
+.* .*kernel.*: GDS: .*$
+.* .*kernel.*: Last level [id]TLB entries: .*$
+.* .*kernel.*: rcu: .*$
+.* .*kernel.*:         (Trampoline|Rude|Tracing) variant of Tasks RCU enabled\.$
+.* .*kernel.*: RCU Tasks.*: Setting shift to .*$
+.* .*kernel.*: .* hash table entries: .*$
+.* .*kernel.*: SLUB: .*$
+.* .*kernel.*: DMA: preallocated .*$
+.* .*kernel.*: Dynamic Preempt: .*$
+.* .*kernel.*: Calibrating delay loop .*$
+.* .*kernel.*: Timer migration: .*$
+.* .*kernel.*: ftrace: .*$
+.* .*kernel.*: NR_IRQS: .*$
+.* .*kernel.*: Console: colour VGA\+ .*$
+.* .*kernel.*: \.\.TIMER: .*$
+.* .*kernel.*: LSM: .*$
+.* .*kernel.*: LSM support for eBPF active$
+.* .*kernel.*: landlock: Up and running\.$
+.* .*kernel.*: Yama: .*$
+.* .*kernel.*: AppArmor: .*$
+.* .*kernel.*: TOMOYO Linux initialized$
+.* .*kernel.*: Kernel/User page tables isolation: .*$
+.* .*kernel.*: Performance Events: .*$
+.* .*kernel.*: \.\.\. .*:  .*$
+.* .*kernel.*: signal: max sigframe size: .*$
+.* .*kernel.*: pid_max: .*$
+.* .*kernel.*: random: crng init done$
+.* .*kernel.*: devtmpfs: initialized$
+.* .*kernel.*: pinctrl core: .*$
+.* .*kernel.*: kprobes: .*$
+.* .*kernel.*: PM: hibernation: .*$
+.* .*kernel.*: NET: Registered .*$
+.* .*kernel.*: TCP: .*$
+.* .*kernel.*: pps_core: .*$
+.* .*kernel.*: PTP clock support registered$
+.* .*kernel.*: NetLabel:.*$
+.* .*kernel.*: HugeTLB: .*$
+.* .*kernel.*: iommu: .*$
+.* .*kernel.*: EDAC MC: .*$
+.* .*kernel.*: vgaarb: .*$
+.* .*kernel.*: hpet[0-9]+: .*$
+.* .*kernel.*: VFS: .*$
+.* .*kernel.*: pnp: .*$
+.* .*kernel.*: pnp [0-9:]+: .*$
+.* .*kernel.*: audit: .*$
+.* .*kernel.*: thermal_sys: .*$
+.* .*kernel.*: cpuidle: .*$
