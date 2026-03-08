@@ -1,4 +1,5 @@
 {
+	"name": "ansible-common",
   "devDependencies": {
     "prettier": "3.7.4"
   }
