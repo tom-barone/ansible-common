@@ -1,0 +1,11 @@
+entryPoints:
+  http:
+    address: ":80"
+
+providers:
+  file:
+    filename: "{{ traefik_install_config_dir }}/routes.yml"
+    watch: true
+
+log:
+  level: "INFO"

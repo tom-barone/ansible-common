@@ -1,0 +1,12 @@
+[Unit]
+Description=Traefik
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart={{ traefik_install_binary_path }} --configFile={{ traefik_install_config_dir }}/traefik.yml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

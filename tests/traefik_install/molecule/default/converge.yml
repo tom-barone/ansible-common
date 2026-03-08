@@ -1,0 +1,7 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply traefik_install role"
+      ansible.builtin.include_role:
+        name: "traefik_install"

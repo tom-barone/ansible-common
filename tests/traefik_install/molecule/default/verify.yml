@@ -1,0 +1,51 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given traefik was installed
+    # When we check for the binary
+    # Then it exists and is executable
+    - name: "Check binary exists"
+      ansible.builtin.stat:
+        path: "/usr/local/bin/traefik"
+      register: "_traefik_binary"
+
+    - name: "Assert binary exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "_traefik_binary.stat.exists"
+          - "_traefik_binary.stat.executable"
+
+    # Given traefik was installed
+    # When we check the systemd service
+    # Then it is active
+    - name: "Check service status"
+      ansible.builtin.systemd:
+        name: "traefik"
+      register: "_traefik_service"
+
+    - name: "Assert service is running"
+      ansible.builtin.assert:
+        that:
+          - "_traefik_service.status.ActiveState == 'active'"
+
+    # Given traefik was installed
+    # When we check port 80
+    # Then it is listening
+    - name: "Check port 80 is listening"
+      ansible.builtin.wait_for:
+        port: 80
+        timeout: 5
+
+    # Given traefik was installed
+    # When we check the config file
+    # Then it exists
+    - name: "Check config file exists"
+      ansible.builtin.stat:
+        path: "/etc/traefik/traefik.yml"
+      register: "_traefik_config"
+
+    - name: "Assert config file exists"
+      ansible.builtin.assert:
+        that:
+          - "_traefik_config.stat.exists"
