@@ -1,0 +1,44 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "system_port_forward_remove_external_port is defined"
+      - "system_port_forward_remove_protocol is defined"
+    msg: "Missing a required variable"
+
+- name: "Install required packages"
+  ansible.builtin.apt:
+    name:
+      - "miniupnpc"
+      - "cron"
+    state: "present"
+    update_cache: true
+
+- name: "Check if port forward exists"
+  ansible.builtin.command:
+    cmd: "upnpc -l"
+  register: "system_port_forward_remove_check"
+  changed_when: false
+  failed_when: false
+
+- name: "Remove port forward"
+  ansible.builtin.command:
+    argv:
+      - "upnpc"
+      - "-d"
+      - "{{ system_port_forward_remove_external_port }}"
+      - "{{ system_port_forward_remove_protocol }}"
+  when: >-
+    system_port_forward_remove_external_port | string
+    in (system_port_forward_remove_check.stdout | default(''))
+  changed_when: "system_port_forward_remove_result.rc == 0"
+  failed_when: false
+  register: "system_port_forward_remove_result"
+
+- name: "Remove cron job for port forward refresh"
+  ansible.builtin.cron:
+    name: >-
+      upnpc refresh
+      {{ system_port_forward_remove_external_port }}
+      {{ system_port_forward_remove_protocol }}
+    state: "absent"

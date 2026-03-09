@@ -1,0 +1,12 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply system_port_forward_add role"
+      ansible.builtin.include_role:
+        name: "system_port_forward_add"
+      vars:
+        system_port_forward_add_description: "test-forward"
+        system_port_forward_add_internal_port: "8080"
+        system_port_forward_add_external_port: "9090"
+        system_port_forward_add_protocol: "TCP"

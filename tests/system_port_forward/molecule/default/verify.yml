@@ -1,0 +1,58 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check miniupnpc is installed"
+      ansible.builtin.command: "dpkg -s miniupnpc"
+      register: "miniupnpc_status"
+      changed_when: false
+
+    - name: "Assert miniupnpc package is installed"
+      ansible.builtin.assert:
+        that:
+          - "miniupnpc_status.rc == 0"
+        msg: "miniupnpc package is not installed"
+
+    - name: "Check upnpc binary exists"
+      ansible.builtin.command: "which upnpc"
+      register: "upnpc_binary"
+      changed_when: false
+
+    - name: "Assert upnpc binary exists"
+      ansible.builtin.assert:
+        that:
+          - "upnpc_binary.rc == 0"
+        msg: "upnpc binary not found"
+
+    - name: "Check cron job was created by add role"
+      ansible.builtin.command: "crontab -l"
+      register: "crontab_after_add"
+      changed_when: false
+
+    - name: "Assert cron job exists"
+      ansible.builtin.assert:
+        that:
+          - "'upnpc refresh 9090 TCP' in crontab_after_add.stdout"
+        msg: "Cron job should exist after add role"
+
+    - name: "Apply system_port_forward_remove role"
+      ansible.builtin.include_role:
+        name: "system_port_forward_remove"
+      vars:
+        system_port_forward_remove_external_port: "9090"
+        system_port_forward_remove_protocol: "TCP"
+
+    - name: "Check crontab after remove"
+      ansible.builtin.command: "crontab -l"
+      register: "crontab_after_remove"
+      changed_when: false
+      failed_when: false
+
+    - name: "Assert cron job was removed"
+      ansible.builtin.assert:
+        that:
+          - >-
+            crontab_after_remove.rc != 0 or
+            'upnpc refresh 9090 TCP'
+            not in crontab_after_remove.stdout
+        msg: "Cron job should be removed"
