@@ -14,7 +14,7 @@
 .* .*tailscaled.*: localapi: \[PATCH\] /localapi/v0/prefs$
 .* .*tailscaled.*: localapi: \[POST\] /localapi/v0/check-prefs$
 .* .*tailscaled.*: logtail: upload succeeded after .* failures and .*$
-.* .*tailscaled.*: logtail: upload: log upload of .* bytes not-compressed failed.*: .*$
+.* .*tailscaled.*: logtail: upload: log upload of .* bytes (not-)?compressed failed.*: .*$
 .* .*tailscaled.*: magicsock: [0-9]+ active derp conns.*$
 .* .*tailscaled.*: magicsock: .* in peerMap for node.*$
 .* .*tailscaled.*: magicsock: .*: node .* now using .*mtu=.*$
@@ -29,6 +29,7 @@
 .* .*tailscaled.*: wgengine: Reconfig: configuring DNS$
 .* .*tailscaled.*: wgengine: Reconfig: configuring router$
 .* .*tailscaled.*: wgengine: Reconfig: configuring userspace WireGuard config \(with [0-9]+/[0-9]+ peers\)$
+.* .*tailscaled.*: wgengine: Reconfig: removing session keys for [0-9]+ peers$
 .* .*tailscaled.*: wgengine: Reconfig: user dialer$
 .* .*tailscaled.*: wgengine: idle peer \[.*\] now active, reconfiguring WireGuard$
 .* .*tailscaled.*: wgengine: set DNS config again after major link change$

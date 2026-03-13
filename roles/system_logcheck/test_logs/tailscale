@@ -99,3 +99,5 @@ Mar 08 09:33:03 forgejo tailscaled[655]: magicsock: adding connection to derp-5 
 Mar 08 09:33:03 forgejo tailscaled[655]: derphttp.Client.Connect: connecting to derp-5 (syd)
 Mar 08 09:33:03 forgejo tailscaled[655]: Switching ipn state Starting -> Running (WantRunning=true, nm=true)
 Mar 08 09:33:03 forgejo tailscaled[655]: magicsock: derp-5 connected; connGen=1
+Mar 09 21:04:26 traefik tailscaled[3260]: logtail: upload: log upload of 294 bytes compressed failed: Post "https://log.tailscale.com/c/tailnode.log.tailscale.io/f0b146ef18acbf06a5114f8cb6c858540740eb8b50d348357248b1f9e8264e52": EOF
+Mar 10 00:16:07 traefik tailscaled[3260]: wgengine: Reconfig: removing session keys for 1 peers
