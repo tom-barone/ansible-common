@@ -1,0 +1,242 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - >-
+        github_actions_self_hosted_runner_install_url
+        is defined
+      - >-
+        github_actions_self_hosted_runner_install_token
+        is defined
+    msg: "Missing a required variable"
+
+- name: "Detect architecture"
+  ansible.builtin.set_fact:
+    github_actions_self_hosted_runner_install_arch: >-
+      {{ 'arm64'
+      if ansible_facts["architecture"] == 'aarch64'
+      else 'x64' }}
+
+- name: "Install dependencies"
+  ansible.builtin.apt:
+    name: "zstd"
+    state: "present"
+    update_cache: true
+
+- name: "Create runner user"
+  ansible.builtin.user:
+    name: >-
+      {{ github_actions_self_hosted_runner_install_user }}
+    system: true
+    shell: "/bin/bash"
+    create_home: true
+    groups: "docker"
+    append: true
+
+- name: "Create directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: >-
+      {{ github_actions_self_hosted_runner_install_user }}
+    mode: "0755"
+  loop:
+    - >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+    - >-
+      {{ github_actions_self_hosted_runner_install_cache_dir }}
+
+- name: "Deploy cache server docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: >-
+      {{ github_actions_self_hosted_runner_install_cache_dir
+      }}/docker-compose.yml
+    mode: "0600"
+  notify: "Restart cache server"
+
+- name: "Start cache server"
+  ansible.builtin.command:
+    cmd: "docker compose up -d"
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_cache_dir
+      }}
+  register: >-
+    github_actions_self_hosted_runner_install_cache_up
+  changed_when: >
+    'Started' in
+    github_actions_self_hosted_runner_install_cache_up.stderr
+    or 'Created' in
+    github_actions_self_hosted_runner_install_cache_up.stderr
+
+- name: "Wait for cache server to be ready"
+  ansible.builtin.uri:
+    url: >-
+      http://localhost:{{
+      github_actions_self_hosted_runner_install_cache_port
+      }}
+    status_code:
+      - 200
+      - 404
+  register: >-
+    github_actions_self_hosted_runner_install_cache_health
+  until: >-
+    github_actions_self_hosted_runner_install_cache_health.status
+    in [200, 404]
+  retries: 30
+  delay: 5
+
+- name: "Check if runner binary exists"
+  ansible.builtin.stat:
+    path: >-
+      {{ github_actions_self_hosted_runner_install_dir
+      }}/run.sh
+  register: >-
+    github_actions_self_hosted_runner_install_binary
+
+- name: "Build download URL"
+  vars:
+    github_actions_self_hosted_runner_install_base: >-
+      https://github.com/falcondev-oss/github-actions-runner
+    github_actions_self_hosted_runner_install_file: >-
+      actions-runner-linux-{{
+      github_actions_self_hosted_runner_install_arch
+      }}-{{
+      github_actions_self_hosted_runner_install_version
+      }}.tar.gz
+  ansible.builtin.set_fact:
+    github_actions_self_hosted_runner_install_download_url: >-
+      {{
+      github_actions_self_hosted_runner_install_base
+      }}/releases/download/v{{
+      github_actions_self_hosted_runner_install_version
+      }}/{{
+      github_actions_self_hosted_runner_install_file
+      }}
+
+- name: "Download runner tarball"
+  ansible.builtin.get_url:
+    url: >-
+      {{
+      github_actions_self_hosted_runner_install_download_url
+      }}
+    dest: "/tmp/github-runner.tar.gz"
+    mode: "0644"
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_binary.stat.exists
+
+- name: "Extract runner"
+  ansible.builtin.unarchive:
+    src: "/tmp/github-runner.tar.gz"
+    dest: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+    remote_src: true
+    owner: >-
+      {{ github_actions_self_hosted_runner_install_user }}
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_binary.stat.exists
+
+- name: "Install runner dependencies"
+  ansible.builtin.command:
+    cmd: "./bin/installdependencies.sh"
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+  changed_when: true
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_binary.stat.exists
+
+- name: "Check if runner is already configured"
+  ansible.builtin.stat:
+    path: >-
+      {{ github_actions_self_hosted_runner_install_dir
+      }}/.runner
+  register: >-
+    github_actions_self_hosted_runner_install_configured
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
+
+- name: "Configure runner"
+  vars:
+    github_actions_self_hosted_runner_install_label_str: >-
+      {{
+      github_actions_self_hosted_runner_install_labels
+      | join(',') }}
+  ansible.builtin.command:
+    cmd: >-
+      ./config.sh
+      --url {{
+      github_actions_self_hosted_runner_install_url }}
+      --token {{
+      github_actions_self_hosted_runner_install_token }}
+      --runnergroup {{
+      github_actions_self_hosted_runner_install_runner_group
+      }}
+      --labels {{
+      github_actions_self_hosted_runner_install_label_str
+      }}
+      --unattended
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+  become: true
+  become_user: >-
+    {{ github_actions_self_hosted_runner_install_user }}
+  changed_when: true
+  no_log: true
+  when:
+    - >-
+      not
+      github_actions_self_hosted_runner_install_skip_registration
+    - >-
+      not
+      github_actions_self_hosted_runner_install_configured.stat.exists
+
+- name: "Add cache URL to .env"
+  ansible.builtin.lineinfile:
+    path: >-
+      {{ github_actions_self_hosted_runner_install_dir
+      }}/.env
+    line: >-
+      ACTIONS_RESULTS_URL=http://localhost:{{
+      github_actions_self_hosted_runner_install_cache_port
+      }}/
+    create: true
+    mode: "0644"
+    owner: >-
+      {{ github_actions_self_hosted_runner_install_user }}
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
+
+- name: "Install systemd service"
+  ansible.builtin.command:
+    cmd: >-
+      ./svc.sh install
+      {{ github_actions_self_hosted_runner_install_user }}
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+  changed_when: true
+  when:
+    - >-
+      not
+      github_actions_self_hosted_runner_install_skip_registration
+    - >-
+      not
+      github_actions_self_hosted_runner_install_configured.stat.exists
+
+- name: "Start service"
+  ansible.builtin.command:
+    cmd: "./svc.sh start"
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+  changed_when: true
+  when:
+    - >-
+      not
+      github_actions_self_hosted_runner_install_skip_registration
+    - >-
+      not
+      github_actions_self_hosted_runner_install_configured.stat.exists

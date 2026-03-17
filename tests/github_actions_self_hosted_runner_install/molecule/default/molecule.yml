@@ -1,0 +1,26 @@
+---
+driver:
+  name: "default"
+platforms:
+  - name: "gha-runner-vm"
+provisioner:
+  name: "ansible"
+  inventory:
+    host_vars:
+      gha-runner-vm:
+        ansible_host: "127.0.0.1"
+        ansible_port: 2224
+        ansible_user: "root"
+        ansible_python_interpreter: "/usr/bin/python3"
+        ansible_ssh_common_args: >-
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+scenario:
+  test_sequence:
+    - "destroy"
+    - "syntax"
+    - "create"
+    - "prepare"
+    - "converge"
+    - "verify"
+    - "destroy"

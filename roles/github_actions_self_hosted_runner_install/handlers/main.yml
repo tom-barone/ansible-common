@@ -1,0 +1,7 @@
+---
+- name: "Restart cache server"
+  ansible.builtin.command:
+    cmd: "docker compose up -d --force-recreate"
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_cache_dir }}
+  changed_when: true
