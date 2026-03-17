@@ -1,0 +1,94 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role has been applied
+    # When we check the runner directory
+    # Then it should exist
+    - name: "Check runner directory exists"
+      ansible.builtin.stat:
+        path: "/opt/github-runner"
+      register: "runner_dir"
+
+    - name: "Assert runner directory exists"
+      ansible.builtin.assert:
+        that:
+          - "runner_dir.stat.exists"
+          - "runner_dir.stat.isdir"
+
+    # Given the role has been applied
+    # When we check the runner user
+    # Then it should exist and be in the docker group
+    - name: "Get runner user info"
+      ansible.builtin.command:
+        cmd: "id github-action-runner"
+      register: "runner_user"
+      changed_when: false
+
+    - name: "Assert runner user exists and is in docker group"
+      ansible.builtin.assert:
+        that:
+          - "runner_user.rc == 0"
+          - "'docker' in runner_user.stdout"
+
+    # Given the role has been applied
+    # When we check the runner binary
+    # Then run.sh should exist
+    - name: "Check runner binary exists"
+      ansible.builtin.stat:
+        path: "/opt/github-runner/run.sh"
+      register: "runner_binary"
+
+    - name: "Assert runner binary exists"
+      ansible.builtin.assert:
+        that:
+          - "runner_binary.stat.exists"
+
+    # Given the role has been applied
+    # When we read the cache server docker-compose.yml
+    # Then it should contain expected configuration
+    - name: "Read cache server docker-compose.yml"
+      ansible.builtin.slurp:
+        src: "/opt/github-runner-cache/docker-compose.yml"
+      register: "cache_compose_file"
+
+    - name: "Assert docker-compose.yml contains expected config"
+      vars:
+        content: "{{ cache_compose_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'gha-cache-server' in content"
+          - "'falcondev-oss/github-actions-cache-server' in content"
+          - "'127.0.0.1:3000:3000' in content"
+
+    # Given the cache server docker-compose.yml has been deployed
+    # When we validate the compose config
+    # Then it should be valid
+    - name: "Validate cache server compose config"
+      ansible.builtin.command:
+        cmd: "docker compose config --quiet"
+        chdir: "/opt/github-runner-cache"
+      changed_when: false
+
+    # Given the cache server has been started
+    # When we check the running containers
+    # Then the cache server container should be running
+    - name: "Check cache server container is running"
+      ansible.builtin.command:
+        cmd: "docker compose ps"
+        chdir: "/opt/github-runner-cache"
+      register: "cache_compose_ps"
+      changed_when: false
+
+    - name: "Assert cache server container is listed"
+      ansible.builtin.assert:
+        that:
+          - "'gha-cache-server' in cache_compose_ps.stdout"
+
+    # Given the cache server is running
+    # When we check port 3000
+    # Then it should be listening
+    - name: "Check cache server port is listening"
+      ansible.builtin.wait_for:
+        port: 3000
+        timeout: 30
