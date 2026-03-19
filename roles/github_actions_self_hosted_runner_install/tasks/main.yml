@@ -38,6 +38,23 @@
     groups: "docker"
     append: true
 
+- name: "Ensure .ssh directory exists for runner user"
+  ansible.builtin.file:
+    # Assuming standard home directory path; adjust if you override this
+    path: "/home/{{ github_actions_self_hosted_runner_install_user }}/.ssh"
+    state: "directory"
+    owner: "{{ github_actions_self_hosted_runner_install_user }}"
+    mode: "0700"
+
+- name: "Scan and add github.com to known_hosts"
+  ansible.builtin.shell: |
+    ssh-keygen -F github.com || ssh-keyscan github.com >> ~/.ssh/known_hosts
+  become: true
+  become_user: "{{ github_actions_self_hosted_runner_install_user }}"
+  register: "github_actions_self_hosted_runner_install_ssh_keyscan"
+  changed_when: >
+    github_actions_self_hosted_runner_install_ssh_keyscan.stdout == ""
+
 - name: "Create directories"
   ansible.builtin.file:
     path: "{{ item }}"
