@@ -19,7 +19,9 @@
 
 - name: "Install dependencies"
   ansible.builtin.apt:
-    name: "zstd"
+    pkg:
+      - "zstd"
+      - "build-essential"
     state: "present"
     update_cache: true
 
