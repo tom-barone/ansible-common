@@ -22,6 +22,8 @@
     pkg:
       - "zstd"
       - "build-essential"
+      - "libssl-dev"
+      - "pkg-config"
     state: "present"
     update_cache: true
 
