@@ -205,7 +205,7 @@
       {{ github_actions_self_hosted_runner_install_dir
       }}/.env
     line: >-
-      ACTIONS_RESULTS_URL=http://localhost:{{
+      CUSTOM_ACTIONS_RESULTS_URL=http://localhost:{{
       github_actions_self_hosted_runner_install_cache_port
       }}/
     create: true
@@ -231,6 +231,20 @@
     - >-
       not
       github_actions_self_hosted_runner_install_configured.stat.exists
+
+- name: "Find runner service file"
+  ansible.builtin.shell:
+    cmd: "ls /etc/systemd/system/actions.runner.*.service"
+  register: "github_actions_self_hosted_runner_install_svc_file"
+  changed_when: false
+
+- name: "Add EnvironmentFile to systemd service"
+  ansible.builtin.lineinfile:
+    path: >-
+      {{ github_actions_self_hosted_runner_install_svc_file.stdout_lines[0] }}
+    insertafter: '^\[Service\]'
+    line: >-
+      EnvironmentFile={{ github_actions_self_hosted_runner_install_dir }}/.env
 
 - name: "Start service"
   ansible.builtin.command:
