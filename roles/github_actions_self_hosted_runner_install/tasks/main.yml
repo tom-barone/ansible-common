@@ -254,6 +254,9 @@
     cmd: "ls /etc/systemd/system/actions.runner.*.service"
   register: "github_actions_self_hosted_runner_install_svc_file"
   changed_when: false
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
 
 - name: "Add EnvironmentFile to systemd service"
   ansible.builtin.lineinfile:
@@ -262,6 +265,9 @@
     insertafter: '^\[Service\]'
     line: >-
       EnvironmentFile={{ github_actions_self_hosted_runner_install_dir }}/.env
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
 
 - name: "Start service"
   ansible.builtin.command:
