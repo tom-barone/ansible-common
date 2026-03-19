@@ -26,6 +26,7 @@
       - "pkg-config"
       - "git"
       - "acl"
+      - "unzip"
     state: "present"
     update_cache: true
 
