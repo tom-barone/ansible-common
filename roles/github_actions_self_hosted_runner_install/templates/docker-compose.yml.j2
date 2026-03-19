@@ -12,7 +12,4 @@ services:
       DB_DRIVER: "sqlite"
       DB_SQLITE_PATH: "/data/cache-server.db"
     volumes:
-      - "cache-data:/data"
-
-volumes:
-  cache-data:
+      - "{{ github_actions_self_hosted_runner_install_cache_dir }}/cache:/data"
