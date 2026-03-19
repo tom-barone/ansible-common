@@ -27,6 +27,7 @@
       - "git"
       - "acl"
       - "unzip"
+      - "chromium"
     state: "present"
     update_cache: true
 
