@@ -25,6 +25,7 @@
       - "libssl-dev"
       - "pkg-config"
       - "git"
+      - "acl"
     state: "present"
     update_cache: true
 
