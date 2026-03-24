@@ -1,3 +1,6 @@
+{% for port in system_harden_ssh_ports %}
+Port {{ port }}
+{% endfor %}
 PermitRootLogin {{ system_harden_ssh_permit_root_login }}
 PasswordAuthentication {{ system_harden_ssh_permit_password_authentication }}
 KbdInteractiveAuthentication no

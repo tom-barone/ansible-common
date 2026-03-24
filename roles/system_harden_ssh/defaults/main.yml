@@ -1,0 +1,5 @@
+---
+system_harden_ssh_ports: [22]
+system_harden_ssh_permit_root_login: "yes"
+system_harden_ssh_exclusive_access: false
+system_harden_ssh_permit_password_authentication: "no"

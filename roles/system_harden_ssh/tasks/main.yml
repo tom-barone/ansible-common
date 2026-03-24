@@ -1,4 +1,5 @@
 ---
+
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
@@ -6,6 +7,7 @@
       - "system_harden_ssh_exclusive_access is defined"
       - "system_harden_ssh_permit_root_login is defined"
       - "system_harden_ssh_permit_password_authentication is defined"
+      - "system_harden_ssh_ports is defined"
     msg: "Missing a required variable"
 
 - name: "Install openssh-server"
@@ -18,6 +20,20 @@
   ansible.builtin.systemd:
     name: "ssh"
     state: "started"
+
+- name: "Gather service facts"
+  ansible.builtin.service_facts: {}
+
+- name: "Disable and stop ssh.socket"
+  ansible.builtin.systemd:
+    name: "ssh.socket"
+    state: "stopped"
+    enabled: false
+    masked: true
+  when: >-
+    'ssh.socket' in ansible_facts.services and
+    ansible_facts.services['ssh.socket'].state
+    == 'active'
 
 - name: "Set up authorized keys for root user"
   ansible.posix.authorized_key:
@@ -33,3 +49,20 @@
     validate: "sshd -t -f %s"
     mode: "0644"
   notify: "Reload ssh service"
+
+- name: "Check if iptables is available"
+  ansible.builtin.command: "which iptables"
+  register: "system_harden_ssh_iptables_check"
+  changed_when: false
+  failed_when: false
+
+- name: "Allow SSH ports through iptables"
+  ansible.builtin.iptables:
+    chain: "INPUT"
+    protocol: "tcp"
+    destination_port: "{{ item }}"
+    ctstate: "NEW"
+    jump: "ACCEPT"
+  loop: "{{ system_harden_ssh_ports }}"
+  when: "system_harden_ssh_iptables_check.rc == 0"
+  notify: "Save iptables rules"

@@ -80,3 +80,4 @@
     tailscale_oauth_ephemeral: "{{ tailscale_install_oauth_ephemeral }}"
     tailscale_oauth_preauthorized: >-
       {{ tailscale_install_oauth_preauthorized }}
+    tailscale_args: "{{ '--ssh' if tailscale_install_enable_ssh else '' }}"
