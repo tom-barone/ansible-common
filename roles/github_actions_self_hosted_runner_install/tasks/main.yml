@@ -236,6 +236,23 @@
     not
     github_actions_self_hosted_runner_install_skip_registration
 
+- name: "Add cache URL to .env"
+  ansible.builtin.lineinfile:
+    path: >-
+      {{ github_actions_self_hosted_runner_install_dir
+      }}/.env
+    line: >-
+      ACTIONS_RESULTS_URL=http://localhost:{{
+      github_actions_self_hosted_runner_install_cache_port
+      }}/
+    create: true
+    mode: "0644"
+    owner: >-
+      {{ github_actions_self_hosted_runner_install_user }}
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
+
 - name: "Install systemd service"
   ansible.builtin.command:
     cmd: >-
