@@ -1,5 +1,4 @@
 ---
-
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
@@ -66,3 +65,10 @@
   loop: "{{ system_harden_ssh_ports }}"
   when: "system_harden_ssh_iptables_check.rc == 0"
   notify: "Save iptables rules"
+
+- name: "Save iptables rules"
+  ansible.builtin.command: "netfilter-persistent save"
+  when:
+    - "system_harden_ssh_iptables_check.rc == 0"
+    - "system_harden_ssh_iptables_result.changed"
+  changed_when: false
