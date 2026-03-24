@@ -64,7 +64,7 @@
     jump: "ACCEPT"
   loop: "{{ system_harden_ssh_ports }}"
   when: "system_harden_ssh_iptables_check.rc == 0"
-  notify: "Save iptables rules"
+  register: "system_harden_ssh_iptables_result"
 
 - name: "Save iptables rules"
   ansible.builtin.command: "netfilter-persistent save"
