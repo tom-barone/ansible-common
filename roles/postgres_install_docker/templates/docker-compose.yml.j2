@@ -6,7 +6,7 @@ services:
     ports:
       - "127.0.0.1:{{ postgres_install_docker_port }}:5432"
     volumes:
-      - "{{ postgres_install_docker_dir }}/data:/var/lib/postgresql"
+      - "{{ postgres_install_docker_dir }}/data:{{ postgres_install_docker_data_dir }}"
     environment:
       POSTGRES_USER: "{{ postgres_install_docker_user }}"
       POSTGRES_PASSWORD: "{{ postgres_install_docker_password }}"
