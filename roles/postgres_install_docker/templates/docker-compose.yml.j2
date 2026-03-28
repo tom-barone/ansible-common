@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: "postgres:{{ postgres_install_docker_version }}"
+    container_name: "postgres"
+    restart: "unless-stopped"
+    ports:
+      - "127.0.0.1:{{ postgres_install_docker_port }}:5432"
+    volumes:
+      - "{{ postgres_install_docker_dir }}/data:{{ postgres_install_docker_data_dir }}"
+    environment:
+      POSTGRES_USER: "{{ postgres_install_docker_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_install_docker_password }}"
+{% if postgres_install_docker_initdb_args %}
+      POSTGRES_INITDB_ARGS: "{{ postgres_install_docker_initdb_args }}"
+{% endif %}
+
+networks:
+  default:
+    name: "{{ postgres_install_docker_network }}"
+    external: true

@@ -1,0 +1,71 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check install directory exists"
+      ansible.builtin.stat:
+        path: "/opt/postgres"
+      register: "install_dir"
+
+    - name: "Assert install directory exists"
+      ansible.builtin.assert:
+        that:
+          - "install_dir.stat.exists"
+          - "install_dir.stat.isdir"
+
+    - name: "Read docker-compose.yml"
+      ansible.builtin.slurp:
+        src: "/opt/postgres/docker-compose.yml"
+      register: "compose_file"
+
+    - name: "Assert docker-compose.yml contains expected content"
+      vars:
+        content: "{{ compose_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'postgres' in content"
+
+    - name: "Validate compose config"
+      ansible.builtin.command:
+        cmd: "docker compose config --quiet"
+        chdir: "/opt/postgres"
+      changed_when: false
+
+    - name: "Check Docker network exists"
+      ansible.builtin.command:
+        cmd: "docker network inspect postgres_network"
+      changed_when: false
+
+    - name: "Check container is running"
+      ansible.builtin.command:
+        cmd: "docker compose ps"
+        chdir: "/opt/postgres"
+      register: "compose_ps"
+      changed_when: false
+
+    - name: "Assert postgres container is listed"
+      ansible.builtin.assert:
+        that:
+          - "'postgres' in compose_ps.stdout"
+
+    - name: "Check PostgreSQL is ready"
+      ansible.builtin.command:
+        cmd: "docker exec postgres pg_isready -U postgres"
+      register: "pg_ready"
+      until: "pg_ready.rc == 0"
+      retries: 10
+      delay: 3
+      changed_when: false
+
+    - name: "Verify can connect and run SQL query"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -t -A -c "SELECT 1"
+      register: "psql_result"
+      changed_when: false
+
+    - name: "Assert SQL query returned expected result"
+      ansible.builtin.assert:
+        that:
+          - "'1' in psql_result.stdout"

@@ -1,0 +1,9 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "postgres_install_docker"
+      vars:
+        postgres_install_docker_password: "testpassword123"
