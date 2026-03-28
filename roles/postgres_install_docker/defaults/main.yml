@@ -1,0 +1,7 @@
+---
+postgres_install_docker_version: "18.3"
+postgres_install_docker_dir: "/opt/postgres"
+postgres_install_docker_network: "postgres_network"
+postgres_install_docker_port: 5432
+postgres_install_docker_user: "postgres"
+postgres_install_docker_initdb_args: ""
