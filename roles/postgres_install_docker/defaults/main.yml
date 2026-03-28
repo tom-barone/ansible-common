@@ -5,4 +5,5 @@ postgres_install_docker_network: "postgres_network"
 postgres_install_docker_port: 5432
 postgres_install_docker_user: "postgres"
 postgres_install_docker_data_dir: "/var/lib/postgresql"
+postgres_install_docker_container_name: "postgres"
 postgres_install_docker_initdb_args: ""

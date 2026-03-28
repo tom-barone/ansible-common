@@ -1,6 +1,10 @@
 ---
 - name: "Verify"
   hosts: "all"
+  vars:
+    container_name: "postgres"
+    network_name: "postgres_network"
+    db_user: "postgres"
   tasks:
     - name: "Check install directory exists"
       ansible.builtin.stat:
@@ -23,7 +27,7 @@
         content: "{{ compose_file.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'postgres' in content"
+          - "container_name in content"
 
     - name: "Validate compose config"
       ansible.builtin.command:
@@ -33,7 +37,7 @@
 
     - name: "Check Docker network exists"
       ansible.builtin.command:
-        cmd: "docker network inspect postgres_network"
+        cmd: "docker network inspect {{ network_name }}"
       changed_when: false
 
     - name: "Check container is running"
@@ -46,11 +50,11 @@
     - name: "Assert postgres container is listed"
       ansible.builtin.assert:
         that:
-          - "'postgres' in compose_ps.stdout"
+          - "container_name in compose_ps.stdout"
 
     - name: "Check PostgreSQL is ready"
       ansible.builtin.command:
-        cmd: "docker exec postgres pg_isready -U postgres"
+        cmd: "docker exec {{ container_name }} pg_isready -U {{ db_user }}"
       register: "pg_ready"
       until: "pg_ready.rc == 0"
       retries: 10
@@ -60,8 +64,8 @@
     - name: "Verify can connect and run SQL query"
       ansible.builtin.command:
         cmd: >-
-          docker exec postgres
-          psql -U postgres -t -A -c "SELECT 1"
+          docker exec {{ container_name }}
+          psql -U {{ db_user }} -t -A -c "SELECT 1"
       register: "psql_result"
       changed_when: false
 

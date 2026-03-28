@@ -48,7 +48,7 @@
 - name: "Wait for PostgreSQL to be ready"
   ansible.builtin.command:
     cmd: >-
-      docker exec postgres
+      docker exec {{ postgres_install_docker_container_name }}
       pg_isready -U {{ postgres_install_docker_user }}
   register: "postgres_install_docker_ready"
   until: "postgres_install_docker_ready.rc == 0"

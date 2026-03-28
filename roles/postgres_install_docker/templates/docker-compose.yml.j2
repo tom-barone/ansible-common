@@ -1,7 +1,7 @@
 services:
   postgres:
     image: "postgres:{{ postgres_install_docker_version }}"
-    container_name: "postgres"
+    container_name: "{{ postgres_install_docker_container_name }}"
     restart: "unless-stopped"
     ports:
       - "127.0.0.1:{{ postgres_install_docker_port }}:5432"
