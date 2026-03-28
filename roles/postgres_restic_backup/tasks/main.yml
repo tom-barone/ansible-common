@@ -60,20 +60,8 @@
   when: "postgres_restic_backup_repo_check.rc != 0"
   changed_when: true
 
-- name: "Set CRON_TZ for backup cron job"
-  ansible.builtin.cron:
-    name: "CRON_TZ"
-    env: true
-    job: "{{ postgres_restic_backup_cron_timezone }}"
-    user: "root"
-
-- name: "Set up backup cron job"
-  ansible.builtin.cron:
-    name: "postgres restic backup"
-    minute: "{{ postgres_restic_backup_cron_schedule.split(' ')[0] }}"
-    hour: "{{ postgres_restic_backup_cron_schedule.split(' ')[1] }}"
-    day: "{{ postgres_restic_backup_cron_schedule.split(' ')[2] }}"
-    month: "{{ postgres_restic_backup_cron_schedule.split(' ')[3] }}"
-    weekday: "{{ postgres_restic_backup_cron_schedule.split(' ')[4] }}"
-    job: "chronic {{ postgres_restic_backup_dir }}/backup.sh"
-    user: "root"
+- name: "Deploy backup cron job"
+  ansible.builtin.template:
+    src: "cron.j2"
+    dest: "/etc/cron.d/postgres-restic-backup"
+    mode: "0644"

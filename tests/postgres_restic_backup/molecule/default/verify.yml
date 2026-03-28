@@ -62,20 +62,17 @@
         that:
           - "(restic_snapshots.stdout | from_json | length) > 0"
 
-    - name: "Check cron job is configured"
-      ansible.builtin.command:
-        cmd: "crontab -l"
-      register: "crontab_contents"
-      changed_when: false
+    - name: "Read cron job file"
+      ansible.builtin.slurp:
+        src: "/etc/cron.d/postgres-restic-backup"
+      register: "cron_file"
 
-    - name: "Assert cron job contains backup command"
+    - name: "Assert cron job is configured correctly"
+      vars:
+        content: "{{ cron_file.content | b64decode }}"
       ansible.builtin.assert:
         that:
+          - "'CRON_TZ=UTC' in content"
           - >-
             'chronic /opt/postgres-backup/backup.sh'
-            in crontab_contents.stdout
-
-    - name: "Assert CRON_TZ is set"
-      ansible.builtin.assert:
-        that:
-          - "'CRON_TZ' in crontab_contents.stdout"
+            in content
