@@ -14,28 +14,29 @@
       vars:
         postgres_install_docker_password: "testpassword123"
 
-    - name: "Start LocalStack"
+    - name: "Start MinIO"
       ansible.builtin.command:
         cmd: >-
           docker run -d
-          --name localstack
-          -p 4566:4566
-          -e SERVICES=s3
-          localstack/localstack:latest
+          --name minio
+          -p 9000:9000
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
       changed_when: true
 
-    - name: "Wait for LocalStack to be ready"
+    - name: "Wait for MinIO to be ready"
       ansible.builtin.uri:
-        url: "http://localhost:4566/_localstack/health"
+        url: "http://localhost:9000/minio/health/live"
         status_code: 200
-      register: "localstack_health"
-      until: "localstack_health.status == 200"
+      register: "minio_health"
+      until: "minio_health.status == 200"
       retries: 30
       delay: 5
 
     - name: "Create S3 bucket"
       ansible.builtin.command:
         cmd: >-
-          docker exec localstack
-          awslocal s3 mb s3://test-backup-bucket
+          docker exec minio
+          mkdir /data/test-backup-bucket
       changed_when: true
