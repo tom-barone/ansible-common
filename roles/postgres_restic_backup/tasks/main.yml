@@ -1,0 +1,79 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "postgres_restic_backup_s3_endpoint is defined"
+      - "postgres_restic_backup_s3_endpoint | length > 0"
+      - "postgres_restic_backup_s3_bucket is defined"
+      - "postgres_restic_backup_s3_bucket | length > 0"
+      - "postgres_restic_backup_s3_access_key is defined"
+      - "postgres_restic_backup_s3_access_key | length > 0"
+      - "postgres_restic_backup_s3_secret_key is defined"
+      - "postgres_restic_backup_s3_secret_key | length > 0"
+      - "postgres_restic_backup_restic_password is defined"
+      - "postgres_restic_backup_restic_password | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Install required packages"
+  ansible.builtin.apt:
+    name:
+      - "restic"
+      - "cron"
+      - "moreutils"
+    state: "present"
+    update_cache: true
+
+- name: "Create backup directory"
+  ansible.builtin.file:
+    path: "{{ postgres_restic_backup_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy environment file"
+  ansible.builtin.template:
+    src: "env.j2"
+    dest: "{{ postgres_restic_backup_dir }}/env"
+    mode: "0600"
+
+- name: "Deploy backup script"
+  ansible.builtin.template:
+    src: "backup.sh.j2"
+    dest: "{{ postgres_restic_backup_dir }}/backup.sh"
+    mode: "0700"
+
+- name: "Check if restic repository is initialized"
+  ansible.builtin.command:
+    cmd: >-
+      bash -c
+      'source {{ postgres_restic_backup_dir }}/env
+      && restic snapshots'
+  register: "postgres_restic_backup_repo_check"
+  failed_when: false
+  changed_when: false
+
+- name: "Initialize restic repository"
+  ansible.builtin.command:
+    cmd: >-
+      bash -c
+      'source {{ postgres_restic_backup_dir }}/env
+      && restic init'
+  when: "postgres_restic_backup_repo_check.rc != 0"
+  changed_when: true
+
+- name: "Set CRON_TZ for backup cron job"
+  ansible.builtin.cron:
+    name: "CRON_TZ"
+    env: true
+    job: "{{ postgres_restic_backup_cron_timezone }}"
+    user: "root"
+
+- name: "Set up backup cron job"
+  ansible.builtin.cron:
+    name: "postgres restic backup"
+    minute: "{{ postgres_restic_backup_cron_schedule.split(' ')[0] }}"
+    hour: "{{ postgres_restic_backup_cron_schedule.split(' ')[1] }}"
+    day: "{{ postgres_restic_backup_cron_schedule.split(' ')[2] }}"
+    month: "{{ postgres_restic_backup_cron_schedule.split(' ')[3] }}"
+    weekday: "{{ postgres_restic_backup_cron_schedule.split(' ')[4] }}"
+    job: "chronic {{ postgres_restic_backup_dir }}/backup.sh"
+    user: "root"

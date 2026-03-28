@@ -1,0 +1,41 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Install and start PostgreSQL"
+      ansible.builtin.include_role:
+        name: "postgres_install_docker"
+      vars:
+        postgres_install_docker_password: "testpassword123"
+
+    - name: "Start LocalStack"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name localstack
+          -p 4566:4566
+          -e SERVICES=s3
+          localstack/localstack:latest
+      changed_when: true
+
+    - name: "Wait for LocalStack to be ready"
+      ansible.builtin.uri:
+        url: "http://localhost:4566/_localstack/health"
+        status_code: 200
+      register: "localstack_health"
+      until: "localstack_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec localstack
+          awslocal s3 mb s3://test-backup-bucket
+      changed_when: true

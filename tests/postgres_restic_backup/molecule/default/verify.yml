@@ -1,0 +1,81 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check backup directory exists"
+      ansible.builtin.stat:
+        path: "/opt/postgres-backup"
+      register: "backup_dir"
+
+    - name: "Assert backup directory exists"
+      ansible.builtin.assert:
+        that:
+          - "backup_dir.stat.exists"
+          - "backup_dir.stat.isdir"
+
+    - name: "Check backup script exists"
+      ansible.builtin.stat:
+        path: "/opt/postgres-backup/backup.sh"
+      register: "backup_script"
+
+    - name: "Assert backup script exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "backup_script.stat.exists"
+          - "backup_script.stat.mode == '0700'"
+
+    - name: "Check env file exists"
+      ansible.builtin.stat:
+        path: "/opt/postgres-backup/env"
+      register: "env_file"
+
+    - name: "Assert env file exists with correct permissions"
+      ansible.builtin.assert:
+        that:
+          - "env_file.stat.exists"
+          - "env_file.stat.mode == '0600'"
+
+    - name: "Check restic repository is initialized"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/postgres-backup/env
+          && restic snapshots'
+      changed_when: false
+
+    - name: "Run backup script manually"
+      ansible.builtin.command:
+        cmd: "/opt/postgres-backup/backup.sh"
+      changed_when: true
+
+    - name: "Verify backup exists in restic repository"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/postgres-backup/env
+          && restic snapshots --json'
+      register: "restic_snapshots"
+      changed_when: false
+
+    - name: "Assert at least one snapshot exists"
+      ansible.builtin.assert:
+        that:
+          - "(restic_snapshots.stdout | from_json | length) > 0"
+
+    - name: "Check cron job is configured"
+      ansible.builtin.command:
+        cmd: "crontab -l"
+      register: "crontab_contents"
+      changed_when: false
+
+    - name: "Assert cron job contains backup command"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'chronic /opt/postgres-backup/backup.sh'
+            in crontab_contents.stdout
+
+    - name: "Assert CRON_TZ is set"
+      ansible.builtin.assert:
+        that:
+          - "'CRON_TZ' in crontab_contents.stdout"
