@@ -32,7 +32,7 @@
       {{ postgres_restic_backup_s3_secret_key }}
     restic_backup_restic_password: >-
       {{ postgres_restic_backup_restic_password }}
-    restic_backup_backup_command: >-
+    restic_backup_command: >-
       docker exec {{ postgres_restic_backup_postgres_container }}
       pg_dumpall -U {{ postgres_restic_backup_postgres_user }}
       | restic backup --stdin --stdin-filename "pg_dumpall.sql"

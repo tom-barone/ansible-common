@@ -6,6 +6,8 @@
       ansible.builtin.include_role:
         name: "restic_backup"
       vars:
+        restic_backup_dir: "/opt/restic-backup"
+        restic_backup_cron_job_name: "restic-backup"
         restic_backup_s3_endpoint: "http://localhost:9000"
         restic_backup_s3_bucket: "test-backup-bucket"
         restic_backup_s3_access_key: "test"

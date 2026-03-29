@@ -5,7 +5,7 @@ set -euo pipefail
 source "{{ restic_backup_dir }}/env"
 
 # Run backup
-{{ restic_backup_backup_command }}
+{{ restic_backup_command }}
 
 # Apply retention policy and prune old snapshots
 restic forget \
