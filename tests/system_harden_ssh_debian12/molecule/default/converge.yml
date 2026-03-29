@@ -6,7 +6,8 @@
       ansible.builtin.include_role:
         name: "system_harden_ssh"
       vars:
-        system_harden_ssh_public_key: "ssh-ed25519 AAAAC3 test@test"
+        system_harden_ssh_public_key: >-
+          {{ lookup('file', '~/.ssh/id_ed25519.pub') }}
         system_harden_ssh_exclusive_access: true
-        system_harden_ssh_permit_root_login: "no"
+        system_harden_ssh_permit_root_login: "prohibit-password"
         system_harden_ssh_permit_password_authentication: "no"
