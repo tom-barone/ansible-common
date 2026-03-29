@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+# Source environment variables
+source "{{ restic_backup_dir }}/env"
+
+# Run backup
+{{ restic_backup_command }}
+
+# Apply retention policy and prune old snapshots
+restic forget \
+  --keep-daily {{ restic_backup_retention_daily }} \
+  --keep-weekly {{ restic_backup_retention_weekly }} \
+  --keep-monthly {{ restic_backup_retention_monthly }} \
+  --prune

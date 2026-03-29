@@ -1,0 +1,48 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Start MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          -p 9000:9000
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "http://localhost:9000/minio/health/live"
+        status_code: 200
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket
+      changed_when: true
+
+    - name: "Create test data directory"
+      ansible.builtin.file:
+        path: "/opt/test-data"
+        state: "directory"
+        mode: "0755"
+
+    - name: "Create test file"
+      ansible.builtin.copy:
+        dest: "/opt/test-data/hello.txt"
+        content: "hello from restic backup test"
+        mode: "0644"

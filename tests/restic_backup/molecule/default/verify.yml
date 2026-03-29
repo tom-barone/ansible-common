@@ -1,0 +1,96 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check backup directory exists"
+      ansible.builtin.stat:
+        path: "/opt/restic-backup"
+      register: "backup_dir"
+
+    - name: "Assert backup directory exists"
+      ansible.builtin.assert:
+        that:
+          - "backup_dir.stat.exists"
+          - "backup_dir.stat.isdir"
+
+    - name: "Check backup script exists"
+      ansible.builtin.stat:
+        path: "/opt/restic-backup/backup.sh"
+      register: "backup_script"
+
+    - name: "Assert backup script exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "backup_script.stat.exists"
+          - "backup_script.stat.mode == '0700'"
+
+    - name: "Check env file exists"
+      ansible.builtin.stat:
+        path: "/opt/restic-backup/env"
+      register: "env_file"
+
+    - name: "Assert env file exists with correct permissions"
+      ansible.builtin.assert:
+        that:
+          - "env_file.stat.exists"
+          - "env_file.stat.mode == '0600'"
+
+    - name: "Check restic repository is initialized"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/restic-backup/env
+          && restic snapshots'
+      changed_when: false
+
+    - name: "Run backup script manually"
+      ansible.builtin.command:
+        cmd: "/opt/restic-backup/backup.sh"
+      changed_when: true
+
+    - name: "Verify backup exists in restic repository"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/restic-backup/env
+          && restic snapshots --json'
+      register: "restic_snapshots"
+      changed_when: false
+
+    - name: "Assert at least one snapshot exists"
+      ansible.builtin.assert:
+        that:
+          - "(restic_snapshots.stdout | from_json | length) > 0"
+
+    - name: "Restore and verify backup content"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/restic-backup/env
+          && restic restore latest --target /tmp/restore'
+      changed_when: true
+
+    - name: "Check restored file content"
+      ansible.builtin.slurp:
+        src: "/tmp/restore/opt/test-data/hello.txt"
+      register: "restored_file"
+
+    - name: "Assert restored file matches original"
+      ansible.builtin.assert:
+        that:
+          - >-
+            (restored_file.content | b64decode)
+            == 'hello from restic backup test'
+
+    - name: "Read cron job file"
+      ansible.builtin.slurp:
+        src: "/etc/cron.d/restic-backup"
+      register: "cron_file"
+
+    - name: "Assert cron job is configured correctly"
+      vars:
+        content: "{{ cron_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'CRON_TZ=UTC' in content"
+          - "'chronic /opt/restic-backup/backup.sh' in content"

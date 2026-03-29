@@ -1,0 +1,8 @@
+---
+restic_backup_cron_schedule: "0 3 * * *"
+restic_backup_cron_timezone: "UTC"
+restic_backup_retention_daily: 7
+restic_backup_retention_weekly: 4
+restic_backup_retention_monthly: 9999
+restic_backup_command: >-
+  restic backup {{ restic_backup_path }}

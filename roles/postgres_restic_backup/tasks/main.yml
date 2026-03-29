@@ -12,56 +12,37 @@
       - "postgres_restic_backup_s3_secret_key | length > 0"
       - "postgres_restic_backup_restic_password is defined"
       - "postgres_restic_backup_restic_password | length > 0"
+      - "postgres_restic_backup_postgres_user is defined"
+      - "postgres_restic_backup_postgres_user | length > 0"
+      - "postgres_restic_backup_postgres_container is defined"
+      - "postgres_restic_backup_postgres_container | length > 0"
     msg: "Missing a required variable"
 
-- name: "Install required packages"
-  ansible.builtin.apt:
-    name:
-      - "restic"
-      - "cron"
-      - "moreutils"
-    state: "present"
-    update_cache: true
-
-- name: "Create backup directory"
-  ansible.builtin.file:
-    path: "{{ postgres_restic_backup_dir }}"
-    state: "directory"
-    mode: "0755"
-
-- name: "Deploy environment file"
-  ansible.builtin.template:
-    src: "env.j2"
-    dest: "{{ postgres_restic_backup_dir }}/env"
-    mode: "0600"
-
-- name: "Deploy backup script"
-  ansible.builtin.template:
-    src: "backup.sh.j2"
-    dest: "{{ postgres_restic_backup_dir }}/backup.sh"
-    mode: "0700"
-
-- name: "Check if restic repository is initialized"
-  ansible.builtin.command:
-    cmd: >-
-      bash -c
-      'source {{ postgres_restic_backup_dir }}/env
-      && restic snapshots'
-  register: "postgres_restic_backup_repo_check"
-  failed_when: false
-  changed_when: false
-
-- name: "Initialize restic repository"
-  ansible.builtin.command:
-    cmd: >-
-      bash -c
-      'source {{ postgres_restic_backup_dir }}/env
-      && restic init'
-  when: "postgres_restic_backup_repo_check.rc != 0"
-  changed_when: true
-
-- name: "Deploy backup cron job"
-  ansible.builtin.template:
-    src: "cron.j2"
-    dest: "/etc/cron.d/postgres-restic-backup"
-    mode: "0644"
+- name: "Apply restic_backup role"
+  ansible.builtin.include_role:
+    name: "restic_backup"
+  vars:
+    restic_backup_dir: "{{ postgres_restic_backup_dir }}"
+    restic_backup_cron_schedule: "{{ postgres_restic_backup_cron_schedule }}"
+    restic_backup_cron_timezone: "{{ postgres_restic_backup_cron_timezone }}"
+    restic_backup_cron_job_name: "postgres-restic-backup"
+    restic_backup_retention_daily: >-
+      {{ postgres_restic_backup_retention_daily }}
+    restic_backup_retention_weekly: >-
+      {{ postgres_restic_backup_retention_weekly }}
+    restic_backup_retention_monthly: >-
+      {{ postgres_restic_backup_retention_monthly }}
+    restic_backup_s3_endpoint: >-
+      {{ postgres_restic_backup_s3_endpoint }}
+    restic_backup_s3_bucket: >-
+      {{ postgres_restic_backup_s3_bucket }}
+    restic_backup_s3_access_key: >-
+      {{ postgres_restic_backup_s3_access_key }}
+    restic_backup_s3_secret_key: >-
+      {{ postgres_restic_backup_s3_secret_key }}
+    restic_backup_restic_password: >-
+      {{ postgres_restic_backup_restic_password }}
+    restic_backup_command: >-
+      docker exec {{ postgres_restic_backup_postgres_container }}
+      pg_dumpall -U {{ postgres_restic_backup_postgres_user }}
+      | restic backup --stdin --stdin-filename "pg_dumpall.sql"
