@@ -15,24 +15,22 @@
     state: "present"
     update_cache: true
 
-- name: "Start the ssh service"
-  ansible.builtin.systemd:
-    name: "ssh"
-    state: "started"
-
 - name: "Gather service facts"
   ansible.builtin.service_facts: {}
 
-- name: "Disable and stop ssh.socket"
+- name: "Disable and mask ssh.socket"
   ansible.builtin.systemd:
     name: "ssh.socket"
     state: "stopped"
     enabled: false
     masked: true
-  when: >-
-    'ssh.socket' in ansible_facts.services and
-    ansible_facts.services['ssh.socket'].state
-    == 'active'
+  when: "'ssh.socket' in ansible_facts.services"
+
+- name: "Enable and start ssh service"
+  ansible.builtin.systemd:
+    name: "ssh"
+    state: "started"
+    enabled: true
 
 - name: "Set up authorized keys for root user"
   ansible.posix.authorized_key:
@@ -48,9 +46,3 @@
     validate: "sshd -t -f %s"
     mode: "0644"
   notify: "Reload ssh service"
-
-- name: "Check if iptables is available"
-  ansible.builtin.command: "which iptables"
-  register: "system_harden_ssh_iptables_check"
-  changed_when: false
-  failed_when: false

@@ -1,0 +1,54 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read sshd_config"
+      ansible.builtin.slurp:
+        src: "/etc/ssh/sshd_config"
+      register: "sshd_config"
+
+    - name: "Assert sshd_config has correct content"
+      vars:
+        content: "{{ sshd_config.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'PermitRootLogin prohibit-password' in content"
+          - "'PasswordAuthentication no' in content"
+          - "'X11Forwarding no' in content"
+        msg: "sshd_config missing expected configuration"
+
+    - name: "Read authorized_keys"
+      ansible.builtin.slurp:
+        src: "/root/.ssh/authorized_keys"
+      register: "authorized_keys"
+
+    - name: "Assert authorized_keys has correct content"
+      vars:
+        content: "{{ authorized_keys.content | b64decode }}"
+        expected_key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+      ansible.builtin.assert:
+        that:
+          - "expected_key in content"
+        msg: "authorized_keys missing expected SSH key"
+
+    - name: "Check ssh service status"
+      ansible.builtin.systemd:
+        name: "ssh"
+      register: "ssh_service"
+
+    - name: "Assert ssh service is active"
+      ansible.builtin.assert:
+        that:
+          - "ssh_service.status.ActiveState == 'active'"
+        msg: "ssh service is not running"
+
+    - name: "Gather service facts"
+      ansible.builtin.service_facts: {}
+
+    - name: "Assert ssh.socket is not active"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'ssh.socket' not in ansible_facts.services or
+            ansible_facts.services['ssh.socket'].state != 'active'
+        msg: "ssh.socket should not be active"

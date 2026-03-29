@@ -1,0 +1,19 @@
+---
+- name: "Create QEMU VM"
+  hosts: "localhost"
+  connection: "local"
+  gather_facts: false
+  tasks:
+    - name: "Create VM"
+      ansible.builtin.include_role:
+        name: "qemu_vm_create"
+      vars:
+        qemu_vm_create_name: "test-vm"
+        qemu_vm_create_ssh_port: 2227
+        qemu_vm_create_image_url: >-
+          {{ 'https://cloud.debian.org/images/cloud'
+          ~ '/bookworm/latest/debian-12-generic-'
+          ~ qemu_vm_create_debian_arch
+          ~ '.qcow2' }}
+        qemu_vm_create_ssh_public_key: >-
+          {{ lookup('file', '~/.ssh/id_ed25519.pub') }}
