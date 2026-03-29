@@ -1,12 +1,22 @@
 ---
-- name: "Validate postgres-specific variables"
+- name: "Validate required variables"
   ansible.builtin.assert:
     that:
+      - "postgres_restic_backup_s3_endpoint is defined"
+      - "postgres_restic_backup_s3_endpoint | length > 0"
+      - "postgres_restic_backup_s3_bucket is defined"
+      - "postgres_restic_backup_s3_bucket | length > 0"
+      - "postgres_restic_backup_s3_access_key is defined"
+      - "postgres_restic_backup_s3_access_key | length > 0"
+      - "postgres_restic_backup_s3_secret_key is defined"
+      - "postgres_restic_backup_s3_secret_key | length > 0"
+      - "postgres_restic_backup_restic_password is defined"
+      - "postgres_restic_backup_restic_password | length > 0"
       - "postgres_restic_backup_postgres_user is defined"
       - "postgres_restic_backup_postgres_user | length > 0"
       - "postgres_restic_backup_postgres_container is defined"
       - "postgres_restic_backup_postgres_container | length > 0"
-    msg: "Missing a required postgres variable"
+    msg: "Missing a required variable"
 
 - name: "Apply restic_backup role"
   ansible.builtin.include_role:
