@@ -1,0 +1,22 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  become: true
+  tasks:
+    - name: "Unmount Docker bind-mounted /etc/hostname"
+      ansible.builtin.shell:
+        cmd: >-
+          cp /etc/hostname /tmp/hostname.bak
+          && umount /etc/hostname
+          && cp /tmp/hostname.bak /etc/hostname
+      changed_when: true
+      failed_when: false
+
+    - name: "Unmount Docker bind-mounted /etc/hosts"
+      ansible.builtin.shell:
+        cmd: >-
+          cp /etc/hosts /tmp/hosts.bak
+          && umount /etc/hosts
+          && cp /tmp/hosts.bak /etc/hosts
+      changed_when: true
+      failed_when: false

@@ -1,0 +1,10 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_hostname"
+      vars:
+        system_hostname_short: "testhost"
+        system_hostname_fqdn: "testhost.example.com"
