@@ -1,0 +1,36 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "system_hostname_short is defined"
+    msg: "Missing a required variable"
+
+- name: "Get current hostname"
+  ansible.builtin.command: "hostname"
+  register: "system_hostname_current"
+  changed_when: false
+
+- name: "Set system hostname"
+  ansible.builtin.command:
+    argv:
+      - "hostnamectl"
+      - "set-hostname"
+      - "{{ system_hostname_short }}"
+  changed_when: true
+  when: "system_hostname_current.stdout != system_hostname_short"
+
+- name: "Update /etc/hosts with FQDN and short hostname"
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regexp: '^127\.0\.1\.1'
+    line: >-
+      127.0.1.1 {{ system_hostname_fqdn }}
+      {{ system_hostname_short }}
+  when: "system_hostname_fqdn is defined"
+
+- name: "Update /etc/hosts with short hostname only"
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1 {{ system_hostname_short }}"
+  when: "system_hostname_fqdn is not defined"

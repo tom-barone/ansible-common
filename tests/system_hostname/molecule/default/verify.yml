@@ -1,0 +1,27 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Get current hostname"
+      ansible.builtin.command: "hostname"
+      register: "current_hostname"
+      changed_when: false
+
+    - name: "Assert hostname is set correctly"
+      ansible.builtin.assert:
+        that:
+          - "current_hostname.stdout == 'testhost'"
+        msg: "Hostname is not set correctly"
+
+    - name: "Read /etc/hosts"
+      ansible.builtin.slurp:
+        src: "/etc/hosts"
+      register: "etc_hosts"
+
+    - name: "Assert /etc/hosts has correct entry"
+      vars:
+        content: "{{ etc_hosts.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'127.0.1.1 testhost.example.com testhost' in content"
+        msg: "/etc/hosts missing expected hostname entry"
