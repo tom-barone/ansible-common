@@ -3,3 +3,5 @@ system_harden_ssh_ports: [22]
 system_harden_ssh_permit_root_login: "yes"
 system_harden_ssh_exclusive_access: false
 system_harden_ssh_permit_password_authentication: "no"
+# The default of 10:30:100 is a bit too low for a VPS getting slammed by bots.
+system_harden_ssh_max_startups: "100:30:200"

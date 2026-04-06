@@ -1,8 +1,11 @@
 ---
 # Tests to confirm working:
-#   `sudo fail2ban-client status sshd`
-#   `sudo tail -n 100 /var/log/auth.log`
-#   `sudo tail -n 100 /var/log/fail2ban.log`
+#   $ fail2ban-client status sshd
+#   $ tail -n 100 /var/log/auth.log
+#   $ tail -n 100 /var/log/fail2ban.log
+# If using systemd backend:
+#   $ journalctl -u fail2ban
+#   $ systemctl status sshd --no-pager
 #
 # Unban an IP (if needed):
 #   `sudo fail2ban-client set sshd unbanip <IP_ADDRESS>`

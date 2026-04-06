@@ -9,3 +9,4 @@ X11Forwarding no
 PrintMotd no
 AcceptEnv LANG LC_* COLORTERM NO_COLOR
 Subsystem       sftp    /usr/lib/openssh/sftp-server
+MaxStartups {{ system_harden_ssh_max_startups }}
