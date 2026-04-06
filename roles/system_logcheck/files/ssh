@@ -10,7 +10,7 @@
 .* .*sshd.*: Received signal.*$
 .* .*sshd.*: Unable to negotiate with.*\[preauth\]$
 .* .*sshd.*: banner exchange: Connection from .* port .*$
-.* .*sshd.*: drop connection .* past MaxStartups.*$
+.* .*sshd.*: drop connection .*$
 .* .*sshd.*: error: Bad remote protocol version.*$
 .* .*sshd.*: error: Protocol major versions differ.*$
 .* .*sshd.*: error: beginning MaxStartups throttling.*$
