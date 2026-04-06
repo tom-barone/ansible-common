@@ -384,3 +384,4 @@ Apr 06 08:25:49 localhost kernel: kauditd_printk_skb: 79 callbacks suppressed
 Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
 Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: uevent: version 1.0.3
 Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@lists.linux.dev
+Apr 06 12:10:58 jqc-pr-84 kernel: overlayfs: upperdir is in-use as upperdir/workdir of another mount, accessing files from both mounts will result in undefined behavior.
