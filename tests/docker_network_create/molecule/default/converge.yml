@@ -1,0 +1,9 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "docker_network_create"
+      vars:
+        docker_network_create_name: "test_network"

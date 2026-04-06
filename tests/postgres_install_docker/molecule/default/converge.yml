@@ -7,3 +7,4 @@
         name: "postgres_install_docker"
       vars:
         postgres_install_docker_password: "testpassword123"
+        postgres_install_docker_network: "postgres_network"

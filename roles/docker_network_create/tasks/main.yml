@@ -1,0 +1,24 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "docker_network_create_name is defined"
+      - "docker_network_create_name | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Check if Docker network exists"
+  ansible.builtin.command:
+    cmd: >-
+      docker network inspect
+      {{ docker_network_create_name }}
+  register: "docker_network_create_check"
+  failed_when: false
+  changed_when: false
+
+- name: "Create Docker network"
+  ansible.builtin.command:
+    cmd: >-
+      docker network create
+      {{ docker_network_create_name }}
+  when: "docker_network_create_check.rc != 0"
+  changed_when: true

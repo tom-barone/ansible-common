@@ -1,0 +1,24 @@
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    network_name: "test_network"
+  tasks:
+    - name: "Check Docker network exists"
+      ansible.builtin.command:
+        cmd: "docker network inspect {{ network_name }}"
+      changed_when: false
+
+    - name: "Get network details"
+      ansible.builtin.command:
+        cmd: >-
+          docker network inspect
+          --format '{{ '{{' }} .Driver {{ '}}' }}'
+          {{ network_name }}
+      register: "network_driver"
+      changed_when: false
+
+    - name: "Assert network uses bridge driver"
+      ansible.builtin.assert:
+        that:
+          - "'bridge' in network_driver.stdout"
