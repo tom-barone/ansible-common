@@ -1,2 +1,3 @@
 .* .*containerd.*: .*level=info.*$
 .* .*containerd.*: .*level=warning.*$
+.* .*containerd.*: .*level=error msg=.* error=.*write: broken pipe.*$
