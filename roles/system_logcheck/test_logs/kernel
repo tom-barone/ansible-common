@@ -381,3 +381,6 @@ Apr 06 07:37:55 localhost kernel: Console: switching to colour frame buffer devi
 Apr 06 07:37:55 localhost kernel: bochs-drm 0000:00:01.0: [drm] fb0: bochs-drmdrmfb frame buffer device
 Apr 06 07:37:53 localhost kernel: EXT4-fs (sdb): re-mounted 8bd9253b-a6bb-ce8e-095b-1b0baf34d2f3 r/w.
 Apr 06 08:25:49 localhost kernel: kauditd_printk_skb: 79 callbacks suppressed
+Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: uevent: version 1.0.3
+Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@lists.linux.dev
