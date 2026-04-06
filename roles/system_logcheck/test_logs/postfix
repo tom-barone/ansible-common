@@ -16,3 +16,4 @@ Mar 08 09:32:56 forgejo postfix[786]: updating /etc/resolv.conf => /var/spool/po
 Mar 08 09:32:56 forgejo postfix[786]: updating /etc/hosts => /var/spool/postfix//etc/hosts
 Mar 08 09:32:56 forgejo postfix[845]: postfix/postlog: warning: not owned by root: /var/spool/postfix/etc/resolv.conf
 Mar 08 09:32:56 forgejo postfix/postfix-script[845]: warning: not owned by root: /var/spool/postfix/etc/resolv.conf
+Apr 06 07:39:47 jqc-pr-81 postfix[2721]: '/usr/lib/x86_64-linux-gnu/libnss_systemd.so.2' -> 'lib/libnss_systemd.so.2'

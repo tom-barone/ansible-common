@@ -10,3 +10,4 @@
 .* .*postfix.*: .*To disable backwards compatibility use .*$
 .* .*postfix.*: updating .* => .*$
 .* .*postfix.*: .*warning: not owned by root: .*$
+.* .*postfix.*: '.*' -> '.*'$

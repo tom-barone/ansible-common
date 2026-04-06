@@ -42,3 +42,31 @@
 .* .*systemd-hostnamed.*: Hostname set to .*$
 .* .*systemd-resolved.*: .*: Bus client set .*$
 .* .*systemd-resolved.*: Clock change detected\. Flushing caches\.$
+.* .*systemd\[1\]: Inserted module '.*'$
+.* .*systemd\[1\]: systemd .* running in system mode .*$
+.* .*systemd\[1\]: Detected virtualization .*$
+.* .*systemd\[1\]: Detected architecture .*$
+.* .*systemd\[1\]: Hostname set to <.*>\.$
+.* .*systemd\[1\]: Initializing machine ID from random generator\.$
+.* .*systemd\[1\]: Installed transient /etc/machine-id file\.$
+.* .*systemd\[1\]: bpf-restrict-fs: LSM BPF program attached$
+.* .*systemd\[1\]: Set up automount .*$
+.* .*systemd\[1\]: Expecting device .*$
+.* .*systemd\[1\]: Mounting .* - .*$
+.* .*systemd\[1\]: Mounted .* - .*$
+.* .*systemd\[1\]: Found device .*$
+.* .*systemd\[1\]: Activating swap .*$
+.* .*systemd\[1\]: Activated swap .*$
+.* .*systemd\[1\]: .*\.automount: Got automount request for .*$
+.* .*systemd\[1\]: .* was skipped because no trigger condition checks were met\.$
+.* .*systemd-journald.*: Collecting audit messages is disabled\.$
+.* .*systemd-journald.*: Journal started$
+.* .*systemd-journald.*: Runtime Journal .* is .*, max .*, .* free\.$
+.* .*systemd-journald.*: System Journal .* is .*, max .*, .* free\.$
+.* .*systemd-journald.*: Time spent on flushing to .* is .* for .* entries\.$
+.* .*systemd-journald.*: Received client request to flush runtime journal\.$
+.* .*systemd-udevd.*: Using default interface naming scheme '.*'\.$
+.* .*systemd\[1\]: .*\.service: Unit process [0-9]+ \(.*\) remains running after unit stopped\.$
+.* .*systemd\[1\]: .*\.service: Found left-over process [0-9]+ \(.*\) in control group while starting unit\. Ignoring\.$
+.* .*systemd\[1\]: .*\.service: This usually indicates unclean termination of a previous run, or service implementation deficiencies\.$
+.* .*systemd\[1\]: .*\.service: Scheduled restart job, restart counter is at [0-9]+\.$
