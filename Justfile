@@ -32,15 +32,5 @@
 @secrets-edit:
     sops secrets.sops.env
 
-[doc("Run a Debian 12 Ansible container for testing")]
-@run-docker:
-    docker run --rm --detach \
-      --privileged \
-      --cgroupns=host \
-      -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-      --name debian12-ansible \
-      geerlingguy/docker-debian12-ansible:latest
-    docker exec -it debian12-ansible bash
-
 [doc("Run all precommit checks")]
 @precommit: install format lint

@@ -1,23 +1,34 @@
 # ansible-common
 
-Reusable ansible roles.
+Reusable ansible roles that can be used across projects via a git submodule.
 
-# Molecule tests
+Targeted at stock Debian on your own hardware or VPS providers like Hetzner / Linode.
 
-| Testing Phase | Molecule Action | Purpose |
-| --- | --- | --- |
-| Environment provisioning | `create` | Provisions test infrastructure and environments |
-| Validates ansible syntax without execution | `syntax` | Checks for syntax errors in Ansible playbooks and roles |
-| Dependency resolution | `dependency` | Installs required roles, collections, and dependencies |
-| Environment preparation | `prepare` | Configures environments before applying automation logic |
-| Change application | `converge` | Executes the automation being tested |
-| Idempotence verification | `idempotence` | Re-runs automation to verify no unintended changes |
-| Side effect detection | `side_effect` | Executes additional automation to test for unintended consequences |
-| Functional verification | `verify` | Validates that desired outcomes were achieved |
-| Resource cleanup | `cleanup` | Removes temporary files and intermediate artifacts |
-| Resource destruction | `destroy` | Cleans up all provisioned resources |
+A non-comprehensive list of the more interesting roles:
 
-## Molecule development tips
+| Role | Description |
+| --- | --- |
+| `dokku_install` | Install [Dokku](https://dokku.com/) PaaS platform with admin SSH key and global domain configuration. |
+| `github_actions_self_hosted_runner_install` | Deploy a GitHub Actions self-hosted runner with local cache server. |
+| `monitoring_stack_install` | Install [Prometheus](https://prometheus.io/), [Loki](https://grafana.com/oss/loki/), [Grafana](https://grafana.com/), [Alloy](https://grafana.com/docs/alloy/latest/), [Node Exporter](https://github.com/prometheus/node_exporter), and [cAdvisor](https://github.com/google/cadvisor) via Docker with emailed alerts for disk and RAM usage. |
+| `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |
+| `postgres_install_docker` | Deploy PostgreSQL via Docker. |
+| `postgres_restic_backup` | Automated PostgreSQL backups to a S3 compatible backend with [Restic](https://restic.net/). |
+| `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |
+| `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
+| `system_harden_ssh` | Harden SSH setting up authorized keys, and configuring sshd security parameters. |
+| `system_logcheck` | Install [logcheck](https://packages.debian.org/logcheck) with ignore rules for common services. |
+| `tailscale_install` | Connect to a [Tailscale](https://tailscale.com/) tailnet. |
+| `tailscale_subnet_router` | Configure Tailscale subnet routing with auto-discovery of local subnets. |
+| `traefik_install` | Install [Traefik](https://traefik.io/) reverse proxy with docker tagging and LetsEncrypt support. |
+
+## Development
+
+See the `Justfile` for development tasks.
+
+## Testing
+
+Every role has a corresponding [molecule](https://docs.ansible.com/projects/molecule/) test and are required to pass idempotence checks.
 
 Use this task in a playbook to pause execution and allow for manual verification of the container state during testing:
 
