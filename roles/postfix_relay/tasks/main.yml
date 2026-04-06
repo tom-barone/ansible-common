@@ -1,4 +1,9 @@
 ---
+# Test with:
+# $ echo "Test email" | mail -s "Postfix test" <recipient_email>
+# Check logs with:
+# $ systemctl status postfix
+
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
