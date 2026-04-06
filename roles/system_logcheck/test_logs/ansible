@@ -8,3 +8,4 @@ expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None 
 Mar 03 15:48:56 forgejo ansible-ansible.legacy.command[46903]: Invoked with _raw_params=su -s /bin/bash -c "/usr/sbin/logcheck" logcheck
 Mar 03 15:48:59 forgejo ansible-ansible.builtin.apt[48017]: Invoked with cache_valid_time=3600 name=['gnupg',
 Apr 06 07:39:12 localhost ansible-ansible.builtin.service_facts[1138]: Invoked
+Apr 06 10:31:01 jqc-pr-83 python3[6255]: ansible-ansible.builtin.service_facts Invoked
