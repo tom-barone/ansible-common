@@ -205,3 +205,4 @@
 .* .*kernel.*: fbcon: .*$
 .* .*kernel.*: Adding [0-9]+k swap on .*$
 .* .*kernel.*: bochs-drm .*$$
+.* .*kernel.*: kauditd_printk_skb: [0-9]+ callbacks suppressed$
