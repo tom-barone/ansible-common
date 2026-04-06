@@ -38,3 +38,4 @@
 .* .*sshd.*: Received SIGHUP; restarting.*$
 .* .*sshd.*: Server listening on .*$
 .* .*systemd.*: Reloaded ssh.service .*$
+.* .*sshd.*: Timeout before authentication for connection from .*$

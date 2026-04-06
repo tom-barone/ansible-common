@@ -45,3 +45,4 @@ Mar 02 22:52:31 quilava sshd[892]: Server listening on 0.0.0.0 port 22.
 Mar 02 22:52:31 quilava sshd[892]: Server listening on :: port 22.
 Mar 02 22:52:31 quilava systemd[1]: Reloaded ssh.service - OpenBSD Secure Shell server.
 2025-11-15T13:15:01.895608+00:00 dokku-sandbox sshd-session[255648]: syslogin_perform_logout: logout() returned an error
+Apr 06 07:43:42 jqc-pr-81 sshd[850]: Timeout before authentication for connection from 194.147.50.177 to 172.236.44.69, pid = 9485
