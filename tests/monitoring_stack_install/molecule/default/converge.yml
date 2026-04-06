@@ -6,8 +6,11 @@
       ansible.builtin.include_role:
         name: "monitoring_stack_install"
       vars:
-        monitoring_stack_install_gmail_username: "test@gmail.com"
-        monitoring_stack_install_gmail_app_password: "testpassword"
+        monitoring_stack_install_smtp_host: "smtp.example.com"
+        monitoring_stack_install_smtp_port: "587"
+        monitoring_stack_install_smtp_user: "test@example.com"
+        monitoring_stack_install_smtp_password: "testpassword"
+        monitoring_stack_install_smtp_from_address: "alerts@example.com"
         monitoring_stack_install_alert_email_to: "alerts@example.com"
         monitoring_stack_install_grafana_admin_user: "testuser"
         monitoring_stack_install_grafana_admin_password: "testpassword"
