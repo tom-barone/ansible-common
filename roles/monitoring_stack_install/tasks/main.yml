@@ -10,6 +10,8 @@
       - "monitoring_stack_install_alert_email_to is defined"
       - "monitoring_stack_install_grafana_admin_user is defined"
       - "monitoring_stack_install_grafana_admin_password is defined"
+      - "monitoring_stack_install_docker_network is defined"
+      - "monitoring_stack_install_docker_network | length > 0"
     msg: "Missing a required variable"
 
 - name: "Create monitoring directories"

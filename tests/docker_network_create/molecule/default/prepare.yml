@@ -10,9 +10,3 @@
         # where no copy-on-write filesystem can be used.
         # Performance is poor, and not generally recommended for production use.
         docker_install_storage_driver: "vfs"
-
-    - name: "Create Docker network"
-      ansible.builtin.include_role:
-        name: "docker_network_create"
-      vars:
-        docker_network_create_name: "monitoring_network"

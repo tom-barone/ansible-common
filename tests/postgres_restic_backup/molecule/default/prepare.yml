@@ -8,11 +8,18 @@
       vars:
         docker_install_storage_driver: "vfs"
 
+    - name: "Create Docker network"
+      ansible.builtin.include_role:
+        name: "docker_network_create"
+      vars:
+        docker_network_create_name: "postgres_network"
+
     - name: "Install and start PostgreSQL"
       ansible.builtin.include_role:
         name: "postgres_install_docker"
       vars:
         postgres_install_docker_password: "testpassword123"
+        postgres_install_docker_network: "postgres_network"
 
     - name: "Start MinIO"
       ansible.builtin.command:

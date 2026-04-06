@@ -9,8 +9,6 @@ services:
     volumes:
       - "./prometheus.yml:/etc/prometheus/prometheus.yml:ro"
       - "prometheus_data:/prometheus"
-    networks:
-      - "monitoring"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -47,8 +45,6 @@ services:
       - "/sys:/sys:ro"
       - "/var/lib/docker/:/var/lib/docker:ro"
       - "/dev/disk/:/dev/disk:ro"
-    networks:
-      - "monitoring"
 
   grafana:
     # https://hub.docker.com/r/grafana/grafana
@@ -70,8 +66,6 @@ services:
       GF_SMTP_FROM_ADDRESS: "{{ monitoring_stack_install_smtp_from_address }}"
       GF_SMTP_FROM_NAME: "Grafana Alerts"
       GF_SMTP_STARTTLS_POLICY: "MandatoryStartTLS"
-    networks:
-      - "monitoring"
 
   loki:
     # hub.docker.com/r/grafana/loki
@@ -83,8 +77,6 @@ services:
     volumes:
       - "./loki-config.yml:/etc/loki/local-config.yaml:ro"
       - "loki_data:/loki"
-    networks:
-      - "monitoring"
 
   alloy:
     # https://hub.docker.com/r/grafana/alloy
@@ -96,8 +88,6 @@ services:
       - "/var/log/journal:/var/log/journal:ro"
       - "/run/log/journal:/run/log/journal:ro"
       - "/etc/machine-id:/etc/machine-id:ro"
-    networks:
-      - "monitoring"
 
 volumes:
   prometheus_data:
@@ -105,5 +95,6 @@ volumes:
   loki_data:
 
 networks:
-  monitoring:
-    driver: "bridge"
+  default:
+    name: "{{ monitoring_stack_install_docker_network }}"
+    external: true
