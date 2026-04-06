@@ -36,7 +36,7 @@
 .* .*kernel.*: Early memory node ranges$
 .* .*kernel.*:   node   [0-9]+: \[mem 0x[0-9a-f]+-0x[0-9a-f]+\]$
 .* .*kernel.*: Initmem setup node [0-9]+ \[mem 0x[0-9a-f]+-0x[0-9a-f]+\]$
-.* .*kernel.*: On node [0-9]+, zone DMA[0-9]*: [0-9]+ pages in unavailable ranges$
+.* .*kernel.*: On node [0-9]+, zone [A-Za-z0-9]+: [0-9]+ pages in unavailable ranges$
 .* .*kernel.*: \[mem 0x[0-9a-f]+-0x[0-9a-f]+\] available for PCI devices$
 .* .*kernel.*: Memory: .*$
 .* .*kernel.*: Fallback order for Node [0-9]+: .*$
@@ -126,4 +126,82 @@
 .* .*kernel.*: tun: Universal TUN/TAP device driver.*$
 .* .*kernel.*: Initializing XFRM netlink socket$
 .* .*kernel.*: bridge: filtering via arp/ip/ip6tables is no longer available by default\..*$
-.* .*kernel.*: evm: overlay not supported$
+.* .*kernel.*: evm: overlay not supported
+.* .*kernel.*: Linux version .*$
+.* .*kernel.*: software IO TLB: .*$
+.* .*kernel.*: Speculative Return Stack Overflow: .*$
+.* .*kernel.*: active return thunk: .*$
+.* .*kernel.*: Transient Scheduler Attacks: .*$
+.* .*kernel.*: system [0-9:]+: \[mem 0x[0-9a-f]+-0x[0-9a-f]+ window\] has been reserved$
+.* .*kernel.*: PCI-DMA: .*$
+.* .*kernel.*: Trying to unpack rootfs image as initramfs.*$
+.* .*kernel.*: Initialise system trusted keyrings$
+.* .*kernel.*: Key type .* registered$
+.* .*kernel.*: workingset: .*$
+.* .*kernel.*: zbud: loaded$
+.* .*kernel.*: fuse: init .*$
+.* .*kernel.*: integrity: .*$
+.* .*kernel.*: Asymmetric key parser '.*' registered$
+.* .*kernel.*: Freeing initrd memory: .*$
+.* .*kernel.*: Block layer SCSI generic \(bsg\) driver .*$
+.* .*kernel.*: io scheduler .* registered$
+.* .*kernel.*: ledtrig-cpu: registered to indicate activity on CPUs$
+.* .*kernel.*: shpchp: .*$
+.* .*kernel.*: Serial: .*$
+.* .*kernel.*: [0-9:]+: ttyS[0-9]+ at I/O .*$
+.* .*kernel.*: Linux agpgart interface .*$
+.* .*kernel.*: i8042: .*$
+.* .*kernel.*: serio: .*$
+.* .*kernel.*: mousedev: .*$
+.* .*kernel.*: rtc_cmos .*$
+.* .*kernel.*: amd_pstate: .*$
+.* .*kernel.*: input: .*$
+.* .*kernel.*: Segment Routing with IPv6$
+.* .*kernel.*: In-situ OAM \(IOAM\) with IPv6$
+.* .*kernel.*: mip6: Mobile IPv6$
+.* .*kernel.*: mpls_gso: MPLS GSO support$
+.* .*kernel.*: IPI shorthand broadcast: enabled$
+.* .*kernel.*: sched_clock: .*$
+.* .*kernel.*: registered taskstats version [0-9]+$
+.* .*kernel.*: Loading compiled-in X\.509 certificates$
+.* .*kernel.*: Loaded X\.509 cert .*$
+.* .*kernel.*: Demotion targets for Node [0-9]+: .*$
+.* .*kernel.*: ima: .*$
+.* .*kernel.*: evm: .*$
+.* .*kernel.*: RAS: .*$
+.* .*kernel.*: clk: Disabling unused clocks$
+.* .*kernel.*: PM: genpd: Disabling unused power domains$
+.* .*kernel.*: Freeing unused decrypted memory: .*$
+.* .*kernel.*: Freeing unused kernel image .*$
+.* .*kernel.*: Write protecting the kernel read-only data: .*$
+.* .*kernel.*: Run /init as init process$
+.* .*kernel.*:   with arguments:$
+.* .*kernel.*:     /init$
+.* .*kernel.*:   with environment:$
+.* .*kernel.*:     HOME=/$
+.* .*kernel.*:     TERM=linux$
+.* .*kernel.*: lpc_ich .*$
+.* .*kernel.*: i801_smbus .*$
+.* .*kernel.*: i2c .*$
+.* .*kernel.*: SCSI subsystem initialized$
+.* .*kernel.*: virtio_scsi .*$
+.* .*kernel.*: scsi host[0-9]+: .*$
+.* .*kernel.*: scsi [0-9:]+: .*$
+.* .*kernel.*: sd [0-9:]+: .*$
+.* .*kernel.*: iTCO_vendor_support: .*$
+.* .*kernel.*: libata version .* loaded\.$
+.* .*kernel.*: iTCO_wdt .*$
+.* .*kernel.*: ahci .*$
+.* .*kernel.*: ata[0-9]+: .*$
+.* .*kernel.*: EXT4-fs \(.*\): .*$
+.* .*kernel.*: Not activating Mandatory Access Control .*$
+.* .*kernel.*: Guest personality initialized and is inactive$
+.* .*kernel.*: VMCI host device registered .*$
+.* .*kernel.*: Initialized host personality$
+.* .*kernel.*: cryptd: .*$
+.* .*kernel.*: AES CTR mode .* optimization enabled$
+.* .*kernel.*: Console: switching to colour .*$
+.* .*kernel.*: \[drm\] .*$
+.* .*kernel.*: fbcon: .*$
+.* .*kernel.*: Adding [0-9]+k swap on .*$
+.* .*kernel.*: bochs-drm .*$$

@@ -7,3 +7,4 @@ expand_argument_vars=True stdin_add_newline=True strip_empty_ends=True cmd=None 
 2026-03-02T23:56:12.281308+10:30 quilava python3[253359]: ansible-community.general.locale_gen Invoked with name=['en_AU.UTF-8'] state=present
 Mar 03 15:48:56 forgejo ansible-ansible.legacy.command[46903]: Invoked with _raw_params=su -s /bin/bash -c "/usr/sbin/logcheck" logcheck
 Mar 03 15:48:59 forgejo ansible-ansible.builtin.apt[48017]: Invoked with cache_valid_time=3600 name=['gnupg',
+Apr 06 07:39:12 localhost ansible-ansible.builtin.service_facts[1138]: Invoked

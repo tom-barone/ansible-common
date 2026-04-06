@@ -20,3 +20,58 @@ Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2
 Mar 08 09:32:55 forgejo sh[645]: Completed socket interaction for boot stage config
 Mar 08 09:33:06 forgejo cloud-init[551]:
 Mar 08 09:33:07 forgejo sh[1879]: Completed socket interaction for boot stage final
+Apr 06 07:38:01 localhost chronyd[796]: chronyd version 4.6.1 starting (+CMDMON +NTP +REFCLOCK +RTC +PRIVDROP +SCFILTER +SIGND +ASYNCDNS +NTS +SECHASH +IPV6 -DEBUG)
+Apr 06 07:38:01 localhost chronyd[796]: Loaded 0 symmetric keys
+Apr 06 07:38:01 localhost chronyd[796]: Using leap second list /usr/share/zoneinfo/leap-seconds.list
+Apr 06 07:38:01 localhost chronyd[796]: Loaded seccomp filter (level 1)
+Apr 06 07:38:06 localhost chronyd[796]: Selected source 203.29.241.127 (2.debian.pool.ntp.org)
+Apr 06 07:38:06 localhost chronyd[796]: System clock TAI offset set to 37 seconds
+Apr 06 07:37:56 localhost apparmor.systemd[539]: Restarting AppArmor
+Apr 06 07:37:56 localhost (haveged)[666]: haveged.service: Referenced but unset environment variable evaluates to an empty string: DAEMON_ARGS
+Apr 06 07:37:56 localhost haveged[666]: haveged: command socket is listening at fd 3
+Apr 06 07:37:56 localhost haveged[666]: haveged starting up
+Apr 06 07:37:56 localhost haveged[666]: haveged: ver: 1.9.19; arch: x86; vend: ; build: (gcc 14.2.0 ITV); collect: 128K
+Apr 06 07:37:56 localhost haveged[666]: haveged: cpu: (VC); data: 64K (V); inst: 64K (V); idx: 39/40; sz: 54097/54097
+Apr 06 07:37:56 localhost haveged[666]: haveged: tot tests(BA8): A:1/1 B:1/1 continuous tests(B):  last entropy estimate 8.00124
+Apr 06 07:37:56 localhost haveged[666]: haveged: fills: 0, generated: 0
+Apr 06 07:38:00 localhost ifup[669]: ifup: waiting for lock on /run/network/ifstate.eth0
+Apr 06 07:39:26 jqc-pr-81 fail2ban-server[1909]: Server ready
+Apr 06 07:39:56 jqc-pr-81 fail2ban-client[2944]: Shutdown successful
+Apr 06 07:39:57 jqc-pr-81 fail2ban-server[2948]: Server ready
+Apr 06 07:39:39 jqc-pr-81 addgroup[2419]: Selecting GID from range 100 to 999 ...
+Apr 06 07:39:39 jqc-pr-81 addgroup[2419]: Adding group `ssl-cert' (GID 104) ...
+Apr 06 07:39:39 jqc-pr-81 groupadd[2422]: group added to /etc/group: name=ssl-cert, GID=104
+Apr 06 07:39:39 jqc-pr-81 groupadd[2422]: group added to /etc/gshadow: name=ssl-cert
+Apr 06 07:39:39 jqc-pr-81 groupadd[2422]: new group: name=ssl-cert, GID=104
+Apr 06 07:39:40 jqc-pr-81 adduser[2513]: Selecting UID from range 100 to 999 ...
+Apr 06 07:39:40 jqc-pr-81 adduser[2513]: Selecting GID from range 100 to 999 ...
+Apr 06 07:39:40 jqc-pr-81 adduser[2513]: Adding system user `postfix' (UID 102) ...
+Apr 06 07:39:40 jqc-pr-81 adduser[2513]: Adding new group `postfix' (GID 105) ...
+Apr 06 07:39:40 jqc-pr-81 groupadd[2518]: group added to /etc/group: name=postfix, GID=105
+Apr 06 07:39:40 jqc-pr-81 groupadd[2518]: group added to /etc/gshadow: name=postfix
+Apr 06 07:39:40 jqc-pr-81 groupadd[2518]: new group: name=postfix, GID=105
+Apr 06 07:39:40 jqc-pr-81 adduser[2513]: Adding new user `postfix' (UID 102) with group `postfix' ...
+Apr 06 07:39:40 jqc-pr-81 useradd[2523]: new user: name=postfix, UID=102, GID=105, home=/var/spool/postfix, shell=/usr/sbin/nologin, from=none
+Apr 06 07:39:40 jqc-pr-81 adduser[2513]: Not creating home directory `/var/spool/postfix' as requested.
+Apr 06 07:39:40 jqc-pr-81 addgroup[2535]: Selecting GID from range 100 to 999 ...
+Apr 06 07:39:40 jqc-pr-81 addgroup[2535]: Adding group `postdrop' (GID 106) ...
+Apr 06 07:39:40 jqc-pr-81 groupadd[2538]: group added to /etc/group: name=postdrop, GID=106
+Apr 06 07:39:40 jqc-pr-81 groupadd[2538]: group added to /etc/gshadow: name=postdrop
+Apr 06 07:39:40 jqc-pr-81 groupadd[2538]: new group: name=postdrop, GID=106
+Apr 06 07:40:03 jqc-pr-81 adduser[3322]: Selecting UID from range 100 to 999 ...
+Apr 06 07:40:03 jqc-pr-81 adduser[3322]: Selecting GID from range 100 to 999 ...
+Apr 06 07:40:03 jqc-pr-81 adduser[3322]: Adding system user `logcheck' (UID 103) ...
+Apr 06 07:40:03 jqc-pr-81 adduser[3322]: Adding new group `logcheck' (GID 107) ...
+Apr 06 07:40:03 jqc-pr-81 groupadd[3327]: group added to /etc/group: name=logcheck, GID=107
+Apr 06 07:40:03 jqc-pr-81 groupadd[3327]: group added to /etc/gshadow: name=logcheck
+Apr 06 07:40:03 jqc-pr-81 groupadd[3327]: new group: name=logcheck, GID=107
+Apr 06 07:40:03 jqc-pr-81 adduser[3322]: Adding new user `logcheck' (UID 103) with group `logcheck' ...
+Apr 06 07:40:03 jqc-pr-81 useradd[3332]: new user: name=logcheck, UID=103, GID=107, home=/var/lib/logcheck, shell=/usr/sbin/nologin, from=/dev/pts/1
+Apr 06 07:40:03 jqc-pr-81 adduser[3322]: Not creating home directory `/var/lib/logcheck' as requested.
+Apr 06 07:40:03 jqc-pr-81 adduser[3345]: Adding user `logcheck' to group `adm' ...
+Apr 06 07:40:03 jqc-pr-81 usermod[3347]: add 'logcheck' to group 'adm'
+Apr 06 07:40:03 jqc-pr-81 usermod[3347]: add 'logcheck' to shadow group 'adm'
+Apr 06 07:40:03 jqc-pr-81 adduser[3354]: Adding user `logcheck' to group `systemd-journal' ...
+Apr 06 07:40:03 jqc-pr-81 usermod[3356]: add 'logcheck' to group 'systemd-journal'
+Apr 06 07:40:03 jqc-pr-81 usermod[3356]: add 'logcheck' to shadow group 'systemd-journal'
+Apr 06 07:40:03 jqc-pr-81 chfn[3364]: changed user 'logcheck' information

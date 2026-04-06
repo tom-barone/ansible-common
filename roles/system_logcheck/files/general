@@ -14,4 +14,31 @@
 .* .*dmeventd.*: Monitoring thin pool.*$
 .* .*sh\[.*\]: Completed socket interaction for boot stage .*$
 .* .*cloud-init\[.*\]:.*$
+.* .*chronyd.*: chronyd version .* starting .*$
+.* .*chronyd.*: Loaded [0-9]+ symmetric keys$
+.* .*chronyd.*: Using leap second list .*$
+.* .*chronyd.*: Loaded seccomp filter .*$
+.* .*chronyd.*: Selected source .* \(.*\)$
+.* .*chronyd.*: System clock TAI offset set to [0-9]+ seconds$
+.* .*apparmor\.systemd.*: Restarting AppArmor$
+.* .*(haveged).*: haveged\.service: Referenced but unset environment variable evaluates to an empty string: .*$
+.* .*haveged.*: haveged: command socket is listening at fd [0-9]+$
+.* .*haveged.*: haveged starting up$
+.* .*haveged.*: haveged: ver: .*$
+.* .*haveged.*: haveged: cpu: .*$
+.* .*haveged.*: haveged: tot tests.*$
+.* .*haveged.*: haveged: fills: .*$
+.* .*ifup.*: ifup: waiting for lock on .*$
+.* .*fail2ban-server.*: Server ready$
+.* .*fail2ban-client.*: Shutdown successful$
+.* .*addgroup.*: Selecting GID from range .*$
+.* .*addgroup.*: Adding group .* \(GID [0-9]+\) \.\.\.$
+.* .*adduser.*: Selecting (UID|GID) from range .*$
+.* .*adduser.*: Adding (system user|new group|new user|user) .*$
+.* .*adduser.*: Not creating home directory .*$
+.* .*groupadd.*: group added to .*$
+.* .*groupadd.*: new group: .*$
+.* .*useradd.*: new user: .*$
+.* .*usermod.*: add '.*' to (group|shadow group) '.*'$
+.* .*chfn.*: changed user '.*' information$
 .*I am a logcheck test that should be filtered out.*$

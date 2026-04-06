@@ -58,3 +58,55 @@ Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set Multic
 Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set DNSSEC setting: no
 Mar 08 09:32:58 forgejo systemd-resolved[329]: tailscale0: Bus client set DNSOverTLS setting: no
 Mar 08 09:33:01 forgejo systemd-resolved[329]: Clock change detected. Flushing caches.
+Apr 06 07:37:53 localhost systemd[1]: Inserted module 'autofs4'
+Apr 06 07:37:53 localhost systemd[1]: systemd 257.9-1~deb13u1 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF -XKBCOMMON -UTMP +SYSVINIT +LIBARCHIVE)
+Apr 06 07:37:53 localhost systemd[1]: Detected virtualization kvm.
+Apr 06 07:37:53 localhost systemd[1]: Detected architecture x86-64.
+Apr 06 07:37:53 localhost systemd[1]: Hostname set to <localhost>.
+Apr 06 07:37:53 localhost systemd[1]: Initializing machine ID from random generator.
+Apr 06 07:37:53 localhost systemd[1]: Installed transient /etc/machine-id file.
+Apr 06 07:37:53 localhost systemd[1]: bpf-restrict-fs: LSM BPF program attached
+Apr 06 07:37:53 localhost systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
+Apr 06 07:37:53 localhost systemd[1]: Expecting device dev-disk-by\x2duuid-f1408ea6\x2d59a0\x2d11ed\x2dbc9d\x2d525400000001.device - /dev/disk/by-uuid/f1408ea6-59a0-11ed-bc9d-525400000001...
+Apr 06 07:37:53 localhost systemd[1]: Expecting device dev-ttyS0.device - /dev/ttyS0...
+Apr 06 07:37:53 localhost systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
+Apr 06 07:37:53 localhost systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+Apr 06 07:37:53 localhost systemd[1]: Mounting run-lock.mount - Legacy Locks Directory /run/lock...
+Apr 06 07:37:53 localhost systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+Apr 06 07:37:53 localhost systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+Apr 06 07:37:53 localhost systemd-journald[293]: Collecting audit messages is disabled.
+Apr 06 07:37:53 localhost systemd[1]: Mounted dev-hugepages.mount - Huge Pages File System.
+Apr 06 07:37:53 localhost systemd[1]: Mounted dev-mqueue.mount - POSIX Message Queue File System.
+Apr 06 07:37:53 localhost systemd[1]: Mounted run-lock.mount - Legacy Locks Directory /run/lock.
+Apr 06 07:37:53 localhost systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+Apr 06 07:37:53 localhost systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.
+Apr 06 07:37:53 localhost systemd-journald[293]: Journal started
+Apr 06 07:37:53 localhost systemd-journald[293]: Runtime Journal (/run/log/journal/2b5e5a5971cc43099184513a1feb1d73) is 4.9M, max 39.2M, 34.3M free.
+Apr 06 07:37:53 localhost systemd[1]: Mounting sys-fs-fuse-connections.mount - FUSE Control File System...
+Apr 06 07:37:53 localhost systemd[1]: Mounting sys-kernel-config.mount - Kernel Configuration File System...
+Apr 06 07:37:53 localhost systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database was skipped because no trigger condition checks were met.
+Apr 06 07:37:53 localhost systemd-journald[293]: Time spent on flushing to /var/log/journal/2b5e5a5971cc43099184513a1feb1d73 is 12.153ms for 537 entries.
+Apr 06 07:37:53 localhost systemd-journald[293]: System Journal (/var/log/journal/2b5e5a5971cc43099184513a1feb1d73) is 8M, max 4G, 3.9G free.
+Apr 06 07:37:53 localhost systemd-journald[293]: Received client request to flush runtime journal.
+Apr 06 07:37:53 localhost systemd[1]: Mounted sys-fs-fuse-connections.mount - FUSE Control File System.
+Apr 06 07:37:53 localhost systemd[1]: Mounted sys-kernel-config.mount - Kernel Configuration File System.
+Apr 06 07:37:53 localhost systemd-udevd[344]: Using default interface naming scheme 'v257'.
+Apr 06 07:37:53 localhost systemd[1]: Found device dev-ttyS0.device - /dev/ttyS0.
+Apr 06 07:37:54 localhost systemd[1]: Expecting device sys-subsystem-net-devices-eth0.device - /sys/subsystem/net/devices/eth0...
+Apr 06 07:37:54 localhost systemd[1]: Found device sys-subsystem-net-devices-eth0.device - Virtio network device.
+Apr 06 07:37:54 localhost systemd[1]: Found device dev-disk-by\x2duuid-f1408ea6\x2d59a0\x2d11ed\x2dbc9d\x2d525400000001.device - QEMU_HARDDISK linode-swap.
+Apr 06 07:37:54 localhost systemd[1]: Activating swap dev-disk-by\x2duuid-f1408ea6\x2d59a0\x2d11ed\x2dbc9d\x2d525400000001.swap - /dev/disk/by-uuid/f1408ea6-59a0-11ed-bc9d-525400000001...
+Apr 06 07:37:55 localhost systemd[1]: Activated swap dev-disk-by\x2duuid-f1408ea6\x2d59a0\x2d11ed\x2dbc9d\x2d525400000001.swap - /dev/disk/by-uuid/f1408ea6-59a0-11ed-bc9d-525400000001.
+Apr 06 07:37:55 localhost systemd[1]: Mounting tmp.mount - Temporary Directory /tmp...
+Apr 06 07:37:55 localhost systemd[1]: Mounted tmp.mount - Temporary Directory /tmp.
+Apr 06 07:37:56 localhost systemd[1]: proc-sys-fs-binfmt_misc.automount: Got automount request for /proc/sys/fs/binfmt_misc, triggered by 541 (systemd-binfmt)
+Apr 06 07:37:56 localhost systemd[1]: Mounting proc-sys-fs-binfmt_misc.mount - Arbitrary Executable File Formats File System...
+Apr 06 07:37:56 localhost systemd[1]: Mounted proc-sys-fs-binfmt_misc.mount - Arbitrary Executable File Formats File System.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: Unit process 839 (sshd-session) remains running after unit stopped.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: Unit process 840 (sshd-auth) remains running after unit stopped.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: Unit process 841 (sshd-session) remains running after unit stopped.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: Found left-over process 839 (sshd-session) in control group while starting unit. Ignoring.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: Found left-over process 840 (sshd-auth) in control group while starting unit. Ignoring.
+Apr 06 07:38:05 localhost systemd[1]: ssh.service: Found left-over process 841 (sshd-session) in control group while starting unit. Ignoring.
+Apr 06 07:38:06 localhost systemd[1]: serial-getty@ttyS0.service: Scheduled restart job, restart counter is at 1.
