@@ -1,5 +1,5 @@
 ---
-github_actions_self_hosted_runner_install_version: "2.332.0"
+github_actions_self_hosted_runner_install_version: "2.333.1"
 github_actions_self_hosted_runner_install_cache_server_version: "latest"
 github_actions_self_hosted_runner_install_dir: "/opt/github-runner"
 github_actions_self_hosted_runner_install_cache_dir: "/opt/github-runner-cache"

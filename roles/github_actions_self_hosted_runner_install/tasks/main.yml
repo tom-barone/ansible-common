@@ -210,7 +210,6 @@
   become_user: >-
     {{ github_actions_self_hosted_runner_install_user }}
   changed_when: true
-  no_log: true
   when:
     - >-
       not
@@ -219,7 +218,7 @@
       not
       github_actions_self_hosted_runner_install_configured.stat.exists
 
-- name: "Add cache URL to .env"
+- name: "Add CUSTOM_ACTIONS_RESULTS_URL to .env"
   ansible.builtin.lineinfile:
     path: >-
       {{ github_actions_self_hosted_runner_install_dir
@@ -235,8 +234,9 @@
   when: >-
     not
     github_actions_self_hosted_runner_install_skip_registration
+  notify: "Restart runner service"
 
-- name: "Add cache URL to .env"
+- name: "Add ACTIONS_RESULTS_URL to .env"
   ansible.builtin.lineinfile:
     path: >-
       {{ github_actions_self_hosted_runner_install_dir
@@ -252,6 +252,7 @@
   when: >-
     not
     github_actions_self_hosted_runner_install_skip_registration
+  notify: "Restart runner service"
 
 - name: "Install systemd service"
   ansible.builtin.command:
@@ -285,6 +286,14 @@
     insertafter: '^\[Service\]'
     line: >-
       EnvironmentFile={{ github_actions_self_hosted_runner_install_dir }}/.env
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
+  notify: "Restart runner service"
+
+- name: "Reload systemd daemon"
+  ansible.builtin.systemd:
+    daemon_reload: true
   when: >-
     not
     github_actions_self_hosted_runner_install_skip_registration

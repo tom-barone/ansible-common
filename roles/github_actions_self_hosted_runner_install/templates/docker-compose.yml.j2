@@ -4,7 +4,7 @@ services:
     container_name: "gha-cache-server"
     restart: "unless-stopped"
     ports:
-      - "127.0.0.1:{{ github_actions_self_hosted_runner_install_cache_port }}:3000"
+      - "0.0.0.0:{{ github_actions_self_hosted_runner_install_cache_port }}:3000"
     environment:
       API_BASE_URL: "http://localhost:{{ github_actions_self_hosted_runner_install_cache_port }}"
       STORAGE_DRIVER: "filesystem"
