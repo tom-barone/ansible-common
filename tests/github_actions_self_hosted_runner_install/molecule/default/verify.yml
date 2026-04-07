@@ -59,7 +59,7 @@
         that:
           - "'gha-cache-server' in content"
           - "'falcondev-oss/github-actions-cache-server' in content"
-          - "'127.0.0.1:3000:3000' in content"
+          - "'0.0.0.0:3000:3000' in content"
 
     # Given the cache server docker-compose.yml has been deployed
     # When we validate the compose config
