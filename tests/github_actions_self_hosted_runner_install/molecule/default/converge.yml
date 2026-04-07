@@ -12,3 +12,21 @@
           dummy-token
         github_actions_self_hosted_runner_install_skip_registration: >-
           true
+
+    - name: "Create marker file to verify force_reinstall cleans directory"
+      ansible.builtin.file:
+        path: "/opt/github-runner/.force_reinstall_test_marker"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Apply role with force_reinstall"
+      ansible.builtin.include_role:
+        name: "github_actions_self_hosted_runner_install"
+      vars:
+        github_actions_self_hosted_runner_install_url: >-
+          https://github.com/test/repo
+        github_actions_self_hosted_runner_install_token: >-
+          dummy-token
+        github_actions_self_hosted_runner_install_skip_registration: >-
+          true
+        github_actions_self_hosted_runner_install_force_reinstall: true

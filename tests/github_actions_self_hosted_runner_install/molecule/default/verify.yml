@@ -92,3 +92,16 @@
       ansible.builtin.wait_for:
         port: 3000
         timeout: 30
+
+    # Given the role was applied twice (second time with force_reinstall)
+    # When we check for the marker file created between runs
+    # Then it should be gone (proving force_reinstall cleaned the directory)
+    - name: "Check force_reinstall marker file is gone"
+      ansible.builtin.stat:
+        path: "/opt/github-runner/.force_reinstall_test_marker"
+      register: "marker_file"
+
+    - name: "Assert force_reinstall cleaned the directory"
+      ansible.builtin.assert:
+        that:
+          - "not marker_file.stat.exists"

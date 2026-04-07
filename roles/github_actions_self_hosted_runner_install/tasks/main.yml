@@ -111,6 +111,58 @@
   retries: 30
   delay: 5
 
+- name: "Check if svc.sh exists (force reinstall)"
+  ansible.builtin.stat:
+    path: >-
+      {{ github_actions_self_hosted_runner_install_dir
+      }}/svc.sh
+  register: >-
+    github_actions_self_hosted_runner_install_svc_exists
+  when: >-
+    github_actions_self_hosted_runner_install_force_reinstall
+    | bool
+
+- name: "Stop runner service (force reinstall)"
+  ansible.builtin.command:
+    cmd: "./svc.sh stop"
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+  failed_when: false
+  changed_when: true
+  when:
+    - >-
+      github_actions_self_hosted_runner_install_force_reinstall
+      | bool
+    - >-
+      github_actions_self_hosted_runner_install_svc_exists.stat.exists
+      | default(false)
+
+- name: "Uninstall runner systemd service (force reinstall)"
+  ansible.builtin.command:
+    cmd: "./svc.sh uninstall"
+    chdir: >-
+      {{ github_actions_self_hosted_runner_install_dir }}
+  failed_when: false
+  changed_when: true
+  when:
+    - >-
+      github_actions_self_hosted_runner_install_force_reinstall
+      | bool
+    - >-
+      github_actions_self_hosted_runner_install_svc_exists.stat.exists
+      | default(false)
+
+- name: "Remove runner directory contents (force reinstall)"
+  ansible.builtin.command:
+    cmd: >-
+      find
+      {{ github_actions_self_hosted_runner_install_dir }}
+      -mindepth 1 -delete
+  changed_when: true
+  when: >-
+    github_actions_self_hosted_runner_install_force_reinstall
+    | bool
+
 - name: "Check if runner binary exists"
   ansible.builtin.stat:
     path: >-
