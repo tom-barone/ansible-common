@@ -8,3 +8,4 @@ github_actions_self_hosted_runner_install_cache_port: 3000
 github_actions_self_hosted_runner_install_labels: []
 github_actions_self_hosted_runner_install_runner_group: "Default"
 github_actions_self_hosted_runner_install_skip_registration: false
+github_actions_self_hosted_runner_install_force_reinstall: false
