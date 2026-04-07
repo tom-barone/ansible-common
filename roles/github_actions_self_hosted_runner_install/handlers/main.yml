@@ -6,12 +6,15 @@
       {{ github_actions_self_hosted_runner_install_cache_dir }}
   changed_when: true
 
-- name: "Restart runner service"
+- name: "Reload systemd daemon"
+  ansible.builtin.systemd:
+    daemon_reload: true
+  listen: "Restart runner service"
+
+- name: "Restart runner service via svc.sh"
   ansible.builtin.shell:
-    cmd: >-
-      systemctl daemon-reload
-      && ./svc.sh stop
-      && ./svc.sh start
+    cmd: "./svc.sh stop && ./svc.sh start"
     chdir: >-
       {{ github_actions_self_hosted_runner_install_dir }}
   changed_when: true
+  listen: "Restart runner service"
