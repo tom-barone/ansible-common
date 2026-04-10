@@ -1,0 +1,68 @@
+#!/bin/bash
+set -euo pipefail
+
+# Source environment variables (restic + S3 credentials)
+source "{{ postgres_restic_backup_verify_env_file }}"
+
+CONTAINER_NAME="{{ postgres_restic_backup_verify_container_name }}"
+POSTGRES_USER="{{ postgres_restic_backup_verify_postgres_user }}"
+POSTGRES_IMAGE="{{ postgres_restic_backup_verify_postgres_image }}"
+
+# Cleanup function - always remove temp container
+cleanup() {
+  echo "Cleaning up temporary postgres container..."
+  docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+# Remove any leftover container from a previous run
+cleanup
+
+# Start temporary postgres container
+echo "Starting temporary postgres container..."
+docker run -d \
+  --name "${CONTAINER_NAME}" \
+  -e POSTGRES_HOST_AUTH_METHOD=trust \
+  "${POSTGRES_IMAGE}"
+
+# Wait for postgres to be ready
+echo "Waiting for postgres to be ready..."
+for i in $(seq 1 30); do
+  if docker exec "${CONTAINER_NAME}" pg_isready -U "${POSTGRES_USER}" >/dev/null 2>&1; then
+    echo "Postgres is ready."
+    break
+  fi
+  if [ "$i" -eq 30 ]; then
+    echo "ERROR: Postgres did not become ready in time."
+    exit 1
+  fi
+  sleep 2
+done
+
+# Restore the latest backup
+echo "Restoring latest backup..."
+restic dump latest pg_dumpall.sql \
+  | docker exec -i "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d postgres
+
+echo "Restore complete. Running verification queries..."
+
+# Run verification queries
+FAILED=0
+{% for query in postgres_restic_backup_verify_queries %}
+
+echo "Running query {{ loop.index }}: {{ query }}"
+RESULT=$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d postgres -t -A -c "{{ query }}")
+if [ -z "${RESULT}" ] || [ "${RESULT}" = "0" ] || [ "${RESULT}" = "f" ]; then
+  echo "FAIL: Query {{ loop.index }} returned '${RESULT}'"
+  FAILED=1
+else
+  echo "PASS: Query {{ loop.index }} returned '${RESULT}'"
+fi
+{% endfor %}
+
+if [ "${FAILED}" -ne 0 ]; then
+  echo "ERROR: One or more verification queries failed."
+  exit 1
+fi
+
+echo "All verification queries passed."
