@@ -209,4 +209,4 @@
 .* .*kernel.*: device-mapper: core: .*Duplicate IMA measurements will not be recorded .*$
 .* .*kernel.*: device-mapper: uevent: version .*$
 .* .*kernel.*: device-mapper: ioctl: .*initialised.*$
-.* .*kernel.*: overlayfs: upperdir is in-use as upperdir/workdir of another mount.*$
+.* .*kernel.*: overlayfs: .* is in-use as .* of another mount.*$
