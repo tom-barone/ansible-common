@@ -15,6 +15,7 @@
       - "cron"
     state: "present"
     update_cache: true
+    cache_valid_time: 3600
 
 - name: "Check if port forward already exists"
   ansible.builtin.command:
