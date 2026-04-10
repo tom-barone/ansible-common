@@ -11,3 +11,4 @@
 .* .*docker.*: .*level.error.*failed to query external DNS.*grafana.*$
 .* .*docker.*: .*level.error.*failed to query external DNS.*api\.ipify\.org.*$
 .* .*docker.*: .*level.error.*failed to validate image signature.*list\.v2.*$
+.* .*dockerd.*: .*level=error.*failed to cleanup.*snapshot.*does not exist: not found.*$
