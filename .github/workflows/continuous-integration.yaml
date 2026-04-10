@@ -42,7 +42,7 @@ jobs:
           tests=$(find tests -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(. != ""))')
           echo "tests=$tests" >> "$GITHUB_OUTPUT"
 
-  test-run:
+  tests-run:
     needs: [test-discover]
     runs-on: ubuntu-latest
     strategy:
@@ -84,3 +84,11 @@ jobs:
 
       - name: "Run test: ${{ matrix.test }}"
         run: "just test --no-capture --name ${{ matrix.test }}"
+
+  pass-gate:
+    needs: ["lint", "tests-run"]
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "All checks passed"
+        run: |
+          echo "All checks passed"
