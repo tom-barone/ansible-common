@@ -30,6 +30,7 @@
       - "chromium"
     state: "present"
     update_cache: true
+    cache_valid_time: 3600
 
 - name: "Create runner user"
   ansible.builtin.user:
