@@ -1,0 +1,8 @@
+---
+postgres_restic_backup_verify_dir: "/opt/postgres-backup-verify"
+postgres_restic_backup_verify_env_file: "/opt/postgres-backup/env"
+postgres_restic_backup_verify_cron_schedule: "0 4 * * 0"
+postgres_restic_backup_verify_cron_timezone: "UTC"
+postgres_restic_backup_verify_postgres_image: "postgres:18.3"
+postgres_restic_backup_verify_postgres_user: "postgres"
+postgres_restic_backup_verify_container_name: "postgres-backup-verify"

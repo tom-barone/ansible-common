@@ -1,0 +1,73 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Create Docker network"
+      ansible.builtin.include_role:
+        name: "docker_network_create"
+      vars:
+        docker_network_create_name: "postgres_network"
+
+    - name: "Install and start PostgreSQL"
+      ansible.builtin.include_role:
+        name: "postgres_install_docker"
+      vars:
+        postgres_install_docker_password: "testpassword123"
+        postgres_install_docker_network: "postgres_network"
+
+    - name: "Create test data in PostgreSQL"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "CREATE TABLE users (id serial PRIMARY KEY, name text NOT NULL);
+           INSERT INTO users (name) VALUES ('alice'), ('bob'), ('charlie');"
+      changed_when: true
+
+    - name: "Start MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          -p 9000:9000
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "http://localhost:9000/minio/health/live"
+        status_code: 200
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket
+      changed_when: true
+
+    - name: "Apply postgres_restic_backup role"
+      ansible.builtin.include_role:
+        name: "postgres_restic_backup"
+      vars:
+        postgres_restic_backup_s3_endpoint: "http://localhost:9000"
+        postgres_restic_backup_s3_bucket: "test-backup-bucket"
+        postgres_restic_backup_s3_access_key: "test"
+        postgres_restic_backup_s3_secret_key: "testpassword"
+        postgres_restic_backup_restic_password: "testpassword"
+
+    - name: "Run backup to create a snapshot"
+      ansible.builtin.command:
+        cmd: "/opt/postgres-backup/backup.sh"
+      changed_when: true

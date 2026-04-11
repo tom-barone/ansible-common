@@ -1,0 +1,59 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check verify directory exists"
+      ansible.builtin.stat:
+        path: "/opt/postgres-backup-verify"
+      register: "verify_dir"
+
+    - name: "Assert verify directory exists"
+      ansible.builtin.assert:
+        that:
+          - "verify_dir.stat.exists"
+          - "verify_dir.stat.isdir"
+
+    - name: "Check verify script exists"
+      ansible.builtin.stat:
+        path: "/opt/postgres-backup-verify/verify.sh"
+      register: "verify_script"
+
+    - name: "Assert verify script exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "verify_script.stat.exists"
+          - "verify_script.stat.mode == '0700'"
+
+    - name: "Read cron job file"
+      ansible.builtin.slurp:
+        src: "/etc/cron.d/postgres-restic-backup-verify"
+      register: "cron_file"
+
+    - name: "Assert cron job is configured correctly"
+      vars:
+        content: "{{ cron_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'CRON_TZ=UTC' in content"
+          - >-
+            'chronic /opt/postgres-backup-verify/verify.sh'
+            in content
+
+    - name: "Run verify script manually"
+      ansible.builtin.command:
+        cmd: "/opt/postgres-backup-verify/verify.sh"
+      changed_when: true
+
+    - name: "Check for leftover verification container"
+      ansible.builtin.command:
+        cmd: >-
+          docker ps -a
+          --filter name=postgres-backup-verify
+          --format "{% raw %}{{.Names}}{% endraw %}"
+      register: "leftover_container"
+      changed_when: false
+
+    - name: "Assert no leftover verification container"
+      ansible.builtin.assert:
+        that:
+          - "leftover_container.stdout == ''"

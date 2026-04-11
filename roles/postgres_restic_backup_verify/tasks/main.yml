@@ -1,0 +1,42 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "postgres_restic_backup_verify_queries is defined"
+      - "postgres_restic_backup_verify_queries | length > 0"
+      - "postgres_restic_backup_verify_env_file is defined"
+      - "postgres_restic_backup_verify_env_file | length > 0"
+      - "postgres_restic_backup_verify_postgres_image is defined"
+      - "postgres_restic_backup_verify_postgres_image | length > 0"
+      - "postgres_restic_backup_verify_container_name is defined"
+      - "postgres_restic_backup_verify_container_name | length > 0"
+      - "postgres_restic_backup_verify_postgres_user is defined"
+      - "postgres_restic_backup_verify_postgres_user | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Install required packages"
+  ansible.builtin.apt:
+    name:
+      - "restic"
+      - "cron"
+      - "moreutils"
+    state: "present"
+    update_cache: true
+
+- name: "Create verify directory"
+  ansible.builtin.file:
+    path: "{{ postgres_restic_backup_verify_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy verify script"
+  ansible.builtin.template:
+    src: "verify.sh.j2"
+    dest: "{{ postgres_restic_backup_verify_dir }}/verify.sh"
+    mode: "0700"
+
+- name: "Deploy verify cron job"
+  ansible.builtin.template:
+    src: "cron.j2"
+    dest: "/etc/cron.d/postgres-restic-backup-verify"
+    mode: "0644"
