@@ -5,6 +5,7 @@
 2025-02-19T05:44:59.069255+00:00 jqc-production kernel: [528824.671587] device veth8995f1b left promiscuous mode
 Mar 07 21:45:07 au-adelaide kernel: perf: interrupt took too long (3134 > 3128), lowering kernel.perf_event_max_sample_rate to 63750
 2025-03-10T13:01:02.655403+10:30 au-adelaide kernel: [399592.532630] perf: interrupt took too long (4921 > 4918), lowering kernel.perf_event_max_sample_rate to 40500
+Apr 11 05:57:54 jqc-production kernel: hrtimer: interrupt took 3366956 ns
 Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered blocking state
 Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered disabled state
 Mar 03 23:00:28 quilava kernel: vmbr0: port 2(tap100i0) entered forwarding state
