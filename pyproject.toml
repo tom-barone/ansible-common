@@ -10,4 +10,5 @@ dev = [
   "yamllint>=1.37.1",
   "ansible-dev-tools>=25.10.0",
   "molecule-plugins[docker]>=23.6.1",
+  "mitogen>=0.3.45",
 ]
