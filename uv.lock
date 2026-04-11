@@ -48,6 +48,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "ansible-dev-tools" },
+    { name = "mitogen" },
     { name = "molecule-plugins", extra = ["docker"] },
     { name = "yamllint" },
 ]
@@ -58,6 +59,7 @@ requires-dist = [{ name = "ansible", specifier = ">=13.3.0" }]
 [package.metadata.requires-dev]
 dev = [
     { name = "ansible-dev-tools", specifier = ">=25.10.0" },
+    { name = "mitogen", specifier = ">=0.3.45" },
     { name = "molecule-plugins", extras = ["docker"], specifier = ">=23.6.1" },
     { name = "yamllint", specifier = ">=1.37.1" },
 ]
@@ -693,6 +695,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729, upload-time = "2022-08-14T12:40:10.846Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
+]
+
+[[package]]
+name = "mitogen"
+version = "0.3.45"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7c/5a/9271e42ae2c82173365a396565f3b8b9d96d11941e3f86157a79861e635f/mitogen-0.3.45.tar.gz", hash = "sha256:ee41b1595778903948b94c34ecee853f4ec67c6c5ac3239caa3bc6b4c34e61e8", size = 241033, upload-time = "2026-03-30T08:24:44.924Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/0a/1bd0e56c36bf6c8d5158756e143df54f361c1c4f201cb5f3015bd666e565/mitogen-0.3.45-py2.py3-none-any.whl", hash = "sha256:e116a15472d75cdce796c971f898eb042d21a1b9f0a43fd16daf416060794aaf", size = 291092, upload-time = "2026-03-30T08:24:43.544Z" },
 ]
 
 [[package]]
