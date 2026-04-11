@@ -4,6 +4,7 @@
     name: "postfix"
     state: "present"
     update_cache: true
+    cache_valid_time: 3600
 
 - name: "Set inet_protocols"
   ansible.builtin.lineinfile:
