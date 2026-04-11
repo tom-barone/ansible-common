@@ -3,6 +3,7 @@
 .* .*kernel.*: .*renamed from.*$
 .* .*kernel.*: .*becomes ready.*$
 .* .*kernel.*:.*perf: interrupt took too long.*$
+.* .*kernel.*:.*hrtimer: interrupt took [0-9]+ ns$
 .* .*kernel.*:.*port.*entered blocking state.*$
 .* .*kernel.*:.*port.*entered disabled state.*$
 .* .*kernel.*:.*port.*entered blocking state.*$
