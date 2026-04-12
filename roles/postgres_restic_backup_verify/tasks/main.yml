@@ -12,6 +12,8 @@
       - "postgres_restic_backup_verify_container_name | length > 0"
       - "postgres_restic_backup_verify_postgres_user is defined"
       - "postgres_restic_backup_verify_postgres_user | length > 0"
+      - "postgres_restic_backup_verify_postgres_database is defined"
+      - "postgres_restic_backup_verify_postgres_database | length > 0"
     msg: "Missing a required variable"
 
 - name: "Install required packages"

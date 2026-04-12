@@ -6,6 +6,7 @@ source "{{ postgres_restic_backup_verify_env_file }}"
 
 CONTAINER_NAME="{{ postgres_restic_backup_verify_container_name }}"
 POSTGRES_USER="{{ postgres_restic_backup_verify_postgres_user }}"
+POSTGRES_DB="{{ postgres_restic_backup_verify_postgres_database }}"
 POSTGRES_IMAGE="{{ postgres_restic_backup_verify_postgres_image }}"
 
 # Cleanup function - always remove temp container
@@ -51,7 +52,7 @@ FAILED=0
 {% for query in postgres_restic_backup_verify_queries %}
 
 echo "Running query {{ loop.index }}: {{ query }}"
-RESULT=$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d postgres -t -A -c "{{ query }}")
+RESULT=$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -t -A -c "{{ query }}")
 if [ -z "${RESULT}" ] || [ "${RESULT}" = "0" ] || [ "${RESULT}" = "f" ]; then
   echo "FAIL: Query {{ loop.index }} returned '${RESULT}'"
   FAILED=1
