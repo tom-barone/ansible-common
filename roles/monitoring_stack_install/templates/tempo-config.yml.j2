@@ -24,5 +24,32 @@ storage:
     wal:
       path: "/var/tempo/wal"
 
+metrics_generator:
+  registry:
+    external_labels:
+      source: "tempo"
+  storage:
+    path: "/var/tempo/generator/wal"
+    remote_write:
+      - url: "http://prometheus:9090/api/v1/write"
+  traces_storage:
+    path: "/var/tempo/generator/traces"
+  processor:
+    span_metrics:
+      dimensions:
+        - "service.namespace"
+        - "deployment.environment"
+    service_graphs:
+      dimensions:
+        - "service.namespace"
+        - "deployment.environment"
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors:
+        - "service-graphs"
+        - "span-metrics"
+
 usage_report:
   reporting_enabled: false
