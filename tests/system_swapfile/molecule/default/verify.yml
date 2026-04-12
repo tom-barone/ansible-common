@@ -1,0 +1,136 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role has been applied
+    # When we stat the swapfile
+    # Then it should exist with 0600 root:root and the configured size
+    - name: "Stat swapfile"
+      ansible.builtin.stat:
+        path: "/swapfile"
+      register: "swapfile_stat"
+
+    - name: "Assert swapfile exists with correct attributes"
+      ansible.builtin.assert:
+        that:
+          - "swapfile_stat.stat.exists"
+          - "swapfile_stat.stat.isreg"
+          - "swapfile_stat.stat.pw_name == 'root'"
+          - "swapfile_stat.stat.gr_name == 'root'"
+          - "swapfile_stat.stat.mode == '0600'"
+          - "swapfile_stat.stat.size == 268435456"
+        msg: "swapfile missing or has wrong attributes"
+
+    # Given the role has been applied
+    # When we read /proc/swaps
+    # Then the swapfile should be listed as an active swap device
+    - name: "Read /proc/swaps"
+      ansible.builtin.slurp:
+        src: "/proc/swaps"
+      register: "proc_swaps"
+
+    - name: "Assert swapfile is active"
+      vars:
+        content: "{{ proc_swaps.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'/swapfile' in content"
+          - "'file' in content"
+        msg: "/swapfile not found in /proc/swaps"
+
+    # Given the role has been applied
+    # When we read /etc/fstab
+    # Then it should contain a swap entry for /swapfile
+    - name: "Read /etc/fstab"
+      ansible.builtin.slurp:
+        src: "/etc/fstab"
+      register: "fstab_content"
+
+    - name: "Assert fstab contains swapfile entry"
+      vars:
+        content: "{{ fstab_content.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'/swapfile' in content"
+          - "'swap' in content"
+        msg: "/etc/fstab missing swapfile entry"
+
+    # Given the role has been applied with swappiness=60 override
+    # When we query the live kernel value
+    # Then vm.swappiness should be 60
+    - name: "Read runtime vm.swappiness"
+      ansible.builtin.command:
+        cmd: "sysctl -n vm.swappiness"
+      register: "runtime_swappiness"
+      changed_when: false
+
+    - name: "Assert runtime vm.swappiness is 60"
+      ansible.builtin.assert:
+        that:
+          - "runtime_swappiness.stdout | trim == '60'"
+        msg: "vm.swappiness not set to 60 at runtime"
+
+    # Given the role has been applied
+    # When we read the sysctl drop-in file
+    # Then it should persist vm.swappiness=60 across reboots
+    - name: "Read sysctl drop-in file"
+      ansible.builtin.slurp:
+        src: "/etc/sysctl.d/99-swapfile.conf"
+      register: "sysctl_file"
+
+    - name: "Assert sysctl drop-in persists vm.swappiness"
+      vars:
+        content: "{{ sysctl_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'vm.swappiness' in content"
+          - "'60' in content"
+        msg: "sysctl drop-in file missing vm.swappiness=60"
+
+    # Given swap is active on a 512MB VM
+    # When we allocate ~400MB of anonymous memory under a dropped cache
+    # Then /proc/swaps should show non-zero used swap
+    - name: "Drop page cache to maximize memory pressure"
+      ansible.builtin.shell:
+        cmd: "sync && echo 3 > /proc/sys/vm/drop_caches"
+      changed_when: false
+
+    - name: "Sample swap usage before stress"
+      ansible.builtin.shell:
+        cmd: >-
+          set -o pipefail &&
+          grep -E '^/swapfile' /proc/swaps | awk '{print $4}'
+        executable: "/bin/bash"
+      register: "swap_used_before"
+      changed_when: false
+
+    - name: "Run stress-ng memory hog"
+      ansible.builtin.command:
+        argv:
+          - "stress-ng"
+          - "--vm"
+          - "1"
+          - "--vm-bytes"
+          - "400M"
+          - "--vm-keep"
+          - "--timeout"
+          - "30s"
+      changed_when: false
+
+    - name: "Sample swap usage after stress"
+      ansible.builtin.shell:
+        cmd: >-
+          set -o pipefail &&
+          grep -E '^/swapfile' /proc/swaps | awk '{print $4}'
+        executable: "/bin/bash"
+      register: "swap_used_after"
+      changed_when: false
+
+    - name: "Assert swap was actually used under memory pressure"
+      ansible.builtin.assert:
+        that:
+          - "(swap_used_after.stdout | int) > 0"
+        msg: >-
+          Expected non-zero used swap after stress-ng memory hog.
+          Before: {{ swap_used_before.stdout }} KB.
+          After:  {{ swap_used_after.stdout }} KB.

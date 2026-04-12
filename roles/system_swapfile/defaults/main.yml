@@ -1,0 +1,4 @@
+---
+system_swapfile_path: "/swapfile"
+system_swapfile_size: "1G"
+system_swapfile_swappiness: 10
