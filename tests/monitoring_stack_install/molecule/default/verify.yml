@@ -28,6 +28,10 @@
           - "'cadvisor' in content"
           - "'grafana' in content"
           - "'loki' in content"
+          - "'tempo' in content"
+          - "'alloy' in content"
+          - "'4317' in content"
+          - "'--web.enable-otlp-receiver' in content"
 
     - name: "Check Grafana provisioning files exist"
       ansible.builtin.stat:
@@ -66,6 +70,8 @@
           - "'prometheus' in compose_ps.stdout"
           - "'grafana' in compose_ps.stdout"
           - "'loki' in compose_ps.stdout"
+          - "'tempo' in compose_ps.stdout"
+          - "'alloy' in compose_ps.stdout"
 
     - name: "Check Prometheus responds"
       ansible.builtin.uri:
@@ -84,3 +90,21 @@
       until: "grafana_health.status == 200"
       retries: 15
       delay: 5
+
+    - name: "Check Alloy OTLP ports are listening"
+      ansible.builtin.wait_for:
+        host: "127.0.0.1"
+        port: "{{ item }}"
+        timeout: 30
+      loop:
+        - 4317
+        - 4318
+
+    - name: "Check Tempo ready"
+      ansible.builtin.command:
+        cmd: "docker exec tempo wget -qO- http://localhost:3200/ready"
+      register: "tempo_ready"
+      until: "tempo_ready.rc == 0 and 'ready' in tempo_ready.stdout"
+      retries: 15
+      delay: 5
+      changed_when: false

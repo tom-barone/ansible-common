@@ -11,6 +11,12 @@ services:
       - "prometheus_data:/prometheus"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-otlp-receiver"
 
   node-exporter:
     # https://hub.docker.com/r/prom/node-exporter
@@ -78,11 +84,25 @@ services:
       - "./loki-config.yml:/etc/loki/local-config.yaml:ro"
       - "loki_data:/loki"
 
+  tempo:
+    # https://hub.docker.com/r/grafana/tempo
+    image: "grafana/tempo:2.6.1"
+    container_name: "tempo"
+    restart: "unless-stopped"
+    command:
+      - "-config.file=/etc/tempo/tempo.yml"
+    volumes:
+      - "./tempo-config.yml:/etc/tempo/tempo.yml:ro"
+      - "tempo_data:/var/tempo"
+
   alloy:
     # https://hub.docker.com/r/grafana/alloy
     image: "grafana/alloy:v1.13.2"
     container_name: "alloy"
     restart: "unless-stopped"
+    ports:
+      - "127.0.0.1:4317:4317"
+      - "127.0.0.1:4318:4318"
     volumes:
       - "./alloy-config.alloy:/etc/alloy/config.alloy:ro"
       - "/var/log/journal:/var/log/journal:ro"
@@ -93,6 +113,7 @@ volumes:
   prometheus_data:
   grafana_data:
   loki_data:
+  tempo_data:
 
 networks:
   default:

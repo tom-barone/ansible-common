@@ -32,3 +32,52 @@ loki.write "endpoint" {
     url = "http://loki:3100/loki/api/v1/push"
   }
 }
+
+// ---- OTLP receiver for application telemetry ----
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    metrics = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+    logs    = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  output {
+    metrics = [otelcol.exporter.otlphttp.metrics.input]
+    traces  = [otelcol.exporter.otlp.traces.input]
+    logs    = [otelcol.exporter.otlphttp.logs.input]
+  }
+}
+
+// ---- Traces -> Tempo (gRPC) ----
+otelcol.exporter.otlp "traces" {
+  client {
+    endpoint = "tempo:4317"
+    tls {
+      insecure = true
+    }
+  }
+}
+
+// ---- Metrics -> Prometheus native OTLP receiver ----
+otelcol.exporter.otlphttp "metrics" {
+  client {
+    endpoint = "http://prometheus:9090/api/v1/otlp"
+  }
+}
+
+// ---- Logs -> Loki native OTLP receiver ----
+otelcol.exporter.otlphttp "logs" {
+  client {
+    endpoint = "http://loki:3100/otlp"
+  }
+}
