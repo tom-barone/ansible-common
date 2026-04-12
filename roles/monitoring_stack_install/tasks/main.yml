@@ -52,6 +52,14 @@
     mode: "0644"
   notify: "Restart monitoring stack"
 
+- name: "Deploy Tempo config"
+  ansible.builtin.template:
+    src: "tempo-config.yml.j2"
+    dest: >-
+      {{ monitoring_stack_install_dir }}/tempo-config.yml
+    mode: "0644"
+  notify: "Restart monitoring stack"
+
 - name: "Deploy Alloy config"
   ansible.builtin.template:
     src: "alloy-config.alloy.j2"

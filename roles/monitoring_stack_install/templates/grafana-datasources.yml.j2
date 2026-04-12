@@ -13,3 +13,23 @@ datasources:
     uid: "loki"
     access: "proxy"
     url: "http://loki:3100"
+
+  - name: "Tempo"
+    type: "tempo"
+    uid: "tempo"
+    access: "proxy"
+    url: "http://tempo:3200"
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: "loki"
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+        filterByTraceID: true
+      tracesToMetrics:
+        datasourceUid: "prometheus"
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+      serviceMap:
+        datasourceUid: "prometheus"
+      nodeGraph:
+        enabled: true
