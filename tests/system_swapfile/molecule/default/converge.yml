@@ -1,0 +1,11 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_swapfile"
+      vars:
+        system_swapfile_path: "/swapfile"
+        system_swapfile_size: "256M"
+        system_swapfile_swappiness: 60
