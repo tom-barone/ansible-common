@@ -10,10 +10,63 @@
       - "system_swapfile_swappiness is number"
     msg: "Missing a required variable"
 
+- name: "Compute desired swapfile size in bytes"
+  ansible.builtin.set_fact:
+    system_swapfile_size_bytes: "{{ system_swapfile_size | human_to_bytes }}"
+
 - name: "Stat existing swapfile"
   ansible.builtin.stat:
     path: "{{ system_swapfile_path }}"
   register: "system_swapfile_stat"
+
+- name: "Detect type of existing file"
+  ansible.builtin.command:
+    argv:
+      - "file"
+      - "--brief"
+      - "{{ system_swapfile_path }}"
+  register: "system_swapfile_file_type"
+  changed_when: false
+  check_mode: false
+  when: "system_swapfile_stat.stat.exists"
+
+- name: "Decide whether swapfile needs (re)creation"
+  ansible.builtin.set_fact:
+    system_swapfile_recreate: >-
+      {{ (not system_swapfile_stat.stat.exists)
+         or ((system_swapfile_stat.stat.size | int)
+             != (system_swapfile_size_bytes | int))
+         or ('swap file' not in
+             (system_swapfile_file_type.stdout | default(''))) }}
+
+- name: "Read active swap devices before recreating"
+  ansible.builtin.slurp:
+    src: "/proc/swaps"
+  register: "system_swapfile_proc_swaps_pre"
+  when:
+    - "system_swapfile_recreate"
+    - "system_swapfile_stat.stat.exists"
+
+- name: "Disable existing swap before recreating"
+  ansible.builtin.command:
+    argv:
+      - "swapoff"
+      - "{{ system_swapfile_path }}"
+  when:
+    - "system_swapfile_recreate"
+    - "system_swapfile_stat.stat.exists"
+    - >-
+      system_swapfile_path
+      in (system_swapfile_proc_swaps_pre.content | default('') | b64decode)
+  changed_when: true
+
+- name: "Remove existing swapfile before recreating"
+  ansible.builtin.file:
+    path: "{{ system_swapfile_path }}"
+    state: "absent"
+  when:
+    - "system_swapfile_recreate"
+    - "system_swapfile_stat.stat.exists"
 
 - name: "Allocate swapfile"
   ansible.builtin.command:
@@ -22,7 +75,7 @@
       - "-l"
       - "{{ system_swapfile_size }}"
       - "{{ system_swapfile_path }}"
-  when: "not system_swapfile_stat.stat.exists"
+  when: "system_swapfile_recreate"
   changed_when: true
 
 - name: "Set swapfile permissions"
@@ -33,25 +86,15 @@
     mode: "0600"
     state: "file"
 
-- name: "Detect whether file already has a swap signature"
-  ansible.builtin.command:
-    argv:
-      - "file"
-      - "--brief"
-      - "{{ system_swapfile_path }}"
-  register: "system_swapfile_file_type"
-  changed_when: false
-  check_mode: false
-
 - name: "Format swapfile"
   ansible.builtin.command:
     argv:
       - "mkswap"
       - "{{ system_swapfile_path }}"
-  when: "'swap file' not in system_swapfile_file_type.stdout"
+  when: "system_swapfile_recreate"
   changed_when: true
 
-- name: "Add fstab entry for swapfile"
+- name: "Add swapfile to fstab"
   ansible.posix.mount:
     name: "none"
     src: "{{ system_swapfile_path }}"
@@ -61,19 +104,24 @@
     passno: "0"
     state: "present"
 
-- name: "Read active swap devices"
-  ansible.builtin.slurp:
-    src: "/proc/swaps"
-  register: "system_swapfile_proc_swaps"
+- name: "List currently active swap devices"
+  ansible.builtin.command:
+    argv:
+      - "swapon"
+      - "--show=NAME"
+      - "--noheadings"
+      - "--raw"
+  register: "system_swapfile_active_swaps"
+  changed_when: false
+  check_mode: false
 
-- name: "Activate swapfile if not already active"
+- name: "Activate swapfile"
   ansible.builtin.command:
     argv:
       - "swapon"
       - "{{ system_swapfile_path }}"
-  when: >-
-    system_swapfile_path
-    not in (system_swapfile_proc_swaps.content | b64decode)
+  when:
+    - "system_swapfile_path not in system_swapfile_active_swaps.stdout_lines"
   changed_when: true
 
 - name: "Set vm.swappiness"
