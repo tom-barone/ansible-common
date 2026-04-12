@@ -44,6 +44,8 @@ metrics_generator:
       dimensions:
         - "service.namespace"
         - "deployment.environment"
+    local_blocks:
+      flush_to_storage: true
 
 overrides:
   defaults:
@@ -51,6 +53,7 @@ overrides:
       processors:
         - "service-graphs"
         - "span-metrics"
+        - "local-blocks"
 
 usage_report:
   reporting_enabled: false
