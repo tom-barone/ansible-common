@@ -18,6 +18,7 @@ services:
       - "--web.console.templates=/usr/share/prometheus/consoles"
       - "--web.enable-otlp-receiver"
       - "--web.enable-remote-write-receiver"
+      - "--enable-feature=exemplar-storage"
 
   node-exporter:
     # https://hub.docker.com/r/prom/node-exporter
