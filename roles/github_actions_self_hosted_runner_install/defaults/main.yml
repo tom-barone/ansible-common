@@ -5,6 +5,7 @@ github_actions_self_hosted_runner_install_dir: "/opt/github-runner"
 github_actions_self_hosted_runner_install_cache_dir: "/opt/github-runner-cache"
 github_actions_self_hosted_runner_install_user: "github-action-runner"
 github_actions_self_hosted_runner_install_cache_port: 3000
+github_actions_self_hosted_runner_install_cache_cleanup_older_than_days: 90
 github_actions_self_hosted_runner_install_labels: []
 github_actions_self_hosted_runner_install_runner_group: "Default"
 github_actions_self_hosted_runner_install_skip_registration: false
