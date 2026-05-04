@@ -39,3 +39,4 @@
 .* .*sshd.*: Server listening on .*$
 .* .*systemd.*: Reloaded ssh.service .*$
 .* .*sshd.*: Timeout before authentication for connection from .*$
+.* .*sshd.*: PerSourcePenalties logging rate-limited: .* dropped$
