@@ -13,7 +13,7 @@ A non-comprehensive list of the more interesting roles:
 | `monitoring_stack_install` | Install [Prometheus](https://prometheus.io/), [Loki](https://grafana.com/oss/loki/), [Grafana](https://grafana.com/), [Alloy](https://grafana.com/docs/alloy/latest/), [Node Exporter](https://github.com/prometheus/node_exporter), and [cAdvisor](https://github.com/google/cadvisor) via Docker with emailed alerts for disk and RAM usage. |
 | `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |
 | `postgres_install_docker` | Deploy PostgreSQL via Docker. |
-| `postgres_restic_backup` | Automated PostgreSQL backups to a S3 compatible backend with [Restic](https://restic.net/). |
+| `postgres_restic_backup` | Automated PostgreSQL backups to an S3 compatible backend with [Restic](https://restic.net/). |
 | `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |
 | `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
 | `system_harden_ssh` | Harden SSH setting up authorized keys, and configuring sshd security parameters. |
