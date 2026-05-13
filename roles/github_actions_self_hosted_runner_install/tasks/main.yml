@@ -226,6 +226,38 @@
     not
     github_actions_self_hosted_runner_install_binary.stat.exists
 
+# The falcondev-oss/github-actions-runner tarball is an unmodified mirror of
+# actions/runner. To make the falcondev-oss/github-actions-cache-server work,
+# Runner.Worker.dll must be patched so it stops overwriting ACTIONS_RESULTS_URL
+# on every job (the patch corrupts the env-var name's UTF-16-LE bytes inside
+# the DLL). See: https://gha-cache-server.falcondev.io/getting-started
+- name: "Patch Runner.Worker.dll for falcondev cache server"
+  vars:
+    github_actions_self_hosted_runner_install_worker_dll: >-
+      {{ github_actions_self_hosted_runner_install_dir
+      }}/bin/Runner.Worker.dll
+  ansible.builtin.shell:
+    cmd: |
+      python3 - <<'PY'
+      import sys
+      p = "{{ github_actions_self_hosted_runner_install_worker_dll }}"
+      needle = "ACTIONS_RESULTS_URL".encode("utf-16-le")
+      repl = "ACTIONS_RESULTS_ORL".encode("utf-16-le")
+      with open(p, "rb") as f:
+          data = f.read()
+      if needle not in data:
+          sys.exit(99)
+      with open(p, "wb") as f:
+          f.write(data.replace(needle, repl))
+      PY
+  register: >-
+    github_actions_self_hosted_runner_install_patch
+  changed_when: >-
+    github_actions_self_hosted_runner_install_patch.rc == 0
+  failed_when: >-
+    github_actions_self_hosted_runner_install_patch.rc not in [0, 99]
+  notify: "Restart runner service"
+
 - name: "Check if runner is already configured"
   ansible.builtin.stat:
     path: >-
