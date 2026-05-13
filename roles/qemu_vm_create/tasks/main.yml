@@ -94,6 +94,11 @@
     url: "{{ qemu_vm_create_image_url }}"
     dest: "{{ qemu_vm_create_base_image }}"
     mode: "0644"
+    timeout: 60
+  register: "qemu_vm_create_download_result"
+  retries: 5
+  delay: 15
+  until: "qemu_vm_create_download_result is succeeded"
 
 - name: "Create COW overlay from base image"
   ansible.builtin.command:
