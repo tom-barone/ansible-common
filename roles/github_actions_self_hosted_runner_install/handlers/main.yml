@@ -18,3 +18,7 @@
       {{ github_actions_self_hosted_runner_install_dir }}
   changed_when: true
   listen: "Restart runner service"
+  when: >-
+    not
+    github_actions_self_hosted_runner_install_skip_registration
+    | bool
