@@ -17,25 +17,13 @@
     update_cache: true
     cache_valid_time: 3600
 
-- name: "Configure unattended-upgrades"
-  ansible.builtin.command:
-    argv:
-      - "sh"
-      - "-c"
-      - >-
-        echo unattended-upgrades
-        unattended-upgrades/enable_auto_updates
-        boolean true | debconf-set-selections
-  changed_when: false
-
-- name: "Reconfigure unattended-upgrades"
-  ansible.builtin.command:
-    argv:
-      - "dpkg-reconfigure"
-      - "-f"
-      - "noninteractive"
-      - "unattended-upgrades"
-  changed_when: false
+- name: "Enable periodic apt updates and unattended-upgrades"
+  ansible.builtin.copy:
+    dest: "/etc/apt/apt.conf.d/20auto-upgrades"
+    mode: "0644"
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
 
 - name: "Ensure unattended-upgrades is enabled and started"
   ansible.builtin.systemd:
