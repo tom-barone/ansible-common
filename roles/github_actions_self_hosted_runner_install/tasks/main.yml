@@ -112,6 +112,31 @@
   retries: 30
   delay: 5
 
+# Force the "Restart cache server" handler to fire now (if a fresh
+# docker-compose.yml notified it) so the force-recreate happens before the
+# runner is configured and started. Otherwise the handler runs at end-of-play
+# right next to the runner restart, racing the cache container's reboot and
+# causing the first job to fall back to GitHub's hosted cache.
+- name: "Flush handlers so cache server recreate happens before runner start"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "Wait for cache server to be ready (post-recreate)"
+  ansible.builtin.uri:
+    url: >-
+      http://localhost:{{
+      github_actions_self_hosted_runner_install_cache_port
+      }}
+    status_code:
+      - 200
+      - 404
+  register: >-
+    github_actions_self_hosted_runner_install_cache_health_post
+  until: >-
+    github_actions_self_hosted_runner_install_cache_health_post.status
+    in [200, 404]
+  retries: 30
+  delay: 5
+
 - name: "Check if svc.sh exists (force reinstall)"
   ansible.builtin.stat:
     path: >-
