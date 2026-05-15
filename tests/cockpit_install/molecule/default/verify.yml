@@ -1,0 +1,66 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check cockpit package is installed"
+      ansible.builtin.command: "dpkg -s cockpit"
+      changed_when: false
+
+    - name: "Check pcp package is installed"
+      ansible.builtin.command: "dpkg -s pcp"
+      changed_when: false
+
+    - name: "Get apt-cache policy for cockpit"
+      ansible.builtin.command: "apt-cache policy cockpit"
+      changed_when: false
+      register: "cockpit_policy"
+
+    - name: "Assert cockpit was installed from trixie-backports"
+      ansible.builtin.assert:
+        that:
+          - "'trixie-backports' in cockpit_policy.stdout"
+        msg: "cockpit was not installed from trixie-backports"
+
+    - name: "Check cockpit.socket status"
+      ansible.builtin.systemd:
+        name: "cockpit.socket"
+      register: "cockpit_socket"
+
+    - name: "Assert cockpit.socket is active and enabled"
+      ansible.builtin.assert:
+        that:
+          - "cockpit_socket.status.ActiveState == 'active'"
+          - "cockpit_socket.status.UnitFileState == 'enabled'"
+        msg: "cockpit.socket is not active and enabled"
+
+    - name: "Check pmlogger.service status"
+      ansible.builtin.systemd:
+        name: "pmlogger.service"
+      register: "pmlogger_service"
+
+    - name: "Assert pmlogger.service is active and enabled"
+      ansible.builtin.assert:
+        that:
+          - "pmlogger_service.status.ActiveState == 'active'"
+          - "pmlogger_service.status.UnitFileState == 'enabled'"
+        msg: "pmlogger.service is not active and enabled"
+
+    - name: "Check Cockpit responds on https://localhost:9090/"
+      ansible.builtin.command:
+        argv:
+          - "curl"
+          - "-k"
+          - "-sS"
+          - "-o"
+          - "/dev/null"
+          - "-w"
+          - "%{http_code}"
+          - "https://localhost:9090/"
+      changed_when: false
+      register: "cockpit_http"
+
+    - name: "Assert Cockpit returns 200"
+      ansible.builtin.assert:
+        that:
+          - "cockpit_http.stdout == '200'"
+        msg: "Cockpit did not return 200 on https://localhost:9090/"

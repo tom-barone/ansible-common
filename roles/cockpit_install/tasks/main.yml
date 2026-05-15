@@ -1,0 +1,53 @@
+---
+- name: "Assert target is Debian 13 (trixie)"
+  ansible.builtin.assert:
+    that:
+      - "ansible_facts['distribution'] == 'Debian'"
+      - "ansible_facts['distribution_release'] == 'trixie'"
+    msg: "cockpit_install only supports Debian 13 (trixie)."
+
+- name: "Install repository management dependencies"
+  ansible.builtin.apt:
+    name:
+      - "python3-debian"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Add trixie-backports repository"
+  ansible.builtin.deb822_repository:
+    name: "debian-backports"
+    types: "deb"
+    uris: "http://deb.debian.org/debian"
+    suites: "trixie-backports"
+    components: "main"
+    signed_by: "/usr/share/keyrings/debian-archive-keyring.gpg"
+    state: "present"
+
+- name: "Install Cockpit from backports"
+  ansible.builtin.apt:
+    name:
+      - "cockpit"
+    state: "present"
+    default_release: "trixie-backports"
+    update_cache: true
+
+- name: "Install PCP for Cockpit metrics history"
+  ansible.builtin.apt:
+    name:
+      - "pcp"
+    state: "present"
+  when: "cockpit_install_enable_pcp"
+
+- name: "Ensure cockpit.socket is enabled and started"
+  ansible.builtin.systemd:
+    name: "cockpit.socket"
+    enabled: true
+    state: "started"
+
+- name: "Ensure pmlogger.service is enabled and started"
+  ansible.builtin.systemd:
+    name: "pmlogger.service"
+    enabled: true
+    state: "started"
+  when: "cockpit_install_enable_pcp"

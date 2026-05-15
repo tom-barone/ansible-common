@@ -1,0 +1,11 @@
+---
+- name: "Destroy QEMU VM"
+  hosts: "localhost"
+  connection: "local"
+  gather_facts: false
+  tasks:
+    - name: "Destroy VM"
+      ansible.builtin.include_role:
+        name: "qemu_vm_destroy"
+      vars:
+        qemu_vm_destroy_name: "test-vm"
