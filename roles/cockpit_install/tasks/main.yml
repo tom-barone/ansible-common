@@ -11,6 +11,7 @@
     name:
       - "python3-debian"
     state: "present"
+    install_recommends: false
     update_cache: true
     cache_valid_time: 3600
 
@@ -30,6 +31,7 @@
       - "cockpit"
     state: "present"
     default_release: "trixie-backports"
+    install_recommends: false
     update_cache: true
 
 - name: "Install PCP for Cockpit metrics history"
@@ -37,6 +39,7 @@
     name:
       - "pcp"
     state: "present"
+    install_recommends: false
   when: "cockpit_install_enable_pcp"
 
 - name: "Ensure cockpit.socket is enabled and started"
