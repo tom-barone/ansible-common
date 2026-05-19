@@ -23,7 +23,44 @@
           - "'relayhost = [smtp.gmail.com]:587' in content"
           - "'inet_protocols = ipv4' in content"
           - "'smtp_sasl_auth_enable = yes' in content"
+          - "'smtp_generic_maps = hash:/etc/postfix/generic' in content"
         msg: "main.cf missing expected configuration"
+
+    - name: "Check generic map file exists with correct permissions"
+      ansible.builtin.stat:
+        path: "/etc/postfix/generic"
+      register: "generic_map"
+
+    - name: "Assert generic map permissions"
+      ansible.builtin.assert:
+        that:
+          - "generic_map.stat.exists"
+          - "generic_map.stat.mode == '0644'"
+        msg: "generic map file missing or has incorrect permissions"
+
+    - name: "Check generic map hash db exists"
+      ansible.builtin.stat:
+        path: "/etc/postfix/generic.db"
+      register: "generic_map_db"
+
+    - name: "Assert generic map hash db exists"
+      ansible.builtin.assert:
+        that:
+          - "generic_map_db.stat.exists"
+        msg: "generic.db missing - postmap did not run"
+
+    - name: "Read generic map file"
+      ansible.builtin.slurp:
+        src: "/etc/postfix/generic"
+      register: "generic_map_content"
+
+    - name: "Assert generic map has expected entry"
+      vars:
+        content: "{{ generic_map_content.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'@example.internal noreply@example.com' in content"
+        msg: "generic map missing expected entry"
 
     - name: "Check sasl_passwd file exists with correct permissions"
       ansible.builtin.stat:

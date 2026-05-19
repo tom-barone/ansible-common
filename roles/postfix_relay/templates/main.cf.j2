@@ -34,3 +34,8 @@ smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 
 # Don't use IPv6 for now, as it can cause issues
 inet_protocols = ipv4
+{% if postfix_relay_smtp_generic_maps is defined and postfix_relay_smtp_generic_maps | length > 0 %}
+
+# Rewrite outgoing sender addresses to satisfy relay sender ownership checks
+smtp_generic_maps = hash:/etc/postfix/generic
+{% endif %}

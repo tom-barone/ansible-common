@@ -12,3 +12,5 @@
         postfix_relay_password: "testpassword"
         postfix_relay_hostname: "testhost"
         postfix_relay_root_alias: "admin@example.com"
+        postfix_relay_smtp_generic_maps:
+          - "@example.internal noreply@example.com"
