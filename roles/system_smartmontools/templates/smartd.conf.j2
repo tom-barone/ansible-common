@@ -1,0 +1,9 @@
+# Managed by Ansible role: system_smartmontools
+{% set defaults = system_smartmontools_default_options | trim -%}
+{% if system_smartmontools_devices -%}
+{% for d in system_smartmontools_devices %}
+{{ d.device }} {{ d.options | default(defaults) }}
+{% endfor %}
+{% else %}
+DEVICESCAN {{ defaults }}
+{% endif %}

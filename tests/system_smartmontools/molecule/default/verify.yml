@@ -1,0 +1,32 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check smartmontools package is installed"
+      ansible.builtin.command: "dpkg -s smartmontools"
+      changed_when: false
+
+    - name: "Read smartd.conf"
+      ansible.builtin.slurp:
+        src: "/etc/smartd.conf"
+      register: "smartd_conf"
+
+    - name: "Assert smartd.conf has expected content from second converge pass"
+      vars:
+        content: "{{ smartd_conf.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'/dev/sda -a -m root' in content"
+          - "'/dev/nvme0 -a -d nvme -m root' in content"
+        msg: "smartd.conf missing expected device lines"
+
+    - name: "Get smartmontools service status"
+      ansible.builtin.systemd:
+        name: "smartmontools"
+      register: "smartmontools_service"
+
+    - name: "Assert smartmontools service is enabled"
+      ansible.builtin.assert:
+        that:
+          - "smartmontools_service.status.UnitFileState == 'enabled'"
+        msg: "smartmontools service is not enabled"
