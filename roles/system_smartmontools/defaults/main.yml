@@ -1,0 +1,19 @@
+---
+# List of disks to monitor. Empty list -> DEVICESCAN (auto-discover all).
+# Each entry: { device: "/dev/sdX", options: "<smartd directives>" }
+system_smartmontools_devices: []
+
+# Default directives appended to every device line (and to DEVICESCAN).
+# -a              monitor all SMART attributes
+# -o on           enable automatic offline data collection
+# -S on           enable attribute autosave
+# -n standby,q    skip checks if disk is in standby (quiet)
+# -s (S/../.././02|L/../../6/03)
+#                 short self-test daily at 02:00, long self-test Sat 03:00
+# -W 4,40,45      warn on temp delta 4C, info >=40C, critical >=45C
+# -m root         email recipient (postfix_relay aliases root -> admin)
+system_smartmontools_default_options: >-
+  -a -o on -S on -n standby,q
+  -s (S/../.././02|L/../../6/03)
+  -W 4,40,45
+  -m root

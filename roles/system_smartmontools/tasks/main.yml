@@ -1,0 +1,35 @@
+---
+# Tests to confirm working:
+#   $ sudo systemctl status smartmontools
+#   $ sudo smartctl --scan
+#   $ sudo smartctl -a /dev/sdX
+# Fire a one-shot test email to verify the alert path end-to-end:
+#   $ sudo smartd -q onecheck -M test /dev/sdX
+# (sends a synthetic warning email to `root` then exits; the running
+#  smartmontools service is unaffected)
+
+- name: "Install smartmontools"
+  ansible.builtin.apt:
+    pkg:
+      - "smartmontools"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Configure smartd"
+  ansible.builtin.template:
+    src: "smartd.conf.j2"
+    dest: "/etc/smartd.conf"
+    mode: "0644"
+    backup: true
+  notify: "Restart smartmontools"
+
+- name: "Ensure smartmontools is enabled at boot"
+  # Initial start is handled by the package's postinst; the handler above
+  # restarts on config change. We deliberately don't manage `state` here so
+  # the role stays idempotent on hosts where smartd has exited because no
+  # monitorable devices are present (e.g. test containers, hot-swappable
+  # bays that are temporarily empty).
+  ansible.builtin.systemd:
+    name: "smartmontools"
+    enabled: true

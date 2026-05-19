@@ -1,0 +1,13 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_smartmontools"
+      vars:
+        system_smartmontools_devices:
+          - device: "/dev/sda"
+            options: "-a -m root"
+          - device: "/dev/nvme0"
+            options: "-a -d nvme -m root"
