@@ -79,3 +79,6 @@
 .* .*tailscaled.*: magicsock: adding connection to .*$
 .* .*tailscaled.*: derphttp\.Client\.Connect: .*$
 .* .*tailscaled.*: magicsock: derp-.* connected; .*$
+.* .*tailscaled.*: wgengine: sending TSMP disco key advertisement to .*$
+.* .*tailscaled.*: dns: resolver: forward: forwarder\.send\(".*"\): successfully retried via TCP$
+.* .*tailscaled.*: netmap: suggested exit node: .*$

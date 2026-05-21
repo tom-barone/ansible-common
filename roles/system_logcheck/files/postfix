@@ -11,3 +11,4 @@
 .* .*postfix.*: updating .* => .*$
 .* .*postfix.*: .*warning: not owned by root: .*$
 .* .*postfix.*: '.*' -> '.*'$
+.* .*postfix.*: .*: prepend: header From: .*$
