@@ -1,12 +1,10 @@
 ---
 # Tests to confirm working:
-#   $ sudo systemctl status smartmontools
-#   $ sudo smartctl --scan
-#   $ sudo smartctl -a /dev/sdX
+#   $ systemctl status smartmontools
+#   $ smartctl --scan
+#   $ smartctl -a /dev/sdX
 # Fire a one-shot test email to verify the alert path end-to-end:
-#   $ sudo smartd -q onecheck -M test /dev/sdX
-# (sends a synthetic warning email to `root` then exits; the running
-#  smartmontools service is unaffected)
+#   $ echo '/dev/sdX -M test -m root' | smartd -c - -q onecheck -d
 
 - name: "Install smartmontools"
   ansible.builtin.apt:
