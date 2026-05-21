@@ -82,3 +82,5 @@
 .* .*tailscaled.*: wgengine: sending TSMP disco key advertisement to .*$
 .* .*tailscaled.*: dns: resolver: forward: forwarder\.send\(".*"\): successfully retried via TCP$
 .* .*tailscaled.*: netmap: suggested exit node: .*$
+.* .*tailscaled.*: control: controlclient direct: got TSMP disco key advertisement from .* via eventbus$
+.* .*tailscaled.*: control: controlclient direct: updating discoKey for .* via mapSession$

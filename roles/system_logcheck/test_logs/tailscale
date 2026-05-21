@@ -104,3 +104,5 @@ Mar 10 00:16:07 traefik tailscaled[3260]: wgengine: Reconfig: removing session k
 May 21 15:30:20 quilava tailscaled[2179706]: wgengine: sending TSMP disco key advertisement to 100.116.20.108
 May 21 15:51:31 quilava tailscaled[2179706]: dns: resolver: forward: forwarder.send("192.168.50.1"): successfully retried via TCP
 May 21 15:13:07 quilava tailscaled[2179706]: netmap: suggested exit node:  ()
+May 21 06:34:36 forgejo tailscaled[2198379]: control: controlclient direct: got TSMP disco key advertisement from 100.116.20.108 via eventbus
+May 21 06:34:36 forgejo tailscaled[2198379]: control: controlclient direct: updating discoKey for 100.116.20.108 via mapSession
