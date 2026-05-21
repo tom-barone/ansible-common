@@ -4,6 +4,7 @@ services:
     container_name: "{{ scrutiny_docker_install_container_name }}"
     restart: "unless-stopped"
     cap_add:
+      - "SYS_ADMIN"
       - "SYS_RAWIO"
     ports:
       - "{{ scrutiny_docker_install_port }}:8080"

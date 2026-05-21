@@ -1,4 +1,28 @@
 ---
+- name: "Install smartmontools"
+  ansible.builtin.apt:
+    pkg:
+      - "smartmontools"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Discover S.M.A.R.T. devices via smartctl --scan"
+  ansible.builtin.command:
+    cmd: "smartctl --scan"
+  register: "scrutiny_docker_install_scan"
+  changed_when: false
+
+- name: "Parse discovered device paths"
+  ansible.builtin.set_fact:
+    scrutiny_docker_install_devices: >-
+      {{
+        scrutiny_docker_install_scan.stdout_lines
+        | select('match', '^/dev/')
+        | map('regex_replace', '^(\S+).*$', '\1')
+        | list
+      }}
+
 - name: "Create install directory"
   ansible.builtin.file:
     path: "{{ scrutiny_docker_install_dir }}"
