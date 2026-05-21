@@ -1,0 +1,6 @@
+---
+scrutiny_docker_install_version: "v0.9.2-omnibus"
+scrutiny_docker_install_dir: "/opt/scrutiny"
+scrutiny_docker_install_port: 8080
+scrutiny_docker_install_container_name: "scrutiny"
+scrutiny_docker_install_devices: []

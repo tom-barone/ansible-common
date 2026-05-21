@@ -1,0 +1,19 @@
+services:
+  scrutiny:
+    image: "ghcr.io/analogj/scrutiny:{{ scrutiny_docker_install_version }}"
+    container_name: "{{ scrutiny_docker_install_container_name }}"
+    restart: "unless-stopped"
+    cap_add:
+      - "SYS_RAWIO"
+    ports:
+      - "{{ scrutiny_docker_install_port }}:8080"
+    volumes:
+      - "/run/udev:/run/udev:ro"
+      - "{{ scrutiny_docker_install_dir }}/config:/opt/scrutiny/config"
+      - "{{ scrutiny_docker_install_dir }}/influxdb:/opt/scrutiny/influxdb"
+{% if scrutiny_docker_install_devices | length > 0 %}
+    devices:
+{% for device in scrutiny_docker_install_devices %}
+      - "{{ device }}"
+{% endfor %}
+{% endif %}

@@ -1,0 +1,56 @@
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    container_name: "scrutiny"
+    scrutiny_port: 8080
+  tasks:
+    - name: "Check install directory exists"
+      ansible.builtin.stat:
+        path: "/opt/scrutiny"
+      register: "install_dir"
+
+    - name: "Assert install directory exists"
+      ansible.builtin.assert:
+        that:
+          - "install_dir.stat.exists"
+          - "install_dir.stat.isdir"
+
+    - name: "Read docker-compose.yml"
+      ansible.builtin.slurp:
+        src: "/opt/scrutiny/docker-compose.yml"
+      register: "compose_file"
+
+    - name: "Assert docker-compose.yml contains expected content"
+      vars:
+        content: "{{ compose_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "container_name in content"
+
+    - name: "Validate compose config"
+      ansible.builtin.command:
+        cmd: "docker compose config --quiet"
+        chdir: "/opt/scrutiny"
+      changed_when: false
+
+    - name: "Check container is running"
+      ansible.builtin.command:
+        cmd: "docker compose ps"
+        chdir: "/opt/scrutiny"
+      register: "compose_ps"
+      changed_when: false
+
+    - name: "Assert scrutiny container is listed"
+      ansible.builtin.assert:
+        that:
+          - "container_name in compose_ps.stdout"
+
+    - name: "Check Scrutiny responds on HTTP port"
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ scrutiny_port }}/"
+        status_code: 200
+      register: "scrutiny_http"
+      until: "scrutiny_http.status == 200"
+      retries: 30
+      delay: 2

@@ -1,0 +1,12 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        # 'vfs' is intended for testing purposes, and for situations
+        # where no copy-on-write filesystem can be used.
+        # Performance is poor, and not generally recommended for production use.
+        docker_install_storage_driver: "vfs"
