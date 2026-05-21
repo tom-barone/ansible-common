@@ -29,6 +29,23 @@
     state: "directory"
     mode: "0755"
 
+- name: "Create scrutiny config directory"
+  ansible.builtin.file:
+    path: "{{ scrutiny_docker_install_dir }}/config"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy scrutiny.yaml"
+  ansible.builtin.template:
+    src: "scrutiny.yaml.j2"
+    dest: "{{ scrutiny_docker_install_dir }}/config/scrutiny.yaml"
+    mode: "0644"
+  when:
+    - >-
+      scrutiny_docker_install_notify_urls | length > 0
+      or scrutiny_docker_install_notify_mute_attributes | length > 0
+  notify: "Restart scrutiny"
+
 - name: "Deploy docker-compose.yml"
   ansible.builtin.template:
     src: "docker-compose.yml.j2"

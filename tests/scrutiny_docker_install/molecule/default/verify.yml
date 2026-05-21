@@ -54,3 +54,17 @@
       until: "scrutiny_http.status == 200"
       retries: 30
       delay: 2
+
+    - name: "Read scrutiny.yaml"
+      ansible.builtin.slurp:
+        src: "/opt/scrutiny/config/scrutiny.yaml"
+      register: "scrutiny_yaml"
+
+    - name: "Assert scrutiny.yaml contains notify config"
+      vars:
+        content: "{{ scrutiny_yaml.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'discord://token@id' in content"
+          - "'WD-TESTSERIAL' in content"
+          - '''"188"'' in content'

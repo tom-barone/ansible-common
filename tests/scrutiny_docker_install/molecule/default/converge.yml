@@ -5,3 +5,9 @@
     - name: "Apply role under test"
       ansible.builtin.include_role:
         name: "scrutiny_docker_install"
+      vars:
+        scrutiny_docker_install_notify_urls:
+          - "discord://token@id"
+        scrutiny_docker_install_notify_mute_attributes:
+          "WD-TESTSERIAL":
+            - "188"
