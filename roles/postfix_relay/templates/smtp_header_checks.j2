@@ -1,0 +1,3 @@
+{% for header in postfix_relay_custom_headers %}
+/^From:/i PREPEND {{ header }}
+{% endfor %}

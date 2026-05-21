@@ -39,3 +39,8 @@ inet_protocols = ipv4
 # Rewrite outgoing sender addresses to satisfy relay sender ownership checks
 smtp_generic_maps = hash:/etc/postfix/generic
 {% endif %}
+{% if postfix_relay_custom_headers is defined and postfix_relay_custom_headers | length > 0 %}
+
+# Add custom headers to all outgoing mail
+smtp_header_checks = regexp:/etc/postfix/smtp_header_checks
+{% endif %}
