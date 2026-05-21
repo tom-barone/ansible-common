@@ -59,6 +59,17 @@
     - "Reload generic db"
     - "Restart postfix"
 
+- name: "Configure custom outgoing headers"
+  ansible.builtin.template:
+    src: "smtp_header_checks.j2"
+    dest: "/etc/postfix/smtp_header_checks"
+    mode: "0644"
+  when:
+    - "postfix_relay_custom_headers is defined"
+    - "postfix_relay_custom_headers | length > 0"
+  notify:
+    - "Restart postfix"
+
 - name: "Configure postfix main.cf"
   ansible.builtin.template:
     src: "main.cf.j2"

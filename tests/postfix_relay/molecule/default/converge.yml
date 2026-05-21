@@ -14,3 +14,6 @@
         postfix_relay_root_alias: "admin@example.com"
         postfix_relay_smtp_generic_maps:
           - "@example.internal noreply@example.com"
+        postfix_relay_custom_headers:
+          - "X-Origin-Host: test.example.internal"
+          - "X-Custom1: value1"

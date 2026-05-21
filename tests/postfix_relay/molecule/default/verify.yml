@@ -24,6 +24,9 @@
           - "'inet_protocols = ipv4' in content"
           - "'smtp_sasl_auth_enable = yes' in content"
           - "'smtp_generic_maps = hash:/etc/postfix/generic' in content"
+          - >-
+            'smtp_header_checks = regexp:/etc/postfix/smtp_header_checks'
+            in content
         msg: "main.cf missing expected configuration"
 
     - name: "Check generic map file exists with correct permissions"
@@ -61,6 +64,34 @@
         that:
           - "'@example.internal noreply@example.com' in content"
         msg: "generic map missing expected entry"
+
+    - name: "Check smtp_header_checks file exists with correct permissions"
+      ansible.builtin.stat:
+        path: "/etc/postfix/smtp_header_checks"
+      register: "smtp_header_checks_file"
+
+    - name: "Assert smtp_header_checks permissions"
+      ansible.builtin.assert:
+        that:
+          - "smtp_header_checks_file.stat.exists"
+          - "smtp_header_checks_file.stat.mode == '0644'"
+        msg: "smtp_header_checks file missing or has incorrect permissions"
+
+    - name: "Read smtp_header_checks file"
+      ansible.builtin.slurp:
+        src: "/etc/postfix/smtp_header_checks"
+      register: "smtp_header_checks_content"
+
+    - name: "Assert smtp_header_checks has expected entries"
+      vars:
+        content: "{{ smtp_header_checks_content.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - >-
+            '/^From:/i PREPEND X-Origin-Host: test.example.internal'
+            in content
+          - "'/^From:/i PREPEND X-Custom1: value1' in content"
+        msg: "smtp_header_checks missing expected entries"
 
     - name: "Check sasl_passwd file exists with correct permissions"
       ansible.builtin.stat:
