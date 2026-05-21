@@ -1,6 +1,8 @@
 services:
   scrutiny:
-    image: "ghcr.io/analogj/scrutiny:{{ scrutiny_docker_install_version }}"
+    # image: "ghcr.io/analogj/scrutiny:{{ scrutiny_docker_install_version }}"
+    # Replaced with my own image so we can use per device, per attribute ignores
+    image: "ghcr.io/tom-barone/scrutiny:{{ scrutiny_docker_install_version }}"
     container_name: "{{ scrutiny_docker_install_container_name }}"
     restart: "unless-stopped"
     cap_add:
