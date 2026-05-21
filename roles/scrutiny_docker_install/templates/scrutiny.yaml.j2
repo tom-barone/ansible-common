@@ -1,0 +1,7 @@
+version: 1
+
+notify:
+  urls:
+{% for url in scrutiny_docker_install_notify_urls %}
+    - "{{ url }}"
+{% endfor %}

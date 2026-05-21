@@ -1,5 +1,16 @@
 ---
-scrutiny_docker_install_version: "v0.9.3"
+scrutiny_docker_install_version: "v0.9.2-omnibus"
 scrutiny_docker_install_dir: "/opt/scrutiny"
 scrutiny_docker_install_port: 8080
 scrutiny_docker_install_container_name: "scrutiny"
+
+# Shoutrrr notification URLs. Special characters in usernames / passwords
+# must be URL-encoded by the caller — they are passed through to Shoutrrr
+# verbatim. e.g. user "myname@example.com" + password "124@34$1" becomes
+# "smtp://myname%40example%2Ecom:124%4034%241@host:587"
+# See https://shoutrrr.nickfedor.com/services/overview/
+scrutiny_docker_install_notify_urls: []
+
+# Whether Scrutiny should keep re-sending notifications for a device that
+# stays in a failing state. Applied via /api/settings on each run.
+scrutiny_docker_install_repeat_notifications: false

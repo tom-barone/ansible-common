@@ -54,3 +54,29 @@
       until: "scrutiny_http.status == 200"
       retries: 30
       delay: 2
+
+    - name: "Read scrutiny.yaml"
+      ansible.builtin.slurp:
+        src: "/opt/scrutiny/config/scrutiny.yaml"
+      register: "scrutiny_yaml"
+
+    - name: "Assert scrutiny.yaml contains notify URL"
+      vars:
+        content: "{{ scrutiny_yaml.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'discord://token@id' in content"
+
+    - name: "Read Scrutiny settings via API"
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ scrutiny_port }}/api/settings"
+        method: "GET"
+        return_content: true
+      register: "verify_settings"
+
+    - name: "Assert repeat_notifications was applied"
+      vars:
+        metrics: "{{ verify_settings.json.settings.metrics }}"
+      ansible.builtin.assert:
+        that:
+          - "metrics.repeat_notifications == false"
