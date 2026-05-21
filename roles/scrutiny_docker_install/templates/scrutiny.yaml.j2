@@ -1,18 +1,7 @@
 version: 1
 
 notify:
-{% if scrutiny_docker_install_notify_urls | length > 0 %}
   urls:
 {% for url in scrutiny_docker_install_notify_urls %}
     - "{{ url }}"
 {% endfor %}
-{% endif %}
-{% if scrutiny_docker_install_notify_mute_attributes | length > 0 %}
-  mute_attributes:
-{% for serial, attrs in scrutiny_docker_install_notify_mute_attributes.items() %}
-    "{{ serial }}":
-{% for attr in attrs %}
-      - "{{ attr }}"
-{% endfor %}
-{% endfor %}
-{% endif %}

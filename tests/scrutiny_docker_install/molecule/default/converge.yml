@@ -8,6 +8,4 @@
       vars:
         scrutiny_docker_install_notify_urls:
           - "discord://token@id"
-        scrutiny_docker_install_notify_mute_attributes:
-          "WD-TESTSERIAL":
-            - "188"
+        scrutiny_docker_install_repeat_notifications: false
