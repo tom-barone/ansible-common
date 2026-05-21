@@ -3,6 +3,10 @@
   ansible.builtin.command: "postmap /etc/postfix/sasl/sasl_passwd"
   changed_when: true
 
+- name: "Reload generic db"
+  ansible.builtin.command: "postmap /etc/postfix/generic"
+  changed_when: true
+
 - name: "Update aliases db"
   ansible.builtin.command: "newaliases"
   changed_when: true

@@ -47,6 +47,18 @@
     - "Reload sasl_passwd db"
     - "Restart postfix"
 
+- name: "Configure smtp generic maps"
+  ansible.builtin.template:
+    src: "generic.j2"
+    dest: "/etc/postfix/generic"
+    mode: "0644"
+  when:
+    - "postfix_relay_smtp_generic_maps is defined"
+    - "postfix_relay_smtp_generic_maps | length > 0"
+  notify:
+    - "Reload generic db"
+    - "Restart postfix"
+
 - name: "Configure postfix main.cf"
   ansible.builtin.template:
     src: "main.cf.j2"
