@@ -13,4 +13,4 @@ scrutiny_docker_install_notify_urls: []
 
 # Whether Scrutiny should keep re-sending notifications for a device that
 # stays in a failing state. Applied via /api/settings on each run.
-scrutiny_docker_install_repeat_notifications: true
+scrutiny_docker_install_repeat_notifications: false
