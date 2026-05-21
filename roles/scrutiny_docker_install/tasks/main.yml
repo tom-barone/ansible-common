@@ -1,0 +1,55 @@
+---
+- name: "Install smartmontools"
+  ansible.builtin.apt:
+    pkg:
+      - "smartmontools"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Discover S.M.A.R.T. devices via smartctl --scan"
+  ansible.builtin.command:
+    cmd: "smartctl --scan"
+  register: "scrutiny_docker_install_scan"
+  changed_when: false
+
+- name: "Parse discovered device paths"
+  ansible.builtin.set_fact:
+    scrutiny_docker_install_devices: >-
+      {{
+        scrutiny_docker_install_scan.stdout_lines
+        | select('match', '^/dev/')
+        | map('regex_replace', '^(\S+).*$', '\1')
+        | list
+      }}
+
+- name: "Create install directory"
+  ansible.builtin.file:
+    path: "{{ scrutiny_docker_install_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ scrutiny_docker_install_dir }}/docker-compose.yml"
+    mode: "0644"
+  notify: "Restart scrutiny"
+
+- name: "Start scrutiny"
+  ansible.builtin.command:
+    cmd: "docker compose up -d"
+    chdir: "{{ scrutiny_docker_install_dir }}"
+  register: "scrutiny_docker_install_up"
+  changed_when: >
+    'Started' in scrutiny_docker_install_up.stderr or
+    'Created' in scrutiny_docker_install_up.stderr
+
+- name: "Wait for Scrutiny HTTP endpoint to respond"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ scrutiny_docker_install_port }}/"
+    status_code: 200
+  register: "scrutiny_docker_install_health"
+  until: "scrutiny_docker_install_health.status == 200"
+  retries: 30
+  delay: 2

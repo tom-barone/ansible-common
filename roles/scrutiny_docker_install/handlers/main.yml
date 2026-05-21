@@ -1,0 +1,6 @@
+---
+- name: "Restart scrutiny"
+  ansible.builtin.command:
+    cmd: "docker compose up -d --force-recreate"
+    chdir: "{{ scrutiny_docker_install_dir }}"
+  changed_when: true
