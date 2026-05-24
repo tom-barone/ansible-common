@@ -107,3 +107,32 @@ May 21 15:13:07 quilava tailscaled[2179706]: netmap: suggested exit node:  ()
 May 21 06:34:36 forgejo tailscaled[2198379]: control: controlclient direct: got TSMP disco key advertisement from 100.116.20.108 via eventbus
 May 21 06:34:36 forgejo tailscaled[2198379]: control: controlclient direct: updating discoKey for 100.116.20.108 via mapSession
 May 24 21:26:49 quilava tailscaled[3106570]: wgengine: Reconfig: configuring userspace WireGuard config (with 2 peers)
+May 24 12:27:06 traefik tailscaled[638]: tailscaled got signal terminated; shutting down
+May 24 12:27:06 traefik tailscaled[638]: canceling captive portal context
+May 24 12:27:06 traefik tailscaled[638]: control: client.Shutdown ...
+May 24 12:27:06 traefik tailscaled[638]: control: updateRoutine: exiting
+May 24 12:27:06 traefik tailscaled[638]: control: authRoutine: exiting
+May 24 12:27:06 traefik tailscaled[638]: control: mapRoutine: exiting
+May 24 12:27:06 traefik tailscaled[638]: control: Client.Shutdown done.
+May 24 12:27:06 traefik tailscaled[638]: ipnext: work queue shutdown failed: execqueue shut down
+May 24 12:27:06 traefik tailscaled[638]: magicsock: closing connection to derp-5 (conn-close), age 74h9m36s
+May 24 12:27:06 traefik tailscaled[638]: monitor: ip rule deleted: {Family:2 DstLength:0 SrcLength:0 Tos:0 Table:254 Protocol:0 Scope:0 Type:1 Flags:0 Attributes:{Dst:<nil> Src:<nil> Gateway:<nil> OutIface:0 Priority:5210 Table:254 Mark:16711680 Pref:<nil> Expires:<nil> Metrics:<nil> Multipath:[]}}
+May 24 12:27:06 traefik tailscaled[638]: monitor: ip rule deleted: {Family:2 DstLength:0 SrcLength:0 Tos:0 Table:253 Protocol:0 Scope:0 Type:1 Flags:0 Attributes:{Dst:<nil> Src:<nil> Gateway:<nil> OutIface:0 Priority:5230 Table:253 Mark:16711680 Pref:<nil> Expires:<nil> Metrics:<nil> Multipath:[]}}
+May 24 12:27:06 traefik tailscaled[638]: monitor: ip rule deleted: {Family:2 DstLength:0 SrcLength:0 Tos:0 Table:0 Protocol:0 Scope:0 Type:7 Flags:0 Attributes:{Dst:<nil> Src:<nil> Gateway:<nil> OutIface:0 Priority:5250 Table:0 Mark:16711680 Pref:<nil> Expires:<nil> Metrics:<nil> Multipath:[]}}
+May 24 12:27:06 traefik tailscaled[638]: monitor: ip rule deleted: {Family:2 DstLength:0 SrcLength:0 Tos:0 Table:52 Protocol:0 Scope:0 Type:1 Flags:0 Attributes:{Dst:<nil> Src:<nil> Gateway:<nil> OutIface:0 Priority:5270 Table:52 Mark:0 Pref:<nil> Expires:<nil> Metrics:<nil> Multipath:[]}}
+May 24 12:27:07 traefik tailscaled[638]: flushing log.
+May 24 12:27:07 traefik tailscaled[638]: logger closing down
+May 24 12:27:07 traefik tailscaled[84671]: flushing log.
+May 24 12:27:07 traefik tailscaled[84671]: logger closing down
+May 24 12:27:08 traefik tailscaled[84703]: ipnext: "conn25": skipping extension
+May 24 12:27:08 traefik tailscaled[84703]: load netmap from cache: netmap cache is not available
+May 24 12:27:10 traefik tailscaled[84703]: localapi: [POST] /localapi/v0/start
+May 24 12:27:10 traefik tailscaled[84703]: Start: updated prefs: Prefs{ra=false dns=true want=true routes=[] statefulFiltering=false tags=tag:proxmox-vm nf=on update=check Persist{o=, n=[nuYv0] u="traefik.taile4f997.ts.net" ak=-}}, reason: [opts.UpdatePrefs]
+May 24 12:27:10 traefik tailscaled[84703]: load netmap from cache: netmap cache is not available
+May 24 12:27:10 traefik tailscaled[84703]: control: client.Shutdown ...
+May 24 12:27:10 traefik tailscaled[84703]: control: updateRoutine: exiting
+May 24 12:27:10 traefik tailscaled[84703]: control: authRoutine: exiting
+May 24 12:27:10 traefik tailscaled[84703]: control: mapRoutine: exiting
+May 24 12:27:10 traefik tailscaled[84703]: control: Client.Shutdown done.
+May 24 12:27:11 traefik tailscaled[84703]: writing netmap to disk cache
+May 24 12:27:12 traefik tailscaled[84703]: using tailnet default auto-update setting: true
