@@ -106,3 +106,4 @@ May 21 15:51:31 quilava tailscaled[2179706]: dns: resolver: forward: forwarder.s
 May 21 15:13:07 quilava tailscaled[2179706]: netmap: suggested exit node:  ()
 May 21 06:34:36 forgejo tailscaled[2198379]: control: controlclient direct: got TSMP disco key advertisement from 100.116.20.108 via eventbus
 May 21 06:34:36 forgejo tailscaled[2198379]: control: controlclient direct: updating discoKey for 100.116.20.108 via mapSession
+May 24 21:26:49 quilava tailscaled[3106570]: wgengine: Reconfig: configuring userspace WireGuard config (with 2 peers)

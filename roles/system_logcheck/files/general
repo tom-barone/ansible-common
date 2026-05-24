@@ -41,4 +41,7 @@
 .* .*useradd.*: new user: .*$
 .* .*usermod.*: add '.*' to (group|shadow group) '.*'$
 .* .*chfn.*: changed user '.*' information$
+.* .*xfs_scrub_all.*: /usr/sbin/xfs_scrub_all:[0-9]+: DeprecationWarning: .*$
+.* .*xfs_scrub_all.*:   dt = datetime\.utcnow\(\)$
+.* .*xfs_scrub_all.*: Automatically enabling file data scrub\.$
 .*I am a logcheck test that should be filtered out.*$
