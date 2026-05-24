@@ -28,7 +28,7 @@
 .* .*tailscaled.*: wgengine: Reconfig: .*"$
 .* .*tailscaled.*: wgengine: Reconfig: configuring DNS$
 .* .*tailscaled.*: wgengine: Reconfig: configuring router$
-.* .*tailscaled.*: wgengine: Reconfig: configuring userspace WireGuard config \(with [0-9]+(/[0-9]+)? peers\)$
+.* .*tailscaled.*: wgengine: Reconfig: configuring userspace WireGuard config .*$
 .* .*tailscaled.*: wgengine: Reconfig: removing session keys for [0-9]+ peers$
 .* .*tailscaled.*: wgengine: Reconfig: user dialer$
 .* .*tailscaled.*: wgengine: idle peer \[.*\] now active, reconfiguring WireGuard$
