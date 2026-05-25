@@ -84,3 +84,21 @@
 .* .*tailscaled.*: netmap: suggested exit node: .*$
 .* .*tailscaled.*: control: controlclient direct: got TSMP disco key advertisement from .* via eventbus$
 .* .*tailscaled.*: control: controlclient direct: updating discoKey for .* via mapSession$
+.* .*tailscaled.*: tailscaled got signal .*; shutting down$
+.* .*tailscaled.*: canceling captive portal context$
+.* .*tailscaled.*: control: client\.Shutdown \.\.\.$
+.* .*tailscaled.*: control: updateRoutine: exiting$
+.* .*tailscaled.*: control: authRoutine: exiting$
+.* .*tailscaled.*: control: mapRoutine: exiting$
+.* .*tailscaled.*: control: Client\.Shutdown done\.$
+.* .*tailscaled.*: ipnext: work queue shutdown failed: .*$
+.* .*tailscaled.*: magicsock: closing connection to .* \(conn-close\), age .*$
+.* .*tailscaled.*: monitor: ip rule deleted: \{.*\}$
+.* .*tailscaled.*: flushing log\.$
+.* .*tailscaled.*: logger closing down$
+.* .*tailscaled.*: ipnext: ".*": skipping extension$
+.* .*tailscaled.*: load netmap from cache: .*$
+.* .*tailscaled.*: localapi: \[POST\] /localapi/v0/start$
+.* .*tailscaled.*: Start: updated prefs: Prefs\{.*\}, reason: \[.*\]$
+.* .*tailscaled.*: writing netmap to disk cache$
+.* .*tailscaled.*: using tailnet default auto-update setting: .*$
