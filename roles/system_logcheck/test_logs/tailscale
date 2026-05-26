@@ -136,3 +136,6 @@ May 24 12:27:10 traefik tailscaled[84703]: control: mapRoutine: exiting
 May 24 12:27:10 traefik tailscaled[84703]: control: Client.Shutdown done.
 May 24 12:27:11 traefik tailscaled[84703]: writing netmap to disk cache
 May 24 12:27:12 traefik tailscaled[84703]: using tailnet default auto-update setting: true
+May 25 14:33:18 forgejo tailscaled[466562]: magicsock: [0x15f052a53540] derp.Recv(derp-5): derp.Recv: EOF
+May 25 14:33:18 forgejo tailscaled[466562]: derphttp.Client.Recv: connecting to derp-5 (syd)
+May 25 14:33:21 forgejo tailscaled[466562]: magicsock: [0x15f052a53540] derp.Recv(derp-5): derphttp.Client.Recv connect to region 5 (syd): dial tcp6 [2400:8907::2000:ceff:fe8d:4f4e]:443: connect: network is unreachable
