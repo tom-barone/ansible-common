@@ -70,7 +70,6 @@
 .* .*systemd\[1\]: .*\.service: Found left-over process [0-9]+ \(.*\) in control group while starting unit\. Ignoring\.$
 .* .*systemd\[1\]: .*\.service: This usually indicates unclean termination of a previous run, or service implementation deficiencies\.$
 .* .*systemd\[1\]: .*\.service: Scheduled restart job, restart counter is at [0-9]+\.$
-# The following entries are specific to Linode virtual machines
 .* .*systemd-ssh-generator.*: Failed to query local AF_VSOCK CID: Cannot assign requested address$
 .* .*\(sd-exec-.*: /usr/lib/systemd/system-generators/systemd-ssh-generator failed with exit status 1\.$
 .* .*systemd\[1\]: .* skipped, unmet condition check .*$
