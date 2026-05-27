@@ -110,3 +110,7 @@ Apr 06 07:38:05 localhost systemd[1]: ssh.service: This usually indicates unclea
 Apr 06 07:38:05 localhost systemd[1]: ssh.service: Found left-over process 840 (sshd-auth) in control group while starting unit. Ignoring.
 Apr 06 07:38:05 localhost systemd[1]: ssh.service: Found left-over process 841 (sshd-session) in control group while starting unit. Ignoring.
 Apr 06 07:38:06 localhost systemd[1]: serial-getty@ttyS0.service: Scheduled restart job, restart counter is at 1.
+May 26 04:56:27 jqc-pr-191 systemd-ssh-generator[1540]: Failed to query local AF_VSOCK CID: Cannot assign requested address
+May 26 04:56:27 jqc-pr-191 (sd-exec-[1528]: /usr/lib/systemd/system-generators/systemd-ssh-generator failed with exit status 1.
+May 26 04:54:32 localhost systemd[1]: systemd-pcrextend.socket - TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-uki
+May 26 04:54:32 localhost systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database skipped, no trigger condition checks were met.
