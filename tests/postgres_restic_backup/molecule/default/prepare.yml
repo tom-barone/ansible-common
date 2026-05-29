@@ -47,3 +47,42 @@
           docker exec minio
           mkdir /data/test-backup-bucket
       changed_when: true
+
+    - name: "Seed restic repo by applying role once"
+      ansible.builtin.include_role:
+        name: "postgres_restic_backup"
+      vars:
+        postgres_restic_backup_s3_endpoint: "http://localhost:9000"
+        postgres_restic_backup_s3_bucket: "test-backup-bucket"
+        postgres_restic_backup_s3_access_key: "test"
+        postgres_restic_backup_s3_secret_key: "testpassword"
+        postgres_restic_backup_restic_password: "testpassword"
+
+    - name: "Create test database to restore"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "CREATE DATABASE bootstrap_restore_test;"
+      changed_when: true
+
+    - name: "Seed test database with marker row"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -d bootstrap_restore_test -c
+          "CREATE TABLE marker (id int); INSERT INTO marker VALUES (42);"
+      changed_when: true
+
+    - name: "Run backup script to snapshot seeded data"
+      ansible.builtin.command:
+        cmd: "/opt/postgres-backup/backup.sh"
+      changed_when: true
+
+    - name: "Drop test database so postgres is empty before converge"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "DROP DATABASE bootstrap_restore_test;"
+      changed_when: true

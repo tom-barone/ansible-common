@@ -76,3 +76,17 @@
           - >-
             'chronic /opt/postgres-backup/backup.sh'
             in content
+
+    - name: "Query restored marker row"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -d bootstrap_restore_test -t -A -c
+          "SELECT id FROM marker;"
+      register: "marker_query"
+      changed_when: false
+
+    - name: "Assert restored data matches"
+      ansible.builtin.assert:
+        that:
+          - "marker_query.stdout | trim == '42'"

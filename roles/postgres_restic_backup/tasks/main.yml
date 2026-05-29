@@ -86,7 +86,7 @@
       source {{ postgres_restic_backup_dir }}/env;
       restic dump latest pg_dumpall.sql
       | docker exec -i {{ postgres_restic_backup_postgres_container }}
-        psql -U {{ postgres_restic_backup_postgres_user }} -d postgres
+      psql -U {{ postgres_restic_backup_postgres_user }} -d postgres
     executable: "/bin/bash"
   when:
     - "postgres_restic_backup_restore_on_bootstrap | bool"
