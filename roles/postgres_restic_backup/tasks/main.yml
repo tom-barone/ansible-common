@@ -46,3 +46,49 @@
       docker exec {{ postgres_restic_backup_postgres_container }}
       pg_dumpall -U {{ postgres_restic_backup_postgres_user }}
       | restic backup --stdin --stdin-filename "pg_dumpall.sql"
+
+- name: "Check restic repo for existing snapshots"
+  ansible.builtin.command:
+    cmd: >-
+      bash -c 'source {{ postgres_restic_backup_dir }}/env
+      && restic snapshots --json --latest 1'
+  register: "postgres_restic_backup_latest_snapshots"
+  changed_when: false
+  when: "postgres_restic_backup_restore_on_bootstrap | bool"
+
+- name: "Count user databases in running postgres"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec {{ postgres_restic_backup_postgres_container }}
+      psql -U {{ postgres_restic_backup_postgres_user }} -t -A -c
+      "SELECT count(*) FROM pg_database
+       WHERE datname NOT IN ('postgres', 'template0', 'template1');"
+  register: "postgres_restic_backup_user_db_count"
+  changed_when: false
+  when: "postgres_restic_backup_restore_on_bootstrap | bool"
+
+- name: "Decide whether to bootstrap-restore"
+  ansible.builtin.set_fact:
+    postgres_restic_backup_should_restore: >-
+      {{
+        postgres_restic_backup_restore_on_bootstrap | bool
+        and (postgres_restic_backup_latest_snapshots.stdout
+             | default('[]') | from_json | length) > 0
+        and (postgres_restic_backup_user_db_count.stdout
+             | default('0') | trim | int) == 0
+      }}
+  when: "postgres_restic_backup_restore_on_bootstrap | bool"
+
+- name: "Restore latest pg_dumpall snapshot into postgres"
+  ansible.builtin.shell:
+    cmd: >-
+      set -euo pipefail;
+      source {{ postgres_restic_backup_dir }}/env;
+      restic dump latest pg_dumpall.sql
+      | docker exec -i {{ postgres_restic_backup_postgres_container }}
+        psql -U {{ postgres_restic_backup_postgres_user }} -d postgres
+    executable: "/bin/bash"
+  when:
+    - "postgres_restic_backup_restore_on_bootstrap | bool"
+    - "postgres_restic_backup_should_restore | bool"
+  changed_when: true

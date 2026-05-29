@@ -8,3 +8,4 @@ postgres_restic_backup_retention_monthly: 9999
 postgres_restic_backup_postgres_user: >-
   {{ postgres_install_docker_user | default('postgres') }}
 postgres_restic_backup_postgres_container: "postgres"
+postgres_restic_backup_restore_on_bootstrap: true
