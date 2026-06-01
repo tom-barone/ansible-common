@@ -105,3 +105,4 @@
 .* .*tailscaled.*: Start: updated prefs: Prefs\{.*\}, reason: \[.*\]$
 .* .*tailscaled.*: writing netmap to disk cache$
 .* .*tailscaled.*: using tailnet default auto-update setting: .*$
+.* .*tailscaled.*: dns: inotify: .*$

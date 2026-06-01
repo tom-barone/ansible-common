@@ -139,3 +139,5 @@ May 24 12:27:12 traefik tailscaled[84703]: using tailnet default auto-update set
 May 25 14:33:18 forgejo tailscaled[466562]: magicsock: [0x15f052a53540] derp.Recv(derp-5): derp.Recv: EOF
 May 25 14:33:18 forgejo tailscaled[466562]: derphttp.Client.Recv: connecting to derp-5 (syd)
 May 25 14:33:21 forgejo tailscaled[466562]: magicsock: [0x15f052a53540] derp.Recv(derp-5): derphttp.Client.Recv connect to region 5 (syd): dial tcp6 [2400:8907::2000:ceff:fe8d:4f4e]:443: connect: network is unreachable
+May 30 03:00:06 quilava tailscaled[3106570]: dns: inotify: context canceled
+May 30 03:00:06 quilava tailscaled[754128]: dns: inotify: NewDirWatcher: context canceled

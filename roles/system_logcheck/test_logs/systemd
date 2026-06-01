@@ -114,3 +114,4 @@ May 26 04:56:27 jqc-pr-191 systemd-ssh-generator[1540]: Failed to query local AF
 May 26 04:56:27 jqc-pr-191 (sd-exec-[1528]: /usr/lib/systemd/system-generators/systemd-ssh-generator failed with exit status 1.
 May 26 04:54:32 localhost systemd[1]: systemd-pcrextend.socket - TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-uki
 May 26 04:54:32 localhost systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database skipped, no trigger condition checks were met.
+Jun 01 02:02:01 quilava systemd-tmpfiles[1273086]: Opening file "/tmp/tmux-0/default" failed, proceeding without lock: No such device or address
