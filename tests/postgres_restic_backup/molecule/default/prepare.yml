@@ -21,6 +21,73 @@
         postgres_install_docker_password: "testpassword123"
         postgres_install_docker_network: "postgres_network"
 
+    - name: "Count user data on fresh postgres"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -t -A -c
+          "SELECT
+          (SELECT count(*) FROM pg_database
+          WHERE datistemplate = false AND datname <> 'postgres')
+          + (SELECT count(*) FROM pg_class c
+          JOIN pg_namespace n ON n.oid = c.relnamespace
+          WHERE c.relkind IN ('r', 'p')
+          AND n.nspname NOT IN ('pg_catalog', 'information_schema')
+          AND n.nspname !~ '^pg_');"
+      register: "fresh_user_data_count"
+      changed_when: false
+
+    - name: "Assert fresh postgres reports no user data"
+      ansible.builtin.assert:
+        that:
+          - "fresh_user_data_count.stdout | trim | int == 0"
+        fail_msg: >-
+          Restore guard query returned
+          '{{ fresh_user_data_count.stdout | trim }}' on a fresh postgres,
+          expected '0'
+
+    - name: "Create a user table in the postgres database"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "CREATE TABLE guard_check (id int);
+          INSERT INTO guard_check VALUES (1);"
+      changed_when: true
+
+    - name: "Count user data with a populated postgres database"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -t -A -c
+          "SELECT
+          (SELECT count(*) FROM pg_database
+          WHERE datistemplate = false AND datname <> 'postgres')
+          + (SELECT count(*) FROM pg_class c
+          JOIN pg_namespace n ON n.oid = c.relnamespace
+          WHERE c.relkind IN ('r', 'p')
+          AND n.nspname NOT IN ('pg_catalog', 'information_schema')
+          AND n.nspname !~ '^pg_');"
+      register: "populated_user_data_count"
+      changed_when: false
+
+    - name: "Assert populated postgres reports user data"
+      ansible.builtin.assert:
+        that:
+          - "populated_user_data_count.stdout | trim | int > 0"
+        fail_msg: >-
+          Restore guard query returned
+          '{{ populated_user_data_count.stdout | trim }}' with a table in the
+          postgres database, expected a non-zero count
+
+    - name: "Drop the guard-check table to return postgres to empty"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "DROP TABLE guard_check;"
+      changed_when: true
+
     - name: "Start MinIO"
       ansible.builtin.command:
         cmd: >-
