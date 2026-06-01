@@ -9,3 +9,12 @@ postgres_restic_backup_postgres_user: >-
   {{ postgres_install_docker_user | default('postgres') }}
 postgres_restic_backup_postgres_container: "postgres"
 postgres_restic_backup_restore_on_bootstrap: true
+postgres_restic_backup_restore_guard_query: >-
+  SELECT
+  (SELECT count(*) FROM pg_database
+  WHERE datistemplate = false AND datname <> 'postgres')
+  + (SELECT count(*) FROM pg_class c
+  JOIN pg_namespace n ON n.oid = c.relnamespace
+  WHERE c.relkind IN ('r', 'p')
+  AND n.nspname NOT IN ('pg_catalog', 'information_schema')
+  AND n.nspname !~ '^pg_');

@@ -56,14 +56,13 @@
   changed_when: false
   when: "postgres_restic_backup_restore_on_bootstrap | bool"
 
-- name: "Count user databases in running postgres"
+- name: "Count user data in running postgres"
   ansible.builtin.command:
     cmd: >-
       docker exec {{ postgres_restic_backup_postgres_container }}
       psql -U {{ postgres_restic_backup_postgres_user }} -t -A -c
-      "SELECT count(*) FROM pg_database
-       WHERE datname NOT IN ('postgres', 'template0', 'template1');"
-  register: "postgres_restic_backup_user_db_count"
+      "{{ postgres_restic_backup_restore_guard_query }}"
+  register: "postgres_restic_backup_user_data_count"
   changed_when: false
   when: "postgres_restic_backup_restore_on_bootstrap | bool"
 
@@ -74,7 +73,7 @@
         postgres_restic_backup_restore_on_bootstrap | bool
         and (postgres_restic_backup_latest_snapshots.stdout
              | default('[]') | from_json | length) > 0
-        and (postgres_restic_backup_user_db_count.stdout
+        and (postgres_restic_backup_user_data_count.stdout
              | default('0') | trim | int) == 0
       }}
   when: "postgres_restic_backup_restore_on_bootstrap | bool"
