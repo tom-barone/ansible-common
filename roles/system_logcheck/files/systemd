@@ -74,3 +74,4 @@
 .* .*\(sd-exec-.*: /usr/lib/systemd/system-generators/systemd-ssh-generator failed with exit status 1\.$
 .* .*systemd\[1\]: .* skipped, unmet condition check .*$
 .* .*systemd\[1\]: .* skipped, no trigger condition checks were met\.$
+.* .*systemd-tmpfiles.*: Opening file ".*" failed, proceeding without lock: No such device or address$
