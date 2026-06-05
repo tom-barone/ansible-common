@@ -106,3 +106,4 @@
 .* .*tailscaled.*: writing netmap to disk cache$
 .* .*tailscaled.*: using tailnet default auto-update setting: .*$
 .* .*tailscaled.*: dns: inotify: .*$
+.* .*tailscaled.*: wgengine: \[unexpected\] Reconfig: using TSMP key for \[.*\] \(control stale\): .*$

@@ -141,3 +141,4 @@ May 25 14:33:18 forgejo tailscaled[466562]: derphttp.Client.Recv: connecting to 
 May 25 14:33:21 forgejo tailscaled[466562]: magicsock: [0x15f052a53540] derp.Recv(derp-5): derphttp.Client.Recv connect to region 5 (syd): dial tcp6 [2400:8907::2000:ceff:fe8d:4f4e]:443: connect: network is unreachable
 May 30 03:00:06 quilava tailscaled[3106570]: dns: inotify: context canceled
 May 30 03:00:06 quilava tailscaled[754128]: dns: inotify: NewDirWatcher: context canceled
+Jun 05 14:29:45 quilava tailscaled[754164]: wgengine: [unexpected] Reconfig: using TSMP key for [8JL4V] (control stale): tsmp="discokey:758cde772c00e309e2bb169aaacd7272068124337daf72d657bcd6fbf9f6777f" control="discokey:d2c9b4ae19f3e770a6ffb513f4c9ceb38f0f69c9b502051583f74871e0205529" old="discokey:758cde772c00e309e2bb169aaacd7272068124337daf72d657bcd6fbf9f6777f"
