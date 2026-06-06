@@ -6,3 +6,9 @@ postgres_install_docker_user: "postgres"
 postgres_install_docker_data_dir: "/var/lib/postgresql"
 postgres_install_docker_container_name: "postgres"
 postgres_install_docker_initdb_args: ""
+postgres_install_docker_pgbouncer_enabled: true
+postgres_install_docker_pgbouncer_version: "v1.25.1-p0"
+postgres_install_docker_pgbouncer_container_name: "pgbouncer"
+postgres_install_docker_pgbouncer_pool_mode: "session"
+postgres_install_docker_pgbouncer_max_client_conn: 100
+postgres_install_docker_pgbouncer_default_pool_size: 20

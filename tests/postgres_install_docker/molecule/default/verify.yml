@@ -3,6 +3,7 @@
   hosts: "all"
   vars:
     container_name: "postgres"
+    pgbouncer_container_name: "pgbouncer"
     network_name: "postgres_network"
     db_user: "postgres"
   tasks:
@@ -73,3 +74,33 @@
       ansible.builtin.assert:
         that:
           - "'1' in psql_result.stdout"
+
+    - name: "Assert pgbouncer container is listed"
+      ansible.builtin.assert:
+        that:
+          - "pgbouncer_container_name in compose_ps.stdout"
+
+    - name: "Check pgBouncer is ready"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ pgbouncer_container_name }}
+          pg_isready -h localhost -p 6432 -U {{ db_user }}
+      register: "pgbouncer_ready"
+      until: "pgbouncer_ready.rc == 0"
+      retries: 10
+      delay: 3
+      changed_when: false
+
+    - name: "Verify SELECT 1 routed through pgBouncer"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec -e PGPASSWORD=testpassword123 {{ container_name }}
+          psql -h {{ pgbouncer_container_name }} -p 6432
+          -U {{ db_user }} -d {{ db_user }} -t -A -c "SELECT 1"
+      register: "pgbouncer_psql_result"
+      changed_when: false
+
+    - name: "Assert pgBouncer SQL query returned expected result"
+      ansible.builtin.assert:
+        that:
+          - "'1' in pgbouncer_psql_result.stdout"

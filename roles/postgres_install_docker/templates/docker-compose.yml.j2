@@ -3,8 +3,13 @@ services:
     image: "postgres:{{ postgres_install_docker_version }}"
     container_name: "{{ postgres_install_docker_container_name }}"
     restart: "unless-stopped"
+{% if postgres_install_docker_pgbouncer_enabled %}
+    expose:
+      - "5432"
+{% else %}
     ports:
       - "127.0.0.1:{{ postgres_install_docker_port }}:5432"
+{% endif %}
     volumes:
       - "{{ postgres_install_docker_dir }}/data:{{ postgres_install_docker_data_dir }}"
     environment:
@@ -12,6 +17,34 @@ services:
       POSTGRES_PASSWORD: "{{ postgres_install_docker_password }}"
 {% if postgres_install_docker_initdb_args %}
       POSTGRES_INITDB_ARGS: "{{ postgres_install_docker_initdb_args }}"
+{% endif %}
+
+{% if postgres_install_docker_pgbouncer_enabled %}
+  pgbouncer:
+    image: "edoburu/pgbouncer:{{ postgres_install_docker_pgbouncer_version }}"
+    container_name: "{{ postgres_install_docker_pgbouncer_container_name }}"
+    restart: "unless-stopped"
+    depends_on:
+      - "postgres"
+    ports:
+      - "127.0.0.1:{{ postgres_install_docker_port }}:6432"
+    environment:
+      DB_HOST: "{{ postgres_install_docker_container_name }}"
+      DB_PORT: "5432"
+      DB_USER: "{{ postgres_install_docker_user }}"
+      DB_PASSWORD: "{{ postgres_install_docker_password }}"
+      DB_NAME: "*"
+      AUTH_TYPE: "scram-sha-256"
+      POOL_MODE: "{{ postgres_install_docker_pgbouncer_pool_mode }}"
+      ADMIN_USERS: "{{ postgres_install_docker_user }}"
+      LISTEN_PORT: "6432"
+      MAX_CLIENT_CONN: "{{ postgres_install_docker_pgbouncer_max_client_conn }}"
+      DEFAULT_POOL_SIZE: "{{ postgres_install_docker_pgbouncer_default_pool_size }}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432", "-U", "{{ postgres_install_docker_user }}"]
+      interval: "10s"
+      timeout: "5s"
+      retries: 5
 {% endif %}
 
 networks:
