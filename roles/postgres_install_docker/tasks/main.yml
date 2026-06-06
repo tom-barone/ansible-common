@@ -40,3 +40,15 @@
   retries: 15
   delay: 3
   changed_when: false
+
+- name: "Wait for pgBouncer to be ready"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec {{ postgres_install_docker_pgbouncer_container_name }}
+      pg_isready -h localhost -p 6432 -U {{ postgres_install_docker_user }}
+  register: "postgres_install_docker_pgbouncer_ready"
+  until: "postgres_install_docker_pgbouncer_ready.rc == 0"
+  retries: 15
+  delay: 3
+  changed_when: false
+  when: "postgres_install_docker_pgbouncer_enabled | bool"
