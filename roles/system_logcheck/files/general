@@ -20,6 +20,8 @@
 .* .*chronyd.*: Loaded seccomp filter .*$
 .* .*chronyd.*: Selected source .* \(.*\)$
 .* .*chronyd.*: System clock TAI offset set to [0-9]+ seconds$
+.* .*chronyd.*: System clock wrong by .* seconds$
+.* .*chronyd.*: System clock was stepped by .* seconds$
 .* .*apparmor\.systemd.*: Restarting AppArmor$
 .* .*(haveged).*: haveged\.service: Referenced but unset environment variable evaluates to an empty string: .*$
 .* .*haveged.*: haveged: command socket is listening at fd [0-9]+$

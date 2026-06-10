@@ -78,3 +78,5 @@ Apr 06 07:40:03 jqc-pr-81 chfn[3364]: changed user 'logcheck' information
 May 24 03:11:03 quilava xfs_scrub_all[3387294]: /usr/sbin/xfs_scrub_all:489: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
 May 24 03:11:03 quilava xfs_scrub_all[3387294]:   dt = datetime.utcnow()
 May 24 03:11:03 quilava xfs_scrub_all[3387294]: Automatically enabling file data scrub.
+Jun 10 03:34:37 localhost chronyd[777]: System clock wrong by 1.031349 seconds
+Jun 10 03:34:38 localhost chronyd[777]: System clock was stepped by 1.031349 seconds
