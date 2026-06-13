@@ -11,7 +11,7 @@ WorkingDirectory={{ openclaw_install_home }}
 Environment="PNPM_HOME={{ openclaw_install_home }}/.local/share/pnpm"
 Environment="PATH={{ openclaw_install_home }}/.local/bin:{{ openclaw_install_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
 Environment="HOME={{ openclaw_install_home }}"
-ExecStart=openclaw gateway
+ExecStart={{ openclaw_install_home }}/.local/bin/openclaw gateway
 Restart=always
 RestartSec=10
 
