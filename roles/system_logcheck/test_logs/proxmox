@@ -15,6 +15,7 @@ Mar 02 22:49:10 quilava pveproxy[226892]: got inotify poll request in wrong proc
 2026-03-03T01:22:06.620853+10:30 quilava qm[290326]: <root@pam> update VM 9000: resize --disk scsi0 --size 5G
 Mar 03 04:38:15 quilava pveupdate[324667]: <root@pam> starting task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam:
 Mar 03 04:38:17 quilava pveupdate[324674]: update new package list: /var/lib/pve-manager/pkgupdates
+Jun 13 14:42:30 quilava pvedaemon[497071]: update new package list: /var/lib/pve-manager/pkgupdates
 Mar 03 04:38:19 quilava pveupdate[324667]: <root@pam> end task UPID:quilava:0004F442:00961A12:69A5D20F:aptupdate::root@pam: OK
 Mar 03 23:00:27 quilava qm[535897]: start VM 100: UPID:quilava:00082D59:00FB02EF:69A6D463:qmstart:100:root@pam:
 Mar 03 23:00:28 quilava qm[535897]: VM 100 started with PID 535922.
