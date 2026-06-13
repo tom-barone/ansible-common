@@ -63,12 +63,6 @@
     home: "{{ openclaw_install_home }}"
     state: "present"
 
-- name: "Set up authorized keys for OpenClaw user"
-  ansible.posix.authorized_key:
-    user: "{{ openclaw_install_user }}"
-    key: "{{ item }}"
-  loop: "{{ openclaw_install_ssh_keys }}"
-
 - name: "Set up scoped sudo for OpenClaw user"
   ansible.builtin.template:
     src: "sudoers.j2"
