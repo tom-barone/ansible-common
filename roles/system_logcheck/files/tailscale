@@ -107,3 +107,5 @@
 .* .*tailscaled.*: using tailnet default auto-update setting: .*$
 .* .*tailscaled.*: dns: inotify: .*$
 .* .*tailscaled.*: wgengine: \[unexpected\] Reconfig: using TSMP key for \[.*\] \(control stale\): .*$
+.* .*systemd-resolved.*: Using degraded feature set .* instead of .* for DNS server 100.100.100.100.*$
+.* .*systemd-resolved.*: Grace period over, resuming full feature set .* for DNS server 100.100.100.100.*$

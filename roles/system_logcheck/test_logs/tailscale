@@ -142,3 +142,5 @@ May 25 14:33:21 forgejo tailscaled[466562]: magicsock: [0x15f052a53540] derp.Rec
 May 30 03:00:06 quilava tailscaled[3106570]: dns: inotify: context canceled
 May 30 03:00:06 quilava tailscaled[754128]: dns: inotify: NewDirWatcher: context canceled
 Jun 05 14:29:45 quilava tailscaled[754164]: wgengine: [unexpected] Reconfig: using TSMP key for [8JL4V] (control stale): tsmp="discokey:758cde772c00e309e2bb169aaacd7272068124337daf72d657bcd6fbf9f6777f" control="discokey:d2c9b4ae19f3e770a6ffb513f4c9ceb38f0f69c9b502051583f74871e0205529" old="discokey:758cde772c00e309e2bb169aaacd7272068124337daf72d657bcd6fbf9f6777f"
+Jun 13 06:57:36 forgejo systemd-resolved[329]: Using degraded feature set UDP instead of UDP+EDNS0 for DNS server 100.100.100.100.
+Jun 13 07:03:06 forgejo systemd-resolved[329]: Grace period over, resuming full feature set (UDP+EDNS0) for DNS server 100.100.100.100.
