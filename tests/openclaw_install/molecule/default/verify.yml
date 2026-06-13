@@ -1,0 +1,86 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Get OpenClaw user account"
+      ansible.builtin.getent:
+        database: "passwd"
+        key: "openclaw"
+
+    - name: "Assert OpenClaw is a system user with correct shell and home"
+      ansible.builtin.assert:
+        that:
+          - "getent_passwd['openclaw'][1] | int < 1000"
+          - "getent_passwd['openclaw'][4] == '/home/openclaw'"
+          - "getent_passwd['openclaw'][5] == '/bin/bash'"
+        msg: "OpenClaw user is not configured as a system user"
+
+    - name: "Stat the scoped sudoers file"
+      ansible.builtin.stat:
+        path: "/etc/sudoers.d/openclaw"
+      register: "openclaw_sudoers"
+
+    - name: "Assert sudoers file exists with correct permissions"
+      ansible.builtin.assert:
+        that:
+          - "openclaw_sudoers.stat.exists"
+          - "openclaw_sudoers.stat.mode == '0440'"
+        msg: "OpenClaw sudoers file missing or has wrong mode"
+
+    - name: "Validate sudoers file syntax"
+      ansible.builtin.command:
+        cmd: "/usr/sbin/visudo -cf /etc/sudoers.d/openclaw"
+      changed_when: false
+
+    - name: "Read the sudoers file"
+      ansible.builtin.slurp:
+        src: "/etc/sudoers.d/openclaw"
+      register: "openclaw_sudoers_content"
+
+    - name: "Assert sudo is scoped to service management only"
+      vars:
+        content: "{{ openclaw_sudoers_content.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'/usr/bin/systemctl restart openclaw' in content"
+          - "'/usr/bin/journalctl -u openclaw' in content"
+          - "'NOPASSWD: ALL' not in content"
+          - "'ALL=(ALL) ALL' not in content"
+        msg: "OpenClaw sudoers is not scoped to service management"
+
+    - name: "Check OpenClaw binary runs"
+      ansible.builtin.command:
+        cmd: "openclaw --version"
+      become: true
+      become_user: "openclaw"
+      environment:
+        PATH: "/home/openclaw/.local/bin:/usr/local/bin:/usr/bin:/bin"
+        HOME: "/home/openclaw"
+      changed_when: false
+
+    - name: "Read the systemd unit file"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/openclaw.service"
+      register: "openclaw_unit"
+
+    - name: "Assert systemd hardening directives are present"
+      vars:
+        unit: "{{ openclaw_unit.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'NoNewPrivileges=true' in unit"
+          - "'PrivateTmp=true' in unit"
+          - "'ProtectSystem=strict' in unit"
+        msg: "OpenClaw systemd unit is missing hardening directives"
+
+    - name: "Get OpenClaw service status"
+      ansible.builtin.systemd:
+        name: "openclaw"
+      register: "openclaw_service"
+
+    - name: "Assert service is enabled but not started"
+      ansible.builtin.assert:
+        that:
+          - "openclaw_service.status.UnitFileState == 'enabled'"
+          - "openclaw_service.status.ActiveState == 'inactive'"
+        msg: "OpenClaw service should be enabled but not running"
