@@ -1,0 +1,9 @@
+# OpenClaw scoped sudo - service management and log access only.
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl start openclaw
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl stop openclaw
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart openclaw
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl status openclaw
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl enable openclaw
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl disable openclaw
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl daemon-reload
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/journalctl -u openclaw *

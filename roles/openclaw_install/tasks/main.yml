@@ -1,0 +1,157 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "openclaw_install_user is defined"
+      - "openclaw_install_home is defined"
+    msg: "Missing a required variable"
+
+- name: "Install dependencies"
+  ansible.builtin.apt:
+    name:
+      - "ca-certificates"
+      - "curl"
+      - "python3-debian"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Add NodeSource GPG key"
+  ansible.builtin.get_url:
+    url: "https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key"
+    dest: "/etc/apt/keyrings/nodesource.asc"
+    mode: "0644"
+
+- name: "Add NodeSource repository"
+  ansible.builtin.deb822_repository:
+    name: "nodesource"
+    types: "deb"
+    uris: >-
+      https://deb.nodesource.com/node_{{
+      openclaw_install_nodejs_version }}.x
+    suites: "nodistro"
+    components: "main"
+    signed_by: "/etc/apt/keyrings/nodesource.asc"
+    state: "present"
+
+- name: "Install Node.js"
+  ansible.builtin.apt:
+    name: "nodejs"
+    state: "present"
+    update_cache: true
+
+- name: "Check if pnpm is installed"
+  ansible.builtin.command:
+    cmd: "which pnpm"
+  register: "openclaw_install_pnpm_check"
+  changed_when: false
+  failed_when: false
+
+- name: "Install pnpm"
+  ansible.builtin.command:
+    cmd: "npm install -g pnpm"
+  changed_when: true
+  when: "openclaw_install_pnpm_check.rc != 0"
+
+- name: "Create OpenClaw system user"
+  ansible.builtin.user:
+    name: "{{ openclaw_install_user }}"
+    comment: "OpenClaw service user"
+    system: true
+    shell: "/bin/bash"
+    create_home: true
+    home: "{{ openclaw_install_home }}"
+    state: "present"
+
+- name: "Set up scoped sudo for OpenClaw user"
+  ansible.builtin.template:
+    src: "sudoers.j2"
+    dest: "/etc/sudoers.d/{{ openclaw_install_user }}"
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: "Create OpenClaw config directory"
+  ansible.builtin.file:
+    path: "{{ openclaw_install_home }}/.openclaw"
+    state: "directory"
+    owner: "{{ openclaw_install_user }}"
+    group: "{{ openclaw_install_user }}"
+    mode: "0700"
+
+- name: "Create pnpm directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: "{{ openclaw_install_user }}"
+    group: "{{ openclaw_install_user }}"
+    mode: "0755"
+  loop:
+    - "{{ openclaw_install_home }}/.local"
+    - "{{ openclaw_install_home }}/.local/bin"
+    - "{{ openclaw_install_home }}/.local/share"
+    - "{{ openclaw_install_home }}/.local/share/pnpm"
+
+- name: "Configure pnpm global directories"
+  ansible.builtin.command:
+    cmd: "pnpm config set {{ item.key }} {{ item.value }}"
+  become: true
+  become_user: "{{ openclaw_install_user }}"
+  environment:
+    HOME: "{{ openclaw_install_home }}"
+  loop:
+    - key: "global-bin-dir"
+      value: "{{ openclaw_install_home }}/.local/bin"
+    - key: "global-dir"
+      value: "{{ openclaw_install_home }}/.local/share/pnpm"
+  changed_when: false
+
+- name: "Check installed OpenClaw version"
+  ansible.builtin.command:
+    cmd: "openclaw --version"
+  become: true
+  become_user: "{{ openclaw_install_user }}"
+  environment:
+    PATH: >-
+      {{ openclaw_install_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin
+    HOME: "{{ openclaw_install_home }}"
+  register: "openclaw_install_current"
+  changed_when: false
+  failed_when: false
+
+- name: "Install OpenClaw"
+  ansible.builtin.command:
+    cmd: "pnpm install -g openclaw@{{ openclaw_install_version }}"
+  become: true
+  become_user: "{{ openclaw_install_user }}"
+  environment:
+    PATH: >-
+      {{ openclaw_install_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin
+    HOME: "{{ openclaw_install_home }}"
+  changed_when: true
+  when: >-
+    openclaw_install_current.rc != 0
+    or (openclaw_install_version != 'latest'
+    and openclaw_install_version not in openclaw_install_current.stdout)
+
+- name: "Verify OpenClaw installation"
+  ansible.builtin.command:
+    cmd: "openclaw --version"
+  become: true
+  become_user: "{{ openclaw_install_user }}"
+  environment:
+    PATH: >-
+      {{ openclaw_install_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin
+    HOME: "{{ openclaw_install_home }}"
+  changed_when: false
+
+- name: "Deploy OpenClaw systemd service"
+  ansible.builtin.template:
+    src: "openclaw.service.j2"
+    dest: "/etc/systemd/system/openclaw.service"
+    mode: "0644"
+  notify: "Reload openclaw systemd"
+
+- name: "Enable OpenClaw service"
+  ansible.builtin.systemd:
+    name: "openclaw"
+    enabled: true

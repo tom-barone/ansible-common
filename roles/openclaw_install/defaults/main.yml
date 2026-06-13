@@ -1,0 +1,5 @@
+---
+openclaw_install_user: "openclaw"
+openclaw_install_home: "/home/openclaw"
+openclaw_install_version: "latest"
+openclaw_install_nodejs_version: "22"

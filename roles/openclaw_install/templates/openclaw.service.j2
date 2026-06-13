@@ -1,0 +1,31 @@
+[Unit]
+Description=OpenClaw AI Gateway
+After=network-online.target docker.service
+Wants=network-online.target docker.service
+
+[Service]
+Type=simple
+User={{ openclaw_install_user }}
+Group={{ openclaw_install_user }}
+WorkingDirectory={{ openclaw_install_home }}
+Environment="PNPM_HOME={{ openclaw_install_home }}/.local/share/pnpm"
+Environment="PATH={{ openclaw_install_home }}/.local/bin:{{ openclaw_install_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+Environment="HOME={{ openclaw_install_home }}"
+ExecStart=openclaw gateway
+Restart=always
+RestartSec=10
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths={{ openclaw_install_home }}/.openclaw
+ReadWritePaths={{ openclaw_install_home }}/.local
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openclaw
+
+[Install]
+WantedBy=multi-user.target
