@@ -70,11 +70,19 @@
     mode: "0440"
     validate: "/usr/sbin/visudo -cf %s"
 
+- name: "Check if tailscale is installed"
+  ansible.builtin.command:
+    cmd: "which tailscale"
+  register: "openclaw_install_tailscale_check"
+  changed_when: false
+  failed_when: false
+
 - name: "Allow openclaw user to run tailscale without password"
   ansible.builtin.command:
     cmd: "tailscale set --operator={{ openclaw_install_user }}"
   become: true
   changed_when: false
+  when: "openclaw_install_tailscale_check.rc == 0"
 
 - name: "Create OpenClaw config directory"
   ansible.builtin.file:

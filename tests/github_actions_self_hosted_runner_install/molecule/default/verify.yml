@@ -95,14 +95,31 @@
         timeout: 30
 
     # Given the role was applied twice (second time with force_reinstall)
-    # When we check for the marker file created between runs
-    # Then it should be gone (proving force_reinstall cleaned the directory)
-    - name: "Check force_reinstall marker file is gone"
+    # When we check for the runner marker created between runs
+    # Then it should be gone (proving force_reinstall wiped the runner dir)
+    - name: "Check force_reinstall runner marker is gone"
       ansible.builtin.stat:
         path: "/opt/github-runner/.force_reinstall_test_marker"
       register: "marker_file"
 
-    - name: "Assert force_reinstall cleaned the directory"
+    - name: "Assert force_reinstall wiped the runner directory"
       ansible.builtin.assert:
         that:
           - "not marker_file.stat.exists"
+
+    # Given the role was applied twice (second time with force_reinstall)
+    # When we check for the cache marker created between runs
+    # Then it should be gone (proving force_reinstall wiped the cache dir)
+    - name: "Check force_reinstall cache marker is gone"
+      ansible.builtin.stat:
+        path: "/opt/github-runner-cache/.force_reinstall_cache_marker"
+      register: "cache_marker_file"
+
+    - name: "Assert force_reinstall wiped the cache directory"
+      ansible.builtin.assert:
+        that:
+          - "not cache_marker_file.stat.exists"
+
+    # Note: molecule runs with skip_registration=true, so config.sh (and the
+    # --disableupdate flag added to it) is never exercised here. The runner
+    # registration path and auto-update disabling are validated by review only.
