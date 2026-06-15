@@ -7,3 +7,5 @@
 {{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl disable openclaw
 {{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl daemon-reload
 {{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/journalctl -u openclaw *
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/tailscale status
+{{ openclaw_install_user }} ALL=(ALL) NOPASSWD: /usr/bin/tailscale serve *
