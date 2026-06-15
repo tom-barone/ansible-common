@@ -13,9 +13,15 @@
         github_actions_self_hosted_runner_install_skip_registration: >-
           true
 
-    - name: "Create marker file to verify force_reinstall cleans directory"
+    - name: "Create runner marker to verify force_reinstall cleans runner dir"
       ansible.builtin.file:
         path: "/opt/github-runner/.force_reinstall_test_marker"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Create cache marker to verify force_reinstall cleans cache dir"
+      ansible.builtin.file:
+        path: "/opt/github-runner-cache/.force_reinstall_cache_marker"
         state: "touch"
         mode: "0644"
 
