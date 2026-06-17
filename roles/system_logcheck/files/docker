@@ -10,6 +10,6 @@
 .* .*docker.*: [0-9A-Za-z].*true.* ago$
 .* .*docker.*: .*level.error.*failed to query external DNS.*grafana.*$
 .* .*docker.*: .*level.error.*failed to query external DNS.*api\.ipify\.org.*$
-.* .*docker.*: .*level.error.*failed to validate image signature.*list\.v2.*$
+.* .*docker.*: .*level.error.*failed to validate image signature.*manifest.*v2.*$
 .* .*dockerd.*: .*level=error.*failed to cleanup.*snapshot.*does not exist: not found.*$
 .* .*systemd.*: Closed docker\.socket.*$

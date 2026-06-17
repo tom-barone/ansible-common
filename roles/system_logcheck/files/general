@@ -28,8 +28,9 @@
 .* .*haveged.*: haveged starting up$
 .* .*haveged.*: haveged: ver: .*$
 .* .*haveged.*: haveged: cpu: .*$
-.* .*haveged.*: haveged: tot tests.*$
-.* .*haveged.*: haveged: fills: .*$
+.* .*haveged.*: (haveged: )?tot tests.*$
+.* .*haveged.*: (haveged: )?fills: .*$
+.* .*haveged.*: haveged: Stopping due to signal [0-9]+$
 .* .*ifup.*: ifup: waiting for lock on .*$
 .* .*fail2ban-server.*: Server ready$
 .* .*fail2ban-client.*: Shutdown successful$
