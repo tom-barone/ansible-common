@@ -27,29 +27,12 @@
     cache_valid_time: 3600
     state: "present"
 
-- name: "Add logcheck ingore rules"
-  loop:
-    - "ansible"
-    - "collectd"
-    - "containerd"
-    - "docker"
-    - "dokku"
-    - "general"
-    - "gpg"
-    - "kernel"
-    - "nginx"
-    - "packagekit"
-    - "polkit"
-    - "postfix"
-    - "proxmox"
-    - "qemu"
-    - "ssh"
-    - "systemd"
-    - "tailscale"
+- name: "Add logcheck ignore rules"
   ansible.builtin.template:
-    src: "files/{{ item }}"
-    dest: "/etc/logcheck/ignore.d.server/{{ item }}"
+    src: "{{ item }}"
+    dest: "/etc/logcheck/ignore.d.server/{{ item | basename }}"
     mode: "0644"
+  loop: "{{ query('fileglob', 'files/*') }}"
 
 - name: "Configure journal logfiles"
   ansible.builtin.template:
