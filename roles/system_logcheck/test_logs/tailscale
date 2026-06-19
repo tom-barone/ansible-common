@@ -150,3 +150,6 @@ Jun 16 23:49:05 server tailscaled[1979494]: wgengine: got TSMP disco key adverti
 Jun 16 23:49:05 server tailscaled[1979494]: magicsock: received disco key update d:2d5201f60dbc310e from nRWZaz8Y4511CNTRL
 Jun 16 23:49:05 server tailscaled[1979494]: magicsock: disco key did not change for node [3aBnL]
 Jun 16 14:00:37 server tailscaled[1979494]: wgengine: Skipping reconfig (TSMP key): [BV/A9] changed from "discokey:171db1812850bb98c58fdf129d35e8241bd07c52b57bfe14b1c5f15f0e709c3e" to "discokey:6e65608dcde7833879f1dbe3a545ca1ab7c1a2be8ec26da418c454a64aa0010a"
+Jun 18 18:53:10 server tailscaled[1979494]: magicsock: closing connection to derp-24 (idle), age 1m2s
+Jun 17 21:09:04 server tailscaled[1979494]: wg: [lVIS2] - Failed to create response message: handshake initiation must be consumed first
+Jun 17 07:33:59 server tailscaled[1979494]: magicsock: [0x22becbc57cc0] derp.Recv(derp-20): derp.Recv: read tcp6 [2400:8907::2000:7aff:fed3:964a]:39666->[2403:2500:8000:1::e9a]:443: read: connection reset by peer

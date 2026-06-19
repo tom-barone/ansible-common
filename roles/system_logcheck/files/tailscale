@@ -79,7 +79,7 @@
 .* .*tailscaled.*: magicsock: adding connection to .*$
 .* .*tailscaled.*: derphttp\.Client\.Connect: .*$
 .* .*tailscaled.*: derphttp\.Client\.Recv: connecting to derp-.*$
-.* .*tailscaled.*: magicsock: \[.*\] derp\.Recv\(derp-.*\): derp\.Recv: EOF$
+.* .*tailscaled.*: magicsock: \[.*\] derp\.Recv\(derp-.*\): derp\.Recv: .*$
 .* .*tailscaled.*: magicsock: \[.*\] derp\.Recv\(derp-.*\): derphttp\.Client\.Recv connect to region .*$
 .* .*tailscaled.*: magicsock: derp-.* connected; .*$
 .* .*tailscaled.*: wgengine: sending TSMP disco key advertisement to .*$
@@ -95,7 +95,7 @@
 .* .*tailscaled.*: control: mapRoutine: exiting$
 .* .*tailscaled.*: control: Client\.Shutdown done\.$
 .* .*tailscaled.*: ipnext: work queue shutdown failed: .*$
-.* .*tailscaled.*: magicsock: closing connection to .* \(conn-close\), age .*$
+.* .*tailscaled.*: magicsock: closing connection to .* \(.*\), age .*$
 .* .*tailscaled.*: monitor: ip rule deleted: \{.*\}$
 .* .*tailscaled.*: flushing log\.$
 .* .*tailscaled.*: logger closing down$
@@ -108,6 +108,7 @@
 .* .*tailscaled.*: dns: inotify: .*$
 .* .*tailscaled.*: wgengine: \[unexpected\] Reconfig: using TSMP key for \[.*\] \(control stale\): .*$
 .* .*tailscaled.*: wg: \[.*\] - Failed to derive keypair: .*$
+.* .*tailscaled.*: wg: \[.*\] - Failed to create response message: .*$
 .* .*tailscaled.*: control: controlclient direct: updating discoKey for .* via magicsock$
 .* .*tailscaled.*: wgengine: got TSMP disco key advertisement from .* via eventbus$
 .* .*tailscaled.*: magicsock: received disco key update .* from .*$
