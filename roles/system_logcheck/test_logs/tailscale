@@ -153,3 +153,4 @@ Jun 16 14:00:37 server tailscaled[1979494]: wgengine: Skipping reconfig (TSMP ke
 Jun 18 18:53:10 server tailscaled[1979494]: magicsock: closing connection to derp-24 (idle), age 1m2s
 Jun 17 21:09:04 server tailscaled[1979494]: wg: [lVIS2] - Failed to create response message: handshake initiation must be consumed first
 Jun 17 07:33:59 server tailscaled[1979494]: magicsock: [0x22becbc57cc0] derp.Recv(derp-20): derp.Recv: read tcp6 [2400:8907::2000:7aff:fed3:964a]:39666->[2403:2500:8000:1::e9a]:443: read: connection reset by peer
+Jun 19 23:52:08 server tailscaled[1979494]: derphttp.Client.Send: connecting to derp-7 (tok)
