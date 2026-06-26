@@ -42,6 +42,8 @@
 .* .*systemd-hostnamed.*: Hostname set to .*$
 .* .*systemd-resolved.*: .*: Bus client set .*$
 .* .*systemd-resolved.*: Clock change detected\. Flushing caches\.$
+.* .*systemd-resolved.*: Using degraded feature set .* for DNS server .*$
+.* .*systemd-resolved.*: Grace period over, resuming full feature set .* for DNS server .*$
 .* .*systemd\[1\]: Inserted module '.*'$
 .* .*systemd\[1\]: systemd .* running in system mode .*$
 .* .*systemd\[1\]: Detected virtualization .*$

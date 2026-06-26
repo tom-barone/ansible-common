@@ -79,6 +79,7 @@
 .* .*tailscaled.*: magicsock: adding connection to .*$
 .* .*tailscaled.*: derphttp\.Client\.Connect: .*$
 .* .*tailscaled.*: derphttp\.Client\.Recv: connecting to derp-.*$
+.* .*tailscaled.*: derphttp\.Client\.Send: connecting to derp-.*$
 .* .*tailscaled.*: magicsock: \[.*\] derp\.Recv\(derp-.*\): derp\.Recv: .*$
 .* .*tailscaled.*: magicsock: \[.*\] derp\.Recv\(derp-.*\): derphttp\.Client\.Recv connect to region .*$
 .* .*tailscaled.*: magicsock: derp-.* connected; .*$
