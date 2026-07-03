@@ -1,0 +1,5 @@
+---
+# How dpkg resolves conffile conflicts during unattended upgrades.
+# "confnew" installs the maintainer's new version (old file kept as .dpkg-old).
+# "confold" keeps the locally modified file (new one saved as .dpkg-dist).
+system_unattended_upgrades_conffile_action: "confnew"

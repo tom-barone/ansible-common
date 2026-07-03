@@ -13,3 +13,14 @@
           - "status.status.ActiveState == 'active'"
           - "status.status.UnitFileState == 'enabled'"
         msg: "unattended-upgrades service is not active and enabled"
+
+    - name: "Dump apt Dpkg::Options"
+      ansible.builtin.command: "apt-config dump Dpkg::Options"
+      changed_when: false
+      register: "dpkg_options"
+
+    - name: "Assert conffile prompts are resolved with confnew"
+      ansible.builtin.assert:
+        that:
+          - "'--force-confnew' in dpkg_options.stdout"
+        msg: "Dpkg::Options does not contain --force-confnew"

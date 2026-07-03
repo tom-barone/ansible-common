@@ -25,6 +25,20 @@
       APT::Periodic::Update-Package-Lists "1";
       APT::Periodic::Unattended-Upgrade "1";
 
+# Without this, unattended-upgrades skips packages whose upgrade would trigger
+# a dpkg conffile prompt ("Package X has conffile prompt and needs to be
+# upgraded manually"). Only --force-confnew or --force-confold disables that
+# skip. Kept out of 50unattended-upgrades because that file is itself a
+# conffile of the unattended-upgrades package.
+- name: "Resolve conffile prompts automatically during unattended upgrades"
+  ansible.builtin.copy:
+    dest: "/etc/apt/apt.conf.d/51unattended-upgrades-conffile"
+    mode: "0644"
+    content: |
+      Dpkg::Options {
+         "--force-{{ system_unattended_upgrades_conffile_action }}";
+      };
+
 - name: "Ensure unattended-upgrades is enabled and started"
   ansible.builtin.systemd:
     name: "unattended-upgrades"
