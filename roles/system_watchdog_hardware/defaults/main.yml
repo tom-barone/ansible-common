@@ -1,0 +1,11 @@
+---
+# Kernel module providing the chipset hardware watchdog.
+system_watchdog_hardware_module: "iTCO_wdt"
+
+# Identity string exposed at /sys/class/watchdog/watchdogN/identity and
+# matched by the udev rule. Not always equal to the module name.
+system_watchdog_hardware_identity: "iTCO_wdt"
+
+# RuntimeWatchdogSec: if PID 1 stops petting the watchdog for this long,
+# the hardware resets the machine.
+system_watchdog_hardware_timeout: "30s"

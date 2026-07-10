@@ -1,0 +1,72 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read hardware watchdog modules-load config"
+      ansible.builtin.slurp:
+        src: "/etc/modules-load.d/01-hw-watchdog.conf"
+      register: "hw_modules_conf"
+
+    - name: "Assert hardware watchdog module loads at boot"
+      vars:
+        content: "{{ hw_modules_conf.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "content | trim == 'iTCO_wdt'"
+        msg: "01-hw-watchdog.conf missing hardware watchdog module"
+
+    - name: "Stat softdog modules-load config"
+      ansible.builtin.stat:
+        path: "/etc/modules-load.d/00-softdog.conf"
+      register: "softdog_conf"
+
+    - name: "Assert softdog is not pre-loaded outside Proxmox"
+      ansible.builtin.assert:
+        that:
+          - "not softdog_conf.stat.exists"
+        msg: "00-softdog.conf must only exist on Proxmox hosts"
+
+    - name: "Read udev watchdog rule"
+      ansible.builtin.slurp:
+        src: "/etc/udev/rules.d/60-watchdog-hw.rules"
+      register: "udev_rule"
+
+    - name: "Assert udev rule symlinks the hardware watchdog"
+      vars:
+        content: "{{ udev_rule.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'iTCO_wdt' in content"
+          - "'watchdog_hw' in content"
+        msg: "udev rule missing identity match or symlink"
+
+    - name: "Read systemd watchdog drop-in"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system.conf.d/10-watchdog-hardware.conf"
+      register: "systemd_dropin"
+
+    - name: "Assert drop-in configures the hardware watchdog"
+      vars:
+        content: "{{ systemd_dropin.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'RuntimeWatchdogSec=30s' in content"
+          - "'WatchdogDevice=/dev/watchdog_hw' in content"
+        msg: "systemd drop-in missing watchdog settings"
+
+    - name: "Get effective runtime watchdog timeout"
+      # Reads PID 1's applied value, equivalent to
+      # `systemctl show -p RuntimeWatchdogUSec`
+      ansible.builtin.command:
+        cmd: >-
+          busctl get-property org.freedesktop.systemd1
+          /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager
+          RuntimeWatchdogUSec
+      register: "runtime_watchdog"
+      changed_when: false
+
+    - name: "Assert systemd applied the runtime watchdog timeout"
+      ansible.builtin.assert:
+        that:
+          - "runtime_watchdog.stdout == 't 30000000'"
+        msg: "systemd did not apply RuntimeWatchdogSec after reexec"
