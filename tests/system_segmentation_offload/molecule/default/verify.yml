@@ -1,0 +1,68 @@
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    iface: "{{ ansible_default_ipv4.interface }}"
+  tasks:
+    # Given the role has been applied
+    # When we read the interface offload settings with ethtool
+    # Then TSO and GSO should both be off
+    - name: "Read offload settings"
+      ansible.builtin.command:
+        argv:
+          - "ethtool"
+          - "-k"
+          - "{{ iface }}"
+      register: "offload_settings"
+      changed_when: false
+
+    - name: "Assert TSO and GSO are disabled"
+      ansible.builtin.assert:
+        that:
+          - "'tcp-segmentation-offload: off' in offload_settings.stdout"
+          - >-
+            'generic-segmentation-offload: off'
+            in offload_settings.stdout
+        msg: "Expected TSO and GSO to be off"
+
+    # Given the role has been applied
+    # When we query the per-interface systemd instance unit
+    # Then it should be active (RemainAfterExit) and enabled
+    - name: "Get segmentation offload service status"
+      ansible.builtin.systemd:
+        name: "segmentation-offload@{{ iface }}.service"
+      register: "offload_service"
+
+    - name: "Assert service is active and enabled"
+      ansible.builtin.assert:
+        that:
+          - "offload_service.status.ActiveState == 'active'"
+          - "offload_service.status.UnitFileState == 'enabled'"
+        msg: "segmentation-offload service not active or enabled"
+
+    # Given offloads are persisted via a device-bound systemd unit
+    # When the VM reboots
+    # Then TSO and GSO should still be off after boot
+    - name: "Reboot VM"
+      ansible.builtin.reboot:
+        reboot_timeout: 300
+
+    - name: "Read offload settings after reboot"
+      ansible.builtin.command:
+        argv:
+          - "ethtool"
+          - "-k"
+          - "{{ iface }}"
+      register: "offload_settings_after"
+      changed_when: false
+
+    - name: "Assert TSO and GSO remain disabled after reboot"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'tcp-segmentation-offload: off'
+            in offload_settings_after.stdout
+          - >-
+            'generic-segmentation-offload: off'
+            in offload_settings_after.stdout
+        msg: "Offloads re-enabled after reboot"

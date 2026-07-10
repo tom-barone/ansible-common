@@ -1,0 +1,10 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_segmentation_offload"
+      vars:
+        system_segmentation_offload_interfaces:
+          - "{{ ansible_default_ipv4.interface }}"

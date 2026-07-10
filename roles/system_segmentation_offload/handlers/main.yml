@@ -1,0 +1,7 @@
+---
+- name: "Restart segmentation offload services"
+  ansible.builtin.systemd:
+    name: "segmentation-offload@{{ item }}.service"
+    state: "restarted"
+    daemon_reload: true
+  loop: "{{ system_segmentation_offload_interfaces }}"

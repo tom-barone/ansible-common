@@ -1,0 +1,13 @@
+# Managed by Ansible role: system_segmentation_offload
+[Unit]
+Description=Disable segmentation offloads on %i
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/ethtool -K %i tso off gso off
+
+[Install]
+WantedBy=sys-subsystem-net-devices-%i.device

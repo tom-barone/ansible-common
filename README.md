@@ -19,6 +19,7 @@ A non-comprehensive list of the more interesting roles:
 | `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
 | `system_harden_ssh` | Harden SSH setting up authorized keys, and configuring sshd security parameters. |
 | `system_logcheck` | Install [logcheck](https://packages.debian.org/logcheck) with ignore rules for common services. |
+| `system_segmentation_offload` | Disable TSO/GSO segmentation offloads on selected NICs via a device-bound systemd unit, working around NIC bugs like the e1000e "Detected Hardware Unit Hang". |
 | `system_smartmontools` | Install and configure [smartmontools](https://www.smartmontools.org/) to monitor disk health with emailed SMART alerts via the local MTA. |
 | `tailscale_install` | Connect to a [Tailscale](https://tailscale.com/) tailnet. |
 | `tailscale_subnet_router` | Configure Tailscale subnet routing with auto-discovery of local subnets. |
