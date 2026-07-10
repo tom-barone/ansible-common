@@ -12,6 +12,12 @@
 # By default logcheck will run via cron (see /etc/cron.d/logcheck):
 # - every hour
 # - on reboot
+#
+# To check all mail
+# $ ls -lh /var/mail/logcheck
+#
+# To clear the mailbox:
+# $ truncate -s 0 /var/mail/logcheck
 
 - name: "Validate required variables"
   ansible.builtin.assert:
