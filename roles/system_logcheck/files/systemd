@@ -77,3 +77,7 @@
 .* .*systemd\[1\]: .* skipped, unmet condition check .*$
 .* .*systemd\[1\]: .* skipped, no trigger condition checks were met\.$
 .* .*systemd-tmpfiles.*: Opening file ".*" failed, proceeding without lock: No such device or address$
+.* .*systemd\[1\]: Reexecution requested from client PID [0-9]+ .*$
+.* .*systemd\[1\]: Reexecuting\.$
+.* .*systemd\[1\]: Using hardware watchdog '.*', version [0-9]+, device /dev/.*$
+.* .*systemd\[1\]: Watchdog running with a hardware timeout of .*\.$
