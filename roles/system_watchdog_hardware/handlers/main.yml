@@ -1,0 +1,15 @@
+---
+# Handlers run in definition order (not notification order): the udev
+# symlink must be (re)created before systemd re-execs and resolves
+# WatchdogDevice=/dev/watchdog_hw.
+- name: "Retrigger udev watchdog rules"
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - "udevadm control --reload-rules"
+    - "udevadm trigger --subsystem-match=watchdog"
+  changed_when: true
+  when: "not system_watchdog_hardware_in_container"
+
+- name: "Reexec systemd"
+  ansible.builtin.systemd:
+    daemon_reexec: true

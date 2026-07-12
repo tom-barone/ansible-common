@@ -1,0 +1,100 @@
+---
+# Arm the chipset hardware watchdog via systemd (RuntimeWatchdogSec) so a
+# full kernel lockup causes an automatic hardware reset.
+#
+# NEVER open /dev/watchdog* from Ansible: opening a watchdog device arms
+# it. Inspection must use the read-only sysfs interface instead.
+#
+# Proxmox coexistence: the PVE HA stack (watchdog-mux) owns /dev/watchdog
+# (= watchdog0) via softdog. We pre-load softdog first so it always
+# registers watchdog0, then the hardware module registers watchdog1. A
+# udev rule symlinks the hardware device to /dev/watchdog_hw so nothing
+# hardcodes device numbers. The PVE blacklist only blocks alias-based
+# autoloading; explicit loading via /etc/modules-load.d/ still works. We
+# never touch the blacklist or /etc/default/pve-ha-manager.
+#
+# On a fresh boot PID 1 parses this config before modules load; systemd
+# retries opening the watchdog on each ping cycle, so it attaches once
+# the module and udev symlink appear.
+#
+# Tests to confirm working:
+#   $ cat /sys/class/watchdog/watchdog*/identity
+#   $ ls -l /dev/watchdog_hw
+#   $ systemctl show -p RuntimeWatchdogUSec --value
+#   $ journalctl -b _PID=1 | grep -i watchdog
+#     -> "Hardware watchdog 'iTCO_wdt', version 6, activated."
+# On Proxmox additionally:
+#   $ cat /sys/class/watchdog/watchdog0/identity
+#     -> "Software Watchdog" (softdog, owned by watchdog-mux)
+
+- name: "Detect container runtime"
+  ansible.builtin.set_fact:
+    system_watchdog_hardware_in_container: >-
+      {{ ansible_facts['virtualization_type'] | default('')
+         in ['docker', 'podman', 'lxc', 'container'] }}
+
+- name: "Detect Proxmox VE"
+  ansible.builtin.stat:
+    path: "/etc/pve"
+  register: "system_watchdog_hardware_pve"
+
+- name: "Ensure configuration directories exist"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "/etc/modules-load.d"
+    - "/etc/udev/rules.d"
+    - "/etc/systemd/system.conf.d"
+
+- name: "Pre-load softdog first on Proxmox so it keeps watchdog0"
+  ansible.builtin.copy:
+    dest: "/etc/modules-load.d/00-softdog.conf"
+    mode: "0644"
+    content: |
+      softdog
+  when: "system_watchdog_hardware_pve.stat.exists"
+
+- name: "Load hardware watchdog module at boot"
+  ansible.builtin.copy:
+    dest: "/etc/modules-load.d/01-hw-watchdog.conf"
+    mode: "0644"
+    content: |
+      {{ system_watchdog_hardware_module }}
+
+- name: "Symlink the hardware watchdog to a stable device name"
+  ansible.builtin.copy:
+    dest: "/etc/udev/rules.d/60-watchdog-hw.rules"
+    mode: "0644"
+    content: |
+      SUBSYSTEM=="watchdog", KERNEL=="watchdog*", \
+      ATTR{identity}=="{{ system_watchdog_hardware_identity }}", \
+      SYMLINK+="watchdog_hw"
+  notify:
+    - "Retrigger udev watchdog rules"
+    - "Reexec systemd"
+
+- name: "Load softdog module now"
+  community.general.modprobe:
+    name: "softdog"
+    state: "present"
+  when:
+    - "system_watchdog_hardware_pve.stat.exists"
+    - "not system_watchdog_hardware_in_container"
+
+- name: "Load hardware watchdog module now"
+  community.general.modprobe:
+    name: "{{ system_watchdog_hardware_module }}"
+    state: "present"
+  when: "not system_watchdog_hardware_in_container"
+
+- name: "Configure systemd to pet the hardware watchdog"
+  ansible.builtin.copy:
+    dest: "/etc/systemd/system.conf.d/10-watchdog-hardware.conf"
+    mode: "0644"
+    content: |
+      [Manager]
+      RuntimeWatchdogSec={{ system_watchdog_hardware_timeout }}
+      WatchdogDevice=/dev/watchdog_hw
+  notify: "Reexec systemd"

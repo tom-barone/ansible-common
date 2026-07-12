@@ -1,0 +1,10 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  become: true
+  tasks:
+    - name: "Simulate a Proxmox VE node"
+      ansible.builtin.file:
+        path: "/etc/pve"
+        state: "directory"
+        mode: "0755"
