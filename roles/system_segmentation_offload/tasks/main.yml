@@ -1,4 +1,25 @@
 ---
+# Disable TCP and generic segmentation offloads (TSO/GSO) on a list of
+# network interfaces, working around NIC bugs like the Intel e1000e
+# "Detected Hardware Unit Hang". Each interface gets an instance of a
+# device-bound systemd template unit, so the offloads are disabled again
+# at boot and whenever the device reappears (e.g. driver reload).
+#
+# Usage: pass the kernel interface names (see `ip link`) to fix:
+#
+#   - role: "system_segmentation_offload"
+#     vars:
+#       system_segmentation_offload_interfaces:
+#         - "enp0s31f6"
+#
+# Removing an interface from the list later does not re-enable its
+# offloads; disable segmentation-offload@<iface>.service manually.
+#
+# Tests to confirm working:
+#   $ systemctl status segmentation-offload@<iface>.service
+#   $ ethtool -k <iface> | grep segmentation
+#     -> tcp-segmentation-offload and generic-segmentation-offload "off"
+
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
