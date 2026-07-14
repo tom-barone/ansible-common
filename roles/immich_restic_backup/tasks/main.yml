@@ -1,0 +1,141 @@
+---
+# Run immich_install first: the restore guard query needs the Immich
+# schema, and a restored dump needs the same VectorChord postgres image.
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "immich_restic_backup_s3_endpoint is defined"
+      - "immich_restic_backup_s3_endpoint | length > 0"
+      - "immich_restic_backup_s3_bucket is defined"
+      - "immich_restic_backup_s3_bucket | length > 0"
+      - "immich_restic_backup_s3_access_key is defined"
+      - "immich_restic_backup_s3_access_key | length > 0"
+      - "immich_restic_backup_s3_secret_key is defined"
+      - "immich_restic_backup_s3_secret_key | length > 0"
+      - "immich_restic_backup_restic_password is defined"
+      - "immich_restic_backup_restic_password | length > 0"
+      - "immich_restic_backup_postgres_container is defined"
+      - "immich_restic_backup_postgres_container | length > 0"
+      - "immich_restic_backup_server_container is defined"
+      - "immich_restic_backup_server_container | length > 0"
+      - "immich_restic_backup_upload_location is defined"
+      - "immich_restic_backup_upload_location | length > 0"
+      - "immich_restic_backup_media_dirs is defined"
+      - "immich_restic_backup_media_dirs | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Create database dump directory"
+  ansible.builtin.file:
+    path: "{{ immich_restic_backup_dir }}/db"
+    state: "directory"
+    mode: "0700"
+
+- name: "Apply restic_backup role"
+  ansible.builtin.include_role:
+    name: "restic_backup"
+  vars:
+    restic_backup_dir: "{{ immich_restic_backup_dir }}"
+    restic_backup_cron_schedule: "{{ immich_restic_backup_cron_schedule }}"
+    restic_backup_cron_timezone: "{{ immich_restic_backup_cron_timezone }}"
+    restic_backup_cron_job_name: "immich-restic-backup"
+    restic_backup_forget_group_by: "host"
+    restic_backup_retention_daily: >-
+      {{ immich_restic_backup_retention_daily }}
+    restic_backup_retention_weekly: >-
+      {{ immich_restic_backup_retention_weekly }}
+    restic_backup_retention_monthly: >-
+      {{ immich_restic_backup_retention_monthly }}
+    restic_backup_s3_endpoint: >-
+      {{ immich_restic_backup_s3_endpoint }}
+    restic_backup_s3_bucket: >-
+      {{ immich_restic_backup_s3_bucket }}
+    restic_backup_s3_access_key: >-
+      {{ immich_restic_backup_s3_access_key }}
+    restic_backup_s3_secret_key: >-
+      {{ immich_restic_backup_s3_secret_key }}
+    restic_backup_restic_password: >-
+      {{ immich_restic_backup_restic_password }}
+    restic_backup_command: >-
+      docker exec {{ immich_restic_backup_postgres_container }}
+      pg_dumpall --clean --if-exists
+      -U {{ immich_restic_backup_postgres_user }}
+      > {{ immich_restic_backup_dir }}/db/pg_dumpall.sql
+      && restic backup {{ immich_restic_backup_dir }}/db
+      {{ immich_restic_backup_media_dirs
+      | map('regex_replace', '^',
+      immich_restic_backup_upload_location ~ '/')
+      | join(' ') }}
+
+- name: "Check restic repo for existing snapshots"
+  ansible.builtin.command:
+    cmd: >-
+      bash -c 'source {{ immich_restic_backup_dir }}/env
+      && restic snapshots --json --latest 1'
+  register: "immich_restic_backup_latest_snapshots"
+  changed_when: false
+  when: "immich_restic_backup_restore_on_bootstrap | bool"
+
+- name: "Count Immich users in the running database"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec {{ immich_restic_backup_postgres_container }}
+      psql -U {{ immich_restic_backup_postgres_user }}
+      -d {{ immich_restic_backup_database }} -t -A -c
+      '{{ immich_restic_backup_restore_guard_query }}'
+  register: "immich_restic_backup_user_count"
+  changed_when: false
+  when: "immich_restic_backup_restore_on_bootstrap | bool"
+
+- name: "Decide whether to bootstrap-restore"
+  ansible.builtin.set_fact:
+    immich_restic_backup_should_restore: >-
+      {{
+        immich_restic_backup_restore_on_bootstrap | bool
+        and (immich_restic_backup_latest_snapshots.stdout
+             | default('[]') | from_json | length) > 0
+        and (immich_restic_backup_user_count.stdout
+             | default('0') | trim | int) == 0
+      }}
+  when: "immich_restic_backup_restore_on_bootstrap | bool"
+
+- name: "Stop Immich server for bootstrap restore"
+  ansible.builtin.command:
+    cmd: "docker stop {{ immich_restic_backup_server_container }}"
+  when:
+    - "immich_restic_backup_restore_on_bootstrap | bool"
+    - "immich_restic_backup_should_restore | bool"
+  changed_when: true
+
+- name: "Restore latest snapshot files onto the host"
+  ansible.builtin.shell:
+    cmd: >-
+      set -euo pipefail;
+      source {{ immich_restic_backup_dir }}/env;
+      restic restore latest --target /
+    executable: "/bin/bash"
+  when:
+    - "immich_restic_backup_restore_on_bootstrap | bool"
+    - "immich_restic_backup_should_restore | bool"
+  changed_when: true
+
+- name: "Restore database from the latest snapshot dump"
+  ansible.builtin.shell:
+    cmd: >-
+      set -euo pipefail;
+      source {{ immich_restic_backup_dir }}/env;
+      restic dump latest {{ immich_restic_backup_dir }}/db/pg_dumpall.sql
+      | docker exec -i {{ immich_restic_backup_postgres_container }}
+      psql -U {{ immich_restic_backup_postgres_user }} -d postgres
+    executable: "/bin/bash"
+  when:
+    - "immich_restic_backup_restore_on_bootstrap | bool"
+    - "immich_restic_backup_should_restore | bool"
+  changed_when: true
+
+- name: "Start Immich server after bootstrap restore"
+  ansible.builtin.command:
+    cmd: "docker start {{ immich_restic_backup_server_container }}"
+  when:
+    - "immich_restic_backup_restore_on_bootstrap | bool"
+    - "immich_restic_backup_should_restore | bool"
+  changed_when: true

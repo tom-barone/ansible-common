@@ -1,0 +1,21 @@
+---
+immich_restic_backup_dir: "/opt/immich-backup"
+immich_restic_backup_cron_schedule: "0 3 * * *"
+immich_restic_backup_cron_timezone: "UTC"
+immich_restic_backup_retention_daily: 7
+immich_restic_backup_retention_weekly: 4
+immich_restic_backup_retention_monthly: 9999
+immich_restic_backup_upload_location: >-
+  {{ immich_install_upload_location | default('/opt/immich/data') }}
+immich_restic_backup_media_dirs:
+  - "library"
+  - "upload"
+  - "profile"
+immich_restic_backup_postgres_container: "immich_postgres"
+immich_restic_backup_server_container: "immich_server"
+immich_restic_backup_postgres_user: >-
+  {{ immich_install_db_username | default('postgres') }}
+immich_restic_backup_database: >-
+  {{ immich_install_db_database_name | default('immich') }}
+immich_restic_backup_restore_on_bootstrap: true
+immich_restic_backup_restore_guard_query: 'SELECT count(*) FROM "user";'

@@ -1,0 +1,188 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Create media directories"
+      ansible.builtin.file:
+        path: "/opt/immich/data/{{ item }}"
+        state: "directory"
+        mode: "0755"
+      loop:
+        - "library"
+        - "upload"
+        - "profile"
+
+    - name: "Create sample media files"
+      ansible.builtin.copy:
+        content: "immich-test-{{ item }}"
+        dest: "/opt/immich/data/{{ item }}/sample.jpg"
+        mode: "0644"
+      loop:
+        - "library"
+        - "upload"
+        - "profile"
+
+    # A plain postgres container stands in for the real Immich database;
+    # tests/immich_install pins the assumption that Immich has a "user"
+    # table.
+    - name: "Start stand-in Immich postgres container"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name immich_postgres
+          -e POSTGRES_PASSWORD=testpassword123
+          -e POSTGRES_DB=immich
+          postgres:18.3
+      changed_when: true
+
+    - name: "Wait for postgres to be ready"
+      ansible.builtin.command:
+        cmd: "docker exec immich_postgres pg_isready -U postgres"
+      register: "postgres_ready"
+      until: "postgres_ready.rc == 0"
+      retries: 15
+      delay: 3
+      changed_when: false
+
+    - name: "Create the Immich-like user table"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -c
+          'CREATE TABLE "user" (id serial PRIMARY KEY, name text);'
+      changed_when: true
+
+    - name: "Count users on a fresh database"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -t -A -c
+          'SELECT count(*) FROM "user";'
+      register: "fresh_user_count"
+      changed_when: false
+
+    - name: "Assert fresh database reports no users"
+      ansible.builtin.assert:
+        that:
+          - "fresh_user_count.stdout | trim | int == 0"
+        fail_msg: >-
+          Restore guard query returned
+          '{{ fresh_user_count.stdout | trim }}' on a fresh database,
+          expected '0'
+
+    - name: "Insert a user to check the guard query"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -c
+          'INSERT INTO "user" (name) VALUES ($$guard$$);'
+      changed_when: true
+
+    - name: "Count users with a populated database"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -t -A -c
+          'SELECT count(*) FROM "user";'
+      register: "populated_user_count"
+      changed_when: false
+
+    - name: "Assert populated database reports users"
+      ansible.builtin.assert:
+        that:
+          - "populated_user_count.stdout | trim | int > 0"
+        fail_msg: >-
+          Restore guard query returned
+          '{{ populated_user_count.stdout | trim }}' with a user present,
+          expected a non-zero count
+
+    - name: "Delete the guard-check user to return the database to empty"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -c
+          'DELETE FROM "user";'
+      changed_when: true
+
+    - name: "Start stand-in Immich server container"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name immich_server
+          alpine:3.22 sleep infinity
+      changed_when: true
+
+    - name: "Start MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          -p 9000:9000
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "http://localhost:9000/minio/health/live"
+        status_code: 200
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket
+      changed_when: true
+
+    - name: "Seed restic repo by applying role once"
+      ansible.builtin.include_role:
+        name: "immich_restic_backup"
+      vars:
+        immich_restic_backup_s3_endpoint: "http://localhost:9000"
+        immich_restic_backup_s3_bucket: "test-backup-bucket"
+        immich_restic_backup_s3_access_key: "test"
+        immich_restic_backup_s3_secret_key: "testpassword"
+        immich_restic_backup_restic_password: "testpassword"
+
+    - name: "Insert marker user to restore"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -c
+          'INSERT INTO "user" (name) VALUES ($$marker$$);'
+      changed_when: true
+
+    - name: "Create marker media file to restore"
+      ansible.builtin.copy:
+        content: "immich-marker-media"
+        dest: "/opt/immich/data/library/marker.jpg"
+        mode: "0644"
+
+    - name: "Run backup script to snapshot seeded data"
+      ansible.builtin.command:
+        cmd: "/opt/immich-backup/backup.sh"
+      changed_when: true
+
+    - name: "Wipe users so the database is empty before converge"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -c
+          'TRUNCATE "user";'
+      changed_when: true
+
+    - name: "Remove marker media file before converge"
+      ansible.builtin.file:
+        path: "/opt/immich/data/library/marker.jpg"
+        state: "absent"
