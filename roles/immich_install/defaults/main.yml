@@ -1,0 +1,16 @@
+---
+immich_install_version: "v3.0.2"
+immich_install_dir: "/opt/immich"
+immich_install_upload_location: "/opt/immich/data"
+immich_install_db_data_location: "/opt/immich/postgres"
+immich_install_port: 2283
+immich_install_machine_learning: true
+immich_install_db_username: "postgres"
+immich_install_db_database_name: "immich"
+immich_install_server_container_name: "immich_server"
+immich_install_ml_container_name: "immich_machine_learning"
+immich_install_redis_container_name: "immich_redis"
+immich_install_postgres_container_name: "immich_postgres"
+immich_install_valkey_image: "docker.io/valkey/valkey:9"
+immich_install_postgres_image: >-
+  ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
