@@ -1,0 +1,13 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply immich_restic_backup role"
+      ansible.builtin.include_role:
+        name: "immich_restic_backup"
+      vars:
+        immich_restic_backup_s3_endpoint: "http://localhost:9000"
+        immich_restic_backup_s3_bucket: "test-backup-bucket"
+        immich_restic_backup_s3_access_key: "test"
+        immich_restic_backup_s3_secret_key: "testpassword"
+        immich_restic_backup_restic_password: "testpassword"
