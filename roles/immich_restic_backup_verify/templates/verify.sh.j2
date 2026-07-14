@@ -1,0 +1,59 @@
+#!/bin/bash
+set -euo pipefail
+
+# Source environment variables (restic + S3 credentials)
+source "{{ immich_restic_backup_verify_env_file }}"
+
+RESTORE_DIR="{{ immich_restic_backup_verify_dir }}/restore"
+DB_DUMP_PATH="{{ immich_restic_backup_verify_db_dump_path }}"
+
+# Cleanup function - always remove restored files
+cleanup() {
+  rm -rf "${RESTORE_DIR}"
+}
+trap cleanup EXIT
+
+# Remove any leftovers from a previous run
+cleanup
+
+# Check repository integrity, reading a subset of the pack data
+echo "Checking repository integrity..."
+restic check \
+  --read-data-subset="{{ immich_restic_backup_verify_read_data_subset }}"
+
+# Pick a random sample of files from the latest snapshot. Only file
+# nodes are sampled: a directory passed to --include would restore its
+# entire subtree.
+echo "Sampling files from the latest snapshot..."
+mapfile -t SAMPLE < <(
+  restic ls --json latest \
+    | jq -r 'select(.type? == "file") | .path' \
+    | shuf -n "{{ immich_restic_backup_verify_sample_count }}"
+)
+
+INCLUDES=(--include "${DB_DUMP_PATH}")
+for path in "${SAMPLE[@]}"; do
+  INCLUDES+=(--include "${path}")
+done
+
+# Restore the sample; --verify re-reads restored files and compares
+# their content against the repository
+echo "Restoring sampled files and the database dump..."
+restic restore latest --target "${RESTORE_DIR}" --verify "${INCLUDES[@]}"
+
+FAILED=0
+for path in "${DB_DUMP_PATH}" "${SAMPLE[@]}"; do
+  if [ -s "${RESTORE_DIR}${path}" ]; then
+    echo "PASS: ${path} restored and non-empty"
+  else
+    echo "FAIL: ${path} missing or empty after restore"
+    FAILED=1
+  fi
+done
+
+if [ "${FAILED}" -ne 0 ]; then
+  echo "ERROR: One or more restored files failed verification."
+  exit 1
+fi
+
+echo "Backup verification succeeded."

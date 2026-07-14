@@ -1,0 +1,9 @@
+---
+immich_restic_backup_verify_dir: "/opt/immich-backup-verify"
+immich_restic_backup_verify_env_file: "/opt/immich-backup/env"
+immich_restic_backup_verify_cron_schedule: "0 5 * * 0"
+immich_restic_backup_verify_cron_timezone: "UTC"
+immich_restic_backup_verify_read_data_subset: "5%"
+immich_restic_backup_verify_sample_count: 10
+immich_restic_backup_verify_db_dump_path: >-
+  /opt/immich-backup/db/pg_dumpall.sql

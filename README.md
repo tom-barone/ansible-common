@@ -12,6 +12,7 @@ A non-comprehensive list of the more interesting roles:
 | `github_actions_self_hosted_runner_install` | Deploy a GitHub Actions self-hosted runner with local cache server. |
 | `immich_install` | Install the [Immich](https://immich.app/) photo and video manager via Docker. |
 | `immich_restic_backup` | Automated Immich backups (database dump and original media) to an S3 compatible backend with [Restic](https://restic.net/), including bootstrap restore. |
+| `immich_restic_backup_verify` | Scheduled Immich backup verification with `restic check` and a sample restore of backed up files. |
 | `monitoring_stack_install` | Install [Prometheus](https://prometheus.io/), [Loki](https://grafana.com/oss/loki/), [Grafana](https://grafana.com/), [Alloy](https://grafana.com/docs/alloy/latest/), [Node Exporter](https://github.com/prometheus/node_exporter), and [cAdvisor](https://github.com/google/cadvisor) via Docker with emailed alerts for disk and RAM usage. |
 | `openclaw_install` | Install the [OpenClaw](https://github.com/openclaw/openclaw) AI gateway as a hardened, non-root systemd service with scoped sudo. |
 | `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |

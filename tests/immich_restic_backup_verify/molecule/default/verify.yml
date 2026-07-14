@@ -1,0 +1,64 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check verify directory exists"
+      ansible.builtin.stat:
+        path: "/opt/immich-backup-verify"
+      register: "verify_dir"
+
+    - name: "Assert verify directory exists"
+      ansible.builtin.assert:
+        that:
+          - "verify_dir.stat.exists"
+          - "verify_dir.stat.isdir"
+
+    - name: "Check verify script exists"
+      ansible.builtin.stat:
+        path: "/opt/immich-backup-verify/verify.sh"
+      register: "verify_script"
+
+    - name: "Assert verify script exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "verify_script.stat.exists"
+          - "verify_script.stat.mode == '0700'"
+
+    - name: "Read cron job file"
+      ansible.builtin.slurp:
+        src: "/etc/cron.d/immich-restic-backup-verify"
+      register: "cron_file"
+
+    - name: "Assert cron job is configured correctly"
+      vars:
+        content: "{{ cron_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'CRON_TZ=UTC' in content"
+          - >-
+            'chronic /opt/immich-backup-verify/verify.sh'
+            in content
+
+    - name: "Run verify script manually"
+      ansible.builtin.command:
+        cmd: "/opt/immich-backup-verify/verify.sh"
+      register: "verify_run"
+      changed_when: true
+
+    - name: "Assert verification succeeded"
+      ansible.builtin.assert:
+        that:
+          - "'Backup verification succeeded.' in verify_run.stdout"
+          - >-
+            'PASS: /opt/immich-backup/db/pg_dumpall.sql'
+            in verify_run.stdout
+
+    - name: "Check restore directory was cleaned up"
+      ansible.builtin.stat:
+        path: "/opt/immich-backup-verify/restore"
+      register: "restore_dir"
+
+    - name: "Assert restore directory was cleaned up"
+      ansible.builtin.assert:
+        that:
+          - "not restore_dir.stat.exists"
