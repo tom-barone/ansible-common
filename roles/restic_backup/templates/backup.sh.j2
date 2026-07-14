@@ -9,6 +9,7 @@ source "{{ restic_backup_dir }}/env"
 
 # Apply retention policy and prune old snapshots
 restic forget \
+  --group-by {{ restic_backup_forget_group_by }} \
   --keep-daily {{ restic_backup_retention_daily }} \
   --keep-weekly {{ restic_backup_retention_weekly }} \
   --keep-monthly {{ restic_backup_retention_monthly }} \
