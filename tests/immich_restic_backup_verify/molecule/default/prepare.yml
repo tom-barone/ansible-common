@@ -1,0 +1,99 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Create media directories"
+      ansible.builtin.file:
+        path: "/opt/immich/data/{{ item }}"
+        state: "directory"
+        mode: "0755"
+      loop:
+        - "library"
+        - "upload"
+        - "profile"
+
+    - name: "Create sample media files"
+      ansible.builtin.copy:
+        content: "immich-test-media-{{ item }}"
+        dest: "/opt/immich/data/library/sample-{{ item }}.jpg"
+        mode: "0644"
+      loop: "{{ range(1, 6) | list }}"
+
+    # A plain postgres container stands in for the real Immich database;
+    # tests/immich_install pins the assumption that Immich has a "user"
+    # table.
+    - name: "Start stand-in Immich postgres container"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name immich_postgres
+          -e POSTGRES_PASSWORD=testpassword123
+          -e POSTGRES_DB=immich
+          postgres:18.3
+      changed_when: true
+
+    - name: "Wait for postgres to be ready"
+      ansible.builtin.command:
+        cmd: "docker exec immich_postgres pg_isready -U postgres"
+      register: "postgres_ready"
+      until: "postgres_ready.rc == 0"
+      retries: 15
+      delay: 3
+      changed_when: false
+
+    - name: "Create the Immich-like user table with a user"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -c
+          'CREATE TABLE "user" (id serial PRIMARY KEY, name text);
+          INSERT INTO "user" (name) VALUES ($$admin$$);'
+      changed_when: true
+
+    - name: "Start MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          -p 9000:9000
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "http://localhost:9000/minio/health/live"
+        status_code: 200
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket
+      changed_when: true
+
+    - name: "Set up the backup the verify role checks"
+      ansible.builtin.include_role:
+        name: "immich_restic_backup"
+      vars:
+        immich_restic_backup_s3_endpoint: "http://localhost:9000"
+        immich_restic_backup_s3_bucket: "test-backup-bucket"
+        immich_restic_backup_s3_access_key: "test"
+        immich_restic_backup_s3_secret_key: "testpassword"
+        immich_restic_backup_restic_password: "testpassword"
+
+    - name: "Run backup script to create a snapshot"
+      ansible.builtin.command:
+        cmd: "/opt/immich-backup/backup.sh"
+      changed_when: true

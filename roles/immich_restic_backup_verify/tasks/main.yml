@@ -1,0 +1,43 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "immich_restic_backup_verify_dir is defined"
+      - "immich_restic_backup_verify_dir | length > 0"
+      - "immich_restic_backup_verify_env_file is defined"
+      - "immich_restic_backup_verify_env_file | length > 0"
+      - "immich_restic_backup_verify_db_dump_path is defined"
+      - "immich_restic_backup_verify_db_dump_path | length > 0"
+      - "immich_restic_backup_verify_read_data_subset is defined"
+      - "immich_restic_backup_verify_read_data_subset | length > 0"
+      - "immich_restic_backup_verify_sample_count is defined"
+      - "immich_restic_backup_verify_sample_count | int > 0"
+    msg: "Missing a required variable"
+
+- name: "Install required packages"
+  ansible.builtin.apt:
+    name:
+      - "restic"
+      - "cron"
+      - "moreutils"
+      - "jq"
+    state: "present"
+    update_cache: true
+
+- name: "Create verify directory"
+  ansible.builtin.file:
+    path: "{{ immich_restic_backup_verify_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy verify script"
+  ansible.builtin.template:
+    src: "verify.sh.j2"
+    dest: "{{ immich_restic_backup_verify_dir }}/verify.sh"
+    mode: "0700"
+
+- name: "Deploy verify cron job"
+  ansible.builtin.template:
+    src: "cron.j2"
+    dest: "/etc/cron.d/immich-restic-backup-verify"
+    mode: "0644"
