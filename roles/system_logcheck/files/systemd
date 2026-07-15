@@ -81,3 +81,4 @@
 .* .*systemd\[1\]: Reexecuting\.$
 .* .*systemd\[1\]: Using hardware watchdog '.*', version [0-9]+, device /dev/.*$
 .* .*systemd\[1\]: Watchdog running with a hardware timeout of .*\.$
+.* .*systemd\[1\]: .*\.socket: Socket unit configuration has changed while unit has been running, no open socket file descriptor left\. The socket unit is not functional until restarted\.$
