@@ -1,5 +1,6 @@
 ---
-# Optional vars (no default):
+# Optional vars
 # docker_install_version: "5:28.3.3-1~debian.13~trixie"
+#   or latest if not specified
 
 docker_install_storage_driver: ""
