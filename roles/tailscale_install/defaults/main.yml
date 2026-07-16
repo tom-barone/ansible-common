@@ -1,4 +1,9 @@
 ---
+# Required vars:
+# tailscale_install_oauth_client_id: "k123abc..."
+# tailscale_install_oauth_client_secret: "tskey-client-..."
+# tailscale_install_oauth_ephemeral: false
+
 tailscale_install_tags: []
 tailscale_install_oauth_preauthorized: false
 tailscale_install_enable_ssh: false

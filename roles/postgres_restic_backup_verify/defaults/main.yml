@@ -1,4 +1,8 @@
 ---
+# Required vars:
+# postgres_restic_backup_verify_queries:
+#   - "SELECT count(*) FROM users;"
+
 postgres_restic_backup_verify_dir: "/opt/postgres-backup-verify"
 postgres_restic_backup_verify_env_file: "/opt/postgres-backup/env"
 postgres_restic_backup_verify_cron_schedule: "0 4 * * 0"

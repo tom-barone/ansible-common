@@ -1,0 +1,4 @@
+---
+# Required vars:
+# system_segmentation_offload_interfaces:
+#   - "enp0s31f6"

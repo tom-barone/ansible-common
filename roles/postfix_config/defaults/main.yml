@@ -1,0 +1,3 @@
+---
+# Optional vars (no default):
+# postfix_config_inet_protocols: "ipv4"

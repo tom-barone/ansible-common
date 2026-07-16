@@ -1,0 +1,6 @@
+---
+# Required vars:
+# system_hostname_short: "myhost"
+
+# Optional vars (no default):
+# system_hostname_fqdn: "myhost.example.com"

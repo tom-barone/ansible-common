@@ -1,0 +1,4 @@
+---
+# Required vars:
+# user_add_to_groups_username: "admin"
+# user_add_to_groups_groupnames: ["docker"]

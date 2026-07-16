@@ -1,0 +1,6 @@
+---
+# Required vars:
+# ansible_add_host_name: "new-vm"
+# ansible_add_host_user: "admin"
+# ansible_add_host_groups: ["vms"]
+# ansible_add_host_address: "192.168.1.50"

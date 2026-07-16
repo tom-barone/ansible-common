@@ -1,4 +1,15 @@
 ---
+# Required vars:
+# monitoring_stack_install_smtp_host: "smtp.example.com"
+# monitoring_stack_install_smtp_port: 587
+# monitoring_stack_install_smtp_user: "apikey"
+# monitoring_stack_install_smtp_password: "secret"
+# monitoring_stack_install_smtp_from_address: "alerts@example.com"
+# monitoring_stack_install_alert_email_to: "admin@example.com"
+# monitoring_stack_install_grafana_admin_user: "admin"
+# monitoring_stack_install_grafana_admin_password: "secret"
+# monitoring_stack_install_docker_network: "monitoring"
+
 monitoring_stack_install_dir: "/opt/monitoring"
 monitoring_stack_install_memory_threshold: 90
 monitoring_stack_install_disk_threshold: 85

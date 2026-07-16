@@ -1,0 +1,8 @@
+---
+# Required vars:
+# system_logrotate_configs:
+#   - name: "my-app"
+#     path: "/var/log/my-app/*.log"
+#     su: "root adm"       # optional
+#     frequency: "weekly"  # optional (default "daily")
+#     rotate: 14           # optional (default 7)

@@ -1,4 +1,8 @@
 ---
+# Required vars:
+# postgres_install_docker_password: "secret"
+# postgres_install_docker_network: "postgres"
+
 postgres_install_docker_version: "18.3"
 postgres_install_docker_dir: "/opt/postgres"
 postgres_install_docker_port: 5432
