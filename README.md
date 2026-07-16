@@ -14,7 +14,7 @@ A non-comprehensive list of the more interesting roles:
 | `openclaw_install` | Install the [OpenClaw](https://github.com/openclaw/openclaw) AI gateway as a hardened, non-root systemd service with scoped sudo. |
 | `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |
 | `postgres_install_docker` | Deploy PostgreSQL via Docker. |
-| `postgres_restic_backup` | Automated PostgreSQL backups to an S3 compatible backend with [Restic](https://restic.net/). |
+| `postgres_restic_backup` | Automated PostgreSQL backups to any [Restic](https://restic.net/) supported backend. |
 | `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |
 | `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
 | `system_harden_ssh` | Harden SSH setting up authorized keys, and configuring sshd security parameters. |
