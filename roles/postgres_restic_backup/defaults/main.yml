@@ -1,11 +1,14 @@
 ---
 # Required vars:
-# postgres_restic_backup_s3_endpoint: "s3.ap-southeast-2.amazonaws.com"
-# postgres_restic_backup_s3_bucket: "my-postgres-backups"
-# postgres_restic_backup_s3_access_key: "AKIA..."
-# postgres_restic_backup_s3_secret_key: "secret"
+# postgres_restic_backup_repository: "s3:s3.amazonaws.com/my-backups/postgres"
 # postgres_restic_backup_restic_password: "secret"
+#
+# Backend credentials go in postgres_restic_backup_env, e.g.:
+# postgres_restic_backup_env:
+#   AWS_ACCESS_KEY_ID: "AKIA..."
+#   AWS_SECRET_ACCESS_KEY: "secret"
 
+postgres_restic_backup_env: {}
 postgres_restic_backup_dir: "/opt/postgres-backup"
 postgres_restic_backup_cron_schedule: "0 3 * * *"
 postgres_restic_backup_cron_timezone: "UTC"

@@ -1,14 +1,17 @@
 ---
 # Required vars:
-# restic_backup_s3_endpoint: "s3.ap-southeast-2.amazonaws.com"
-# restic_backup_s3_bucket: "my-backups"
-# restic_backup_s3_access_key: "AKIA..."
-# restic_backup_s3_secret_key: "secret"
+# restic_backup_repository: "s3:s3.amazonaws.com/my-backups/my-app"
 # restic_backup_restic_password: "secret"
 # restic_backup_dir: "/opt/my-app-backup"
 # restic_backup_cron_job_name: "my-app-backup"
 # restic_backup_path: "/opt/my-app/data" (used by default restic_backup_command)
+#
+# Backend credentials go in restic_backup_env, e.g.:
+# restic_backup_env:
+#   AWS_ACCESS_KEY_ID: "AKIA..."
+#   AWS_SECRET_ACCESS_KEY: "secret"
 
+restic_backup_env: {}
 restic_backup_cron_schedule: "0 3 * * *"
 restic_backup_cron_timezone: "UTC"
 restic_backup_retention_daily: 7
