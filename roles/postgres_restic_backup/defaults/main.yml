@@ -1,4 +1,11 @@
 ---
+# Required vars:
+# postgres_restic_backup_s3_endpoint: "s3.ap-southeast-2.amazonaws.com"
+# postgres_restic_backup_s3_bucket: "my-postgres-backups"
+# postgres_restic_backup_s3_access_key: "AKIA..."
+# postgres_restic_backup_s3_secret_key: "secret"
+# postgres_restic_backup_restic_password: "secret"
+
 postgres_restic_backup_dir: "/opt/postgres-backup"
 postgres_restic_backup_cron_schedule: "0 3 * * *"
 postgres_restic_backup_cron_timezone: "UTC"

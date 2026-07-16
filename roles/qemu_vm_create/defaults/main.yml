@@ -1,4 +1,11 @@
 ---
+# Optional vars (no default):
+# qemu_vm_create_groups: ["vms"]
+
+# Optional vars (auto-detected if unset):
+# qemu_vm_create_image_url: "https://example.com/debian-13.qcow2"
+# qemu_vm_create_bios_path: "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"
+
 qemu_vm_create_dir: "/tmp/qemu-vms"
 qemu_vm_create_name: "qemu-vm"
 qemu_vm_create_disk_size: "20G"

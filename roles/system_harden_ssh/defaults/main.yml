@@ -1,4 +1,7 @@
 ---
+# Required vars:
+# system_harden_ssh_public_key: "ssh-ed25519 AAAA... admin"
+
 system_harden_ssh_ports: [22]
 system_harden_ssh_permit_root_login: "yes"
 system_harden_ssh_exclusive_access: false

@@ -1,3 +1,9 @@
 ---
+# Required vars:
+# system_port_forward_add_description: "my-app"
+# system_port_forward_add_internal_port: 8080
+# system_port_forward_add_external_port: 8080
+# system_port_forward_add_protocol: "TCP"
+
 system_port_forward_add_refresh_cron: true
 system_port_forward_add_refresh_interval: "*/30"

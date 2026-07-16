@@ -1,3 +1,11 @@
 ---
+# Required vars:
+# postfix_relay_host: "smtp.example.com"
+# postfix_relay_port: 587
+# postfix_relay_username: "apikey"
+# postfix_relay_password: "secret"
+# postfix_relay_hostname: "mail.example.com"
+# postfix_relay_root_alias: "admin@example.com"
+
 postfix_relay_smtp_generic_maps: []
 postfix_relay_custom_headers: []
