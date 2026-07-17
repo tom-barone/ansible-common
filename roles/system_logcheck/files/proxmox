@@ -24,11 +24,11 @@
 .* .*pve.*: .* qga command failed.*guest-ping.*$
 .* .*qm.*: .* qga command failed.*guest-ping.*$
 .* .*pve.*: auth key pair too old.*$
-.* .*(pveproxy|spiceproxy).*: send HUP to .*$
-.* .*(pveproxy|spiceproxy).*: received signal HUP$
-.* .*(pveproxy|spiceproxy).*: server closing$
-.* .*(pveproxy|spiceproxy).*: server shutdown \(restart\)$
-.* .*(pveproxy|spiceproxy).*: restarting server$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: send HUP to .*$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: received signal HUP$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: server closing$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: server shutdown \(restart\)$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: restarting server$
 .* .*spiceproxy.*: worker exit.*$
 .* .*spiceproxy.*: worker .* finished.*$
 .* .*spiceproxy.*: worker .* started.*$
@@ -37,3 +37,11 @@
 .* .*pvefw-logger.*: stopping pvefw logger$
 .* .*pvefw-logger.*: starting pvefw logger$
 .* cloud-init.*: .*$
+.* .*pve-ha-(lrm|crm).*: received signal TERM$
+.* .*pve-ha-lrm.*: restart LRM, freeze all services$
+.* .*pve-ha-crm.*: server received shutdown request$
+.* .*pve-ha-(lrm|crm).*: server stopped$
+.* .*pve-ha-(lrm|crm).*: starting server$
+.* .*pve-ha-(lrm|crm).*: status change startup => wait_for_(agent_lock|quorum)$
+.* .*query-machine-capabilities.*: rdmsr: CPU cannot read MSR 0x[0-9a-fA-F]+$
+.* .*query-machine-capabilities.*: Intel TDX support undetermined$

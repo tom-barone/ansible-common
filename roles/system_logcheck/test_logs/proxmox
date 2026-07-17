@@ -48,3 +48,28 @@ Mar 06 00:37:00 quilava spiceproxy[1106]: worker 1152386 started
 Mar 06 00:37:00 quilava pveproxy[1097]: restarting server
 Mar 06 00:37:05 quilava spiceproxy[866471]: worker exit
 Mar 06 00:37:05 quilava spiceproxy[1106]: worker 866471 finished
+Jul 17 03:00:37 server query-machine-capabilities[1185174]: rdmsr: CPU cannot read MSR 0x00000982
+Jul 17 03:00:37 server query-machine-capabilities[1185174]: Intel TDX support undetermined
+Jul 17 03:01:13 server pve-ha-lrm[1669]: received signal TERM
+Jul 17 03:01:13 server pve-ha-lrm[1669]: restart LRM, freeze all services
+Jul 17 03:01:13 server pve-ha-lrm[1669]: server stopped
+Jul 17 03:01:15 server pve-ha-lrm[1202504]: starting server
+Jul 17 03:01:15 server pve-ha-lrm[1202504]: status change startup => wait_for_agent_lock
+Jul 17 03:01:16 server pve-ha-crm[1655]: received signal TERM
+Jul 17 03:01:16 server pve-ha-crm[1655]: server received shutdown request
+Jul 17 03:01:16 server pve-ha-crm[1655]: server stopped
+Jul 17 03:01:17 server pve-ha-crm[1202543]: starting server
+Jul 17 03:01:17 server pve-ha-crm[1202543]: status change startup => wait_for_quorum
+Jul 17 03:01:19 server pvedaemon[1202550]: send HUP to 1641
+Jul 17 03:01:19 server pvedaemon[1641]: received signal HUP
+Jul 17 03:01:19 server pvedaemon[1641]: server closing
+Jul 17 03:01:19 server pvedaemon[1641]: server shutdown (restart)
+Jul 17 03:01:20 server pvestatd[1202554]: send HUP to 1611
+Jul 17 03:01:20 server pvestatd[1611]: received signal HUP
+Jul 17 03:01:20 server pvestatd[1611]: server shutdown (restart)
+Jul 17 03:01:20 server pvedaemon[1641]: restarting server
+Jul 17 03:01:20 server pvestatd[1611]: restarting server
+Jul 17 03:01:22 server pvescheduler[1202571]: send HUP to 1963
+Jul 17 03:01:22 server pvescheduler[1963]: received signal HUP
+Jul 17 03:01:22 server pvescheduler[1963]: server shutdown (restart)
+Jul 17 03:01:23 server pvescheduler[1963]: restarting server
