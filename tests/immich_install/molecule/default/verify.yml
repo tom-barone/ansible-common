@@ -1,0 +1,57 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check compose file exists"
+      ansible.builtin.stat:
+        path: "/opt/immich/docker-compose.yml"
+      register: "compose_file"
+
+    - name: "Assert compose file exists with correct permissions"
+      ansible.builtin.assert:
+        that:
+          - "compose_file.stat.exists"
+          - "compose_file.stat.mode == '0600'"
+
+    - name: "Ping the Immich server API"
+      ansible.builtin.uri:
+        url: "http://localhost:2283/api/server/ping"
+        status_code: 200
+        return_content: true
+      register: "ping_response"
+
+    - name: "Assert the Immich server responds with pong"
+      ansible.builtin.assert:
+        that:
+          - "'pong' in ping_response.content"
+
+    - name: "List running containers"
+      ansible.builtin.command:
+        cmd: "docker ps --format {% raw %}{{.Names}}{% endraw %}"
+      register: "running_containers"
+      changed_when: false
+
+    - name: "Assert expected containers are running"
+      ansible.builtin.assert:
+        that:
+          - "'immich_server' in running_containers.stdout_lines"
+          - "'immich_postgres' in running_containers.stdout_lines"
+          - "'immich_redis' in running_containers.stdout_lines"
+          - "'immich_machine_learning' not in running_containers.stdout_lines"
+
+    # Pins the schema assumption behind immich_restic_backup's restore
+    # guard query. If a future Immich version renames the table, this
+    # test fails before any production backup role misbehaves.
+    - name: "Count rows in the user table"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -t -A -c
+          'SELECT count(*) FROM "user";'
+      register: "user_count"
+      changed_when: false
+
+    - name: "Assert fresh Immich has an empty user table"
+      ansible.builtin.assert:
+        that:
+          - "user_count.stdout | trim | int == 0"

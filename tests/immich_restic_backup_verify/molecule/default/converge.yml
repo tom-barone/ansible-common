@@ -1,0 +1,12 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply immich_restic_backup_verify role"
+      ansible.builtin.include_role:
+        name: "immich_restic_backup_verify"
+      vars:
+        # A percentage subset of a tiny test repo could select no pack
+        # files at all, so read everything.
+        immich_restic_backup_verify_read_data_subset: "100%"
+        immich_restic_backup_verify_sample_count: 5

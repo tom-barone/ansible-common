@@ -1,0 +1,116 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Check backup directory exists"
+      ansible.builtin.stat:
+        path: "/opt/immich-backup"
+      register: "backup_dir"
+
+    - name: "Assert backup directory exists"
+      ansible.builtin.assert:
+        that:
+          - "backup_dir.stat.exists"
+          - "backup_dir.stat.isdir"
+
+    - name: "Check backup script exists"
+      ansible.builtin.stat:
+        path: "/opt/immich-backup/backup.sh"
+      register: "backup_script"
+
+    - name: "Assert backup script exists and is executable"
+      ansible.builtin.assert:
+        that:
+          - "backup_script.stat.exists"
+          - "backup_script.stat.mode == '0700'"
+
+    - name: "Check env file exists"
+      ansible.builtin.stat:
+        path: "/opt/immich-backup/env"
+      register: "env_file"
+
+    - name: "Assert env file exists with correct permissions"
+      ansible.builtin.assert:
+        that:
+          - "env_file.stat.exists"
+          - "env_file.stat.mode == '0600'"
+
+    - name: "Check restic repository is initialized"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/immich-backup/env
+          && restic snapshots'
+      changed_when: false
+
+    - name: "Run backup script manually"
+      ansible.builtin.command:
+        cmd: "/opt/immich-backup/backup.sh"
+      changed_when: true
+
+    - name: "Verify backup exists in restic repository"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/immich-backup/env
+          && restic snapshots --json'
+      register: "restic_snapshots"
+      changed_when: false
+
+    - name: "Assert at least one snapshot exists"
+      ansible.builtin.assert:
+        that:
+          - "(restic_snapshots.stdout | from_json | length) > 0"
+
+    - name: "Read cron job file"
+      ansible.builtin.slurp:
+        src: "/etc/cron.d/immich-restic-backup"
+      register: "cron_file"
+
+    - name: "Assert cron job is configured correctly"
+      vars:
+        content: "{{ cron_file.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'CRON_TZ=UTC' in content"
+          - >-
+            'chronic /opt/immich-backup/backup.sh'
+            in content
+
+    - name: "Query restored marker user"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec immich_postgres
+          psql -U postgres -d immich -t -A -c
+          'SELECT name FROM "user";'
+      register: "marker_query"
+      changed_when: false
+
+    - name: "Assert restored database data matches"
+      ansible.builtin.assert:
+        that:
+          - "marker_query.stdout | trim == 'marker'"
+
+    - name: "Read restored marker media file"
+      ansible.builtin.slurp:
+        src: "/opt/immich/data/library/marker.jpg"
+      register: "marker_media"
+
+    - name: "Assert restored media file content matches"
+      ansible.builtin.assert:
+        that:
+          - "marker_media.content | b64decode == 'immich-marker-media'"
+
+    - name: "Check Immich server container state"
+      ansible.builtin.command:
+        cmd: >-
+          docker inspect -f
+          {% raw %}{{.State.Running}}{% endraw %}
+          immich_server
+      register: "server_state"
+      changed_when: false
+
+    - name: "Assert Immich server is running again after restore"
+      ansible.builtin.assert:
+        that:
+          - "server_state.stdout | trim == 'true'"

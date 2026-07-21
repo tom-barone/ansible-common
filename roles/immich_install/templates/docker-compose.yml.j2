@@ -1,0 +1,68 @@
+services:
+  immich-server:
+    image: "ghcr.io/immich-app/immich-server:{{ immich_install_version }}"
+    container_name: "{{ immich_install_server_container_name }}"
+    restart: "unless-stopped"
+    volumes:
+      - "{{ immich_install_upload_location }}:/data"
+      # The container follows the host timezone
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      DB_HOSTNAME: "database"
+      DB_USERNAME: "{{ immich_install_db_username }}"
+      DB_PASSWORD: "{{ immich_install_db_password }}"
+      DB_DATABASE_NAME: "{{ immich_install_db_database_name }}"
+      REDIS_HOSTNAME: "redis"
+{% if not immich_install_machine_learning %}
+      IMMICH_MACHINE_LEARNING_ENABLED: "false"
+{% endif %}
+    ports:
+      - "0.0.0.0:{{ immich_install_port }}:2283"
+    depends_on:
+      - "redis"
+      - "database"
+    healthcheck:
+      disable: false
+
+{% if immich_install_machine_learning %}
+  immich-machine-learning:
+    image: "ghcr.io/immich-app/immich-machine-learning:{{ immich_install_version }}"
+    container_name: "{{ immich_install_ml_container_name }}"
+    restart: "unless-stopped"
+    volumes:
+      - "model-cache:/cache"
+    healthcheck:
+      disable: false
+
+{% endif %}
+  redis:
+    image: "{{ immich_install_valkey_image }}"
+    container_name: "{{ immich_install_redis_container_name }}"
+    restart: "unless-stopped"
+    healthcheck:
+      test: "redis-cli ping || exit 1"
+
+  database:
+    image: "{{ immich_install_postgres_image }}"
+    container_name: "{{ immich_install_postgres_container_name }}"
+    restart: "unless-stopped"
+    environment:
+      POSTGRES_PASSWORD: "{{ immich_install_db_password }}"
+      POSTGRES_USER: "{{ immich_install_db_username }}"
+      POSTGRES_DB: "{{ immich_install_db_database_name }}"
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - "{{ immich_install_db_data_location }}:/var/lib/postgresql/data"
+    shm_size: "128mb"
+    healthcheck:
+      disable: false
+
+{% if immich_install_machine_learning %}
+volumes:
+  model-cache:
+
+{% endif %}
+networks:
+  default:
+    name: "{{ immich_install_network }}"
+    external: true
