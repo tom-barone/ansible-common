@@ -62,6 +62,46 @@
         that:
           - "(restic_snapshots.stdout | from_json | length) > 0"
 
+    # Given a dump command that fails mid-stream
+    # When a backup is attempted
+    # Then no snapshot is created from the truncated output
+    - name: "Count snapshots before failing backup"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/postgres-backup/env
+          && restic snapshots --json'
+      register: "snapshots_before_failure"
+      changed_when: false
+
+    - name: "Run backup with a failing dump command"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/postgres-backup/env
+          && restic backup --stdin-from-command
+          --stdin-filename "fail.sql" -- false'
+      register: "failing_backup"
+      failed_when: false
+      changed_when: false
+
+    - name: "Count snapshots after failing backup"
+      ansible.builtin.command:
+        cmd: >-
+          bash -c
+          'source /opt/postgres-backup/env
+          && restic snapshots --json'
+      register: "snapshots_after_failure"
+      changed_when: false
+
+    - name: "Assert failing dump created no snapshot"
+      ansible.builtin.assert:
+        that:
+          - "failing_backup.rc != 0"
+          - >-
+            (snapshots_after_failure.stdout | from_json | length)
+            == (snapshots_before_failure.stdout | from_json | length)
+
     - name: "Read cron job file"
       ansible.builtin.slurp:
         src: "/etc/cron.d/postgres-restic-backup"
