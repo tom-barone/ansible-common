@@ -14,7 +14,7 @@
     # https://github.com/ansible/ansible-lint/issues/4533
     rm -rf .ansible
     uv run yamllint --strict tests roles
-    docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:latest -color
+    actionlint
     # Test logcheck matchers
     ./roles/system_logcheck/test.sh
 
