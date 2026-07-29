@@ -69,8 +69,8 @@
     status_code: 200
   register: "scrutiny_docker_install_health"
   until: "scrutiny_docker_install_health.status == 200"
-  retries: 30
-  delay: 2
+  retries: 60
+  delay: 5
 
 - name: "Read current Scrutiny settings"
   ansible.builtin.uri:
