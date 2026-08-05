@@ -116,6 +116,8 @@
 .* .*tailscaled.*: magicsock: disco key did not change for node \[.*\]$
 .* .*tailscaled.*: wgengine: Skipping reconfig \(TSMP key\): \[.*\] changed from ".*" to ".*"$
 .* .*tailscaled.*: magicsock: updated disco key for peer \[.*\] to d:.*$
+.* .*tailscaled.*: magicsock: new contact: peer=\[.*\] usec=[0-9]+ cached=(true|false) via=.*$
+.* .*tailscaled.*: nodeBackend: peer \[.*\] disco key changed from "discokey:[0-9a-f]+" to "discokey:[0-9a-f]+"$
 .* .*tailscaled.*: \[unexpected\] CallMeMaybe from peer via DERP whose netmap discokey != disco source$
 .* .*systemd-resolved.*: Using degraded feature set .* instead of .* for DNS server 100.100.100.100.*$
 .* .*systemd-resolved.*: Grace period over, resuming full feature set .* for DNS server 100.100.100.100.*$
