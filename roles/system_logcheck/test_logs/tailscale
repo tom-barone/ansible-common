@@ -160,3 +160,5 @@ Aug 05 15:50:27 server tailscaled[135453]: magicsock: new contact: peer=[8JL4V] 
 Aug 05 02:06:18 server tailscaled[215146]: magicsock: new contact: peer=[hvN8X] usec=6189295892 cached=false via=direct
 Aug 05 06:50:49 server tailscaled[215146]: nodeBackend: peer [5xpK2] disco key changed from "discokey:83c328ff7dfa765051775192facae9df36829e69955bad7170b453792181160a" to "discokey:afea86c3a75fb79db674fa88b8505c8a94e630fcbb1abd30a77e460a6fb97810"
 Aug 05 05:35:52 server tailscaled[215146]: nodeBackend: peer [EA9L/] disco key changed from "discokey:56ec4c24cdfbf8dabb3822e37a2d0e8740be5a95beb2b33b1c941811b2eeb804" to "discokey:8a19b2a2a30154c736e324c7343c220222de645c03b06361be442359b2e03c17"
+Aug 05 23:10:30 server tailscaled[352153]: magicsock: new contact: control-netmap usec=1804341 cached=false
+Aug 05 23:10:35 server tailscaled[352153]: updating netmap in disk cache
