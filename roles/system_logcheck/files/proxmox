@@ -45,3 +45,5 @@
 .* .*pve-ha-(lrm|crm).*: status change startup => wait_for_(agent_lock|quorum)$
 .* .*query-machine-capabilities.*: rdmsr: CPU cannot read MSR 0x[0-9a-fA-F]+$
 .* .*query-machine-capabilities.*: Intel TDX support undetermined$
+.* .*addgroup.*: The group `.*' already exists as a system group\.$
+.* .*adduser.*: The system user `.*' already exists\. Exiting\.$

@@ -1,0 +1,16 @@
+---
+# Purpose: assert that apt is configured to retry transient download failures.
+# Molecule calls this playbook with `molecule verify`.
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read the configured apt retries"
+      ansible.builtin.command: "apt-config dump Acquire::Retries"
+      register: "apt_retries_config"
+      changed_when: false
+
+    - name: "Assert apt retries are configured"
+      ansible.builtin.assert:
+        that:
+          - '''Acquire::Retries "6";'' in apt_retries_config.stdout'
+        msg: "Acquire::Retries is not configured"

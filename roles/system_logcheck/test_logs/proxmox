@@ -73,3 +73,6 @@ Jul 17 03:01:22 server pvescheduler[1202571]: send HUP to 1963
 Jul 17 03:01:22 server pvescheduler[1963]: received signal HUP
 Jul 17 03:01:22 server pvescheduler[1963]: server shutdown (restart)
 Jul 17 03:01:23 server pvescheduler[1963]: restarting server
+Aug 06 03:00:11 server addgroup[396932]: The group `frrvty' already exists as a system group.
+Aug 06 03:00:11 server addgroup[396934]: The group `frr' already exists as a system group.
+Aug 06 03:00:11 server adduser[396936]: The system user `frr' already exists. Exiting.
