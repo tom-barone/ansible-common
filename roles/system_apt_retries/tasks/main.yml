@@ -1,5 +1,4 @@
 ---
-# AI GENERATED - Tom Barone
 # Ansible role to make apt resilient to transient network failures
 
 - name: "Make apt resilient to transient CDN failures"

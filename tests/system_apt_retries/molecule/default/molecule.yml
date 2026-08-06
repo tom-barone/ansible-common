@@ -1,5 +1,4 @@
 ---
-# AI GENERATED - Tom Barone
 driver:
   name: "docker"
 platforms:

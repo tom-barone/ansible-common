@@ -1,5 +1,4 @@
 ---
-# AI GENERATED - Tom Barone
 # Purpose: assert that apt is configured to retry transient download failures.
 # Molecule calls this playbook with `molecule verify`.
 - name: "Verify"
