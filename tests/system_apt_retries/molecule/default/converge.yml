@@ -1,0 +1,8 @@
+---
+# AI GENERATED - Tom Barone
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"

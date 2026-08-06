@@ -1,0 +1,10 @@
+---
+# AI GENERATED - Tom Barone
+# Ansible role to make apt resilient to transient network failures
+
+- name: "Make apt resilient to transient CDN failures"
+  ansible.builtin.copy:
+    dest: "/etc/apt/apt.conf.d/80-retries"
+    mode: "0644"
+    content: |
+      Acquire::Retries "{{ system_apt_retries_count }}";
