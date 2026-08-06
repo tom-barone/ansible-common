@@ -3,6 +3,10 @@
   hosts: "all"
   become: true
   tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
     - name: "Ensure auth log file exists for fail2ban to read"
       ansible.builtin.file:
         path: "/var/log/auth.log"

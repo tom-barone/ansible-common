@@ -1,14 +1,8 @@
 ---
+# AI GENERATED - Tom Barone
 - name: "Prepare"
   hosts: "all"
-  become: true
   tasks:
     - name: "Make apt resilient to transient CDN failures"
       ansible.builtin.include_role:
         name: "system_apt_retries"
-
-    - name: "Simulate a Proxmox VE node"
-      ansible.builtin.file:
-        path: "/etc/pve"
-        state: "directory"
-        mode: "0755"
