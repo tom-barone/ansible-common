@@ -16,10 +16,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "system_unattended_upgrades_apt_result"
-  retries: 3
-  delay: 10
-  until: "system_unattended_upgrades_apt_result is success"
 
 - name: "Enable periodic apt updates and unattended-upgrades"
   ansible.builtin.copy:

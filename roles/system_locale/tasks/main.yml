@@ -13,10 +13,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "system_locale_apt_result"
-  retries: 3
-  delay: 10
-  until: "system_locale_apt_result is success"
 
 - name: "Ensure the correct locale is generated"
   community.general.locale_gen:

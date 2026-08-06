@@ -14,10 +14,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "system_port_forward_remove_apt_result"
-  retries: 3
-  delay: 10
-  until: "system_port_forward_remove_apt_result is success"
 
 - name: "Check if port forward exists"
   ansible.builtin.command:

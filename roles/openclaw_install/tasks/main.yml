@@ -15,10 +15,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "openclaw_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "openclaw_install_apt_result is success"
 
 - name: "Add NodeSource GPG key"
   ansible.builtin.get_url:
@@ -43,10 +39,6 @@
     name: "nodejs"
     state: "present"
     update_cache: true
-  register: "openclaw_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "openclaw_install_apt_result is success"
 
 - name: "Check if pnpm is installed"
   ansible.builtin.command:

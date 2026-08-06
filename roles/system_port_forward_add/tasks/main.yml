@@ -16,10 +16,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "system_port_forward_add_apt_result"
-  retries: 3
-  delay: 10
-  until: "system_port_forward_add_apt_result is success"
 
 - name: "Check if port forward already exists"
   ansible.builtin.command:

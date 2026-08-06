@@ -14,10 +14,6 @@
     install_recommends: false
     update_cache: true
     cache_valid_time: 3600
-  register: "cockpit_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "cockpit_install_apt_result is success"
 
 - name: "Add trixie-backports repository"
   ansible.builtin.deb822_repository:
@@ -37,10 +33,6 @@
     default_release: "trixie-backports"
     install_recommends: false
     update_cache: true
-  register: "cockpit_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "cockpit_install_apt_result is success"
 
 - name: "Install PCP for Cockpit metrics history"
   ansible.builtin.apt:
@@ -48,10 +40,6 @@
       - "pcp"
     state: "present"
     install_recommends: false
-  register: "cockpit_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "cockpit_install_apt_result is success"
   when: "cockpit_install_enable_pcp"
 
 - name: "Ensure cockpit.socket is enabled and started"

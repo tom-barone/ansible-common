@@ -15,10 +15,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "system_harden_ssh_apt_result"
-  retries: 3
-  delay: 10
-  until: "system_harden_ssh_apt_result is success"
 
 - name: "Gather service facts"
   ansible.builtin.service_facts: {}

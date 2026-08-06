@@ -23,10 +23,6 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
-  register: "docker_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "docker_install_apt_result is success"
 
 - name: "Add docker GPG key"
   ansible.builtin.get_url:
@@ -62,10 +58,6 @@
       - "docker-compose-plugin"
     state: "present"
     update_cache: true
-  register: "docker_install_apt_result"
-  retries: 3
-  delay: 10
-  until: "docker_install_apt_result is success"
 
 - name: "Ensure Docker service is started"
   ansible.builtin.systemd:

@@ -18,10 +18,6 @@
     update_cache: true
     cache_valid_time: 3600
     state: "present"
-  register: "system_fail2ban_apt_result"
-  retries: 3
-  delay: 10
-  until: "system_fail2ban_apt_result is success"
 
 - name: "Configure jail for sshd"
   ansible.builtin.template:
