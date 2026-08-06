@@ -5,6 +5,10 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
+  register: "postfix_config_apt_result"
+  retries: 3
+  delay: 10
+  until: "postfix_config_apt_result is success"
 
 - name: "Set inet_protocols"
   ansible.builtin.lineinfile:

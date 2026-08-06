@@ -8,3 +8,7 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
+  register: "system_tools_apt_result"
+  retries: 3
+  delay: 10
+  until: "system_tools_apt_result is success"
