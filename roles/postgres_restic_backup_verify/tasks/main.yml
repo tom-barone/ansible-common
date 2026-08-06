@@ -24,6 +24,10 @@
       - "moreutils"
     state: "present"
     update_cache: true
+  register: "postgres_restic_backup_verify_apt_result"
+  retries: 3
+  delay: 10
+  until: "postgres_restic_backup_verify_apt_result is success"
 
 - name: "Create verify directory"
   ansible.builtin.file:
