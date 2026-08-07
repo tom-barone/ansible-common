@@ -1,0 +1,16 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    # Unlike the other tests this keeps docker's default overlay2
+    # storage driver: vfs copies every image layer in full and the
+    # immich images are too large for that on the CI runner disks.
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+
+    - name: "Create Docker network"
+      ansible.builtin.include_role:
+        name: "docker_network_create"
+      vars:
+        docker_network_create_name: "immich_network"

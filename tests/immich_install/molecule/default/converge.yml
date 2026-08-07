@@ -1,0 +1,11 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Install Immich"
+      ansible.builtin.include_role:
+        name: "immich_install"
+      vars:
+        immich_install_db_password: "testpassword123"
+        immich_install_network: "immich_network"
+        immich_install_machine_learning: false

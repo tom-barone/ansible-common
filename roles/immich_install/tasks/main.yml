@@ -1,0 +1,54 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "immich_install_db_password is defined"
+      - "immich_install_db_password | length > 0"
+      - "immich_install_network is defined"
+      - "immich_install_network | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Create install directory"
+  ansible.builtin.file:
+    path: "{{ immich_install_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ immich_install_dir }}/docker-compose.yml"
+    mode: "0600"
+  notify: "Restart immich"
+
+# Retried because registries intermittently rate-limit the parallel
+# layer downloads of a fresh pull, and compose up gives up immediately
+- name: "Pull immich images"
+  ansible.builtin.command:
+    cmd: "docker compose pull"
+    chdir: "{{ immich_install_dir }}"
+  register: "immich_install_pull"
+  until: "immich_install_pull.rc == 0"
+  retries: 3
+  delay: 30
+  changed_when: false
+
+- name: "Start immich"
+  ansible.builtin.command:
+    cmd: "docker compose up -d"
+    chdir: "{{ immich_install_dir }}"
+  register: "immich_install_up"
+  changed_when: >
+    'Started' in immich_install_up.stderr or
+    'Created' in immich_install_up.stderr
+
+# A 200 ping implies the server finished its database migrations, so
+# dependent roles (e.g. immich_restic_backup) can rely on the schema.
+- name: "Wait for Immich server to be ready"
+  ansible.builtin.uri:
+    url: "http://localhost:{{ immich_install_port }}/api/server/ping"
+    status_code: 200
+  register: "immich_install_ping"
+  until: "immich_install_ping.status == 200"
+  retries: 60
+  delay: 5
