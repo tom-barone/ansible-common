@@ -4,14 +4,9 @@
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - "immich_restic_backup_s3_endpoint is defined"
-      - "immich_restic_backup_s3_endpoint | length > 0"
-      - "immich_restic_backup_s3_bucket is defined"
-      - "immich_restic_backup_s3_bucket | length > 0"
-      - "immich_restic_backup_s3_access_key is defined"
-      - "immich_restic_backup_s3_access_key | length > 0"
-      - "immich_restic_backup_s3_secret_key is defined"
-      - "immich_restic_backup_s3_secret_key | length > 0"
+      - "immich_restic_backup_repository is defined"
+      - "immich_restic_backup_repository | length > 0"
+      - "immich_restic_backup_env is mapping"
       - "immich_restic_backup_restic_password is defined"
       - "immich_restic_backup_restic_password | length > 0"
       - "immich_restic_backup_postgres_container is defined"
@@ -45,14 +40,9 @@
       {{ immich_restic_backup_retention_weekly }}
     restic_backup_retention_monthly: >-
       {{ immich_restic_backup_retention_monthly }}
-    restic_backup_s3_endpoint: >-
-      {{ immich_restic_backup_s3_endpoint }}
-    restic_backup_s3_bucket: >-
-      {{ immich_restic_backup_s3_bucket }}
-    restic_backup_s3_access_key: >-
-      {{ immich_restic_backup_s3_access_key }}
-    restic_backup_s3_secret_key: >-
-      {{ immich_restic_backup_s3_secret_key }}
+    restic_backup_repository: >-
+      {{ immich_restic_backup_repository }}
+    restic_backup_env: "{{ immich_restic_backup_env }}"
     restic_backup_restic_password: >-
       {{ immich_restic_backup_restic_password }}
     restic_backup_command: >-
