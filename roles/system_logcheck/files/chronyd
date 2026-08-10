@@ -7,3 +7,5 @@
 .* .*chronyd.*: System clock TAI offset set to [0-9]+ seconds$
 .* .*chronyd.*: System clock wrong by .* seconds$
 .* .*chronyd.*: System clock was stepped by .* seconds$
+.* .*chronyd.*: chronyd exiting$
+.* .*chronyd.*: Frequency .* ppm read from .*$
