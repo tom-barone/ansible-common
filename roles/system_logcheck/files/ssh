@@ -40,3 +40,4 @@
 .* .*systemd.*: Reloaded ssh.service .*$
 .* .*sshd.*: Timeout before authentication for connection from .*$
 .* .*sshd.*: PerSourcePenalties logging rate-limited: .* dropped$
+.* .*sshd.*: error: userauth_pubkey: parse key: .*\[preauth\]$

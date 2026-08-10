@@ -48,3 +48,4 @@ Mar 02 22:52:31 quilava systemd[1]: Reloaded ssh.service - OpenBSD Secure Shell 
 Apr 06 07:43:42 jqc-pr-81 sshd[850]: Timeout before authentication for connection from 194.147.50.177 to 172.236.44.69, pid = 9485
 Apr 06 10:27:27 jqc-pr-83 sshd[819]: drop connection #14 from [85.193.67.164]:7506 on [172.236.51.177]:22 Maxstartups
 May 04 01:26:40 jqc-production sshd[838]: PerSourcePenalties logging rate-limited: additional 58 connections dropped
+Aug 07 17:56:07 server sshd-session[1007033]: error: userauth_pubkey: parse key: Invalid key length [preauth]
