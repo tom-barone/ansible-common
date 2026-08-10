@@ -123,3 +123,22 @@
 .* .*tailscaled.*: \[unexpected\] CallMeMaybe from peer via DERP whose netmap discokey != disco source$
 .* .*systemd-resolved.*: Using degraded feature set .* instead of .* for DNS server 100.100.100.100.*$
 .* .*systemd-resolved.*: Grace period over, resuming full feature set .* for DNS server 100.100.100.100.*$
+.* .*tailscaled.*: c2n: update command failed: .*$
+.* .*tailscaled.*: Updating Tailscale from .* to .*$
+.* .*tailscaled.*: open /etc/apt/sources\.list\.d/tailscale\.list: no such file or directory$
+.* .*tailscaled.*: Finished with result: .*$
+.* .*tailscaled.*: Main processes terminated with: .*$
+.* .*tailscaled.*: Service runtime: .*$
+.* .*tailscaled.*: CPU time consumed: .*$
+.* .*tailscaled.*: Memory peak: .*$
+.* .*tailscaled.*: logpolicy\.ConfigFromFile .*$
+.* .*tailscaled.*: logpolicy\.Config\.Validate .*$
+.* .*tailscaled.*: profile data directory: profile not found$
+.* .*tailscaled.*: blockEngineUpdates\((true|false)\)$
+.* .*tailscaled.*: generating new machine key$
+.* .*tailscaled.*: machine key written to store$
+.* .*tailscaled.*: Reconfig\(down\): no changes made to Engine config$
+.* .*tailscaled.*: localapi: \[POST\] /localapi/v0/login-interactive$
+.* .*tailscaled.*: StartLoginInteractiveAs\(.*\): url=(true|false)$
+.* .*tailscaled.*: control: LoginInteractive -> regen=(true|false)$
+.* .*tailscaled.*: control: Generating a new nodekey\.$

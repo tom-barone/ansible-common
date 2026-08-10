@@ -1,4 +1,3 @@
-.* .*chronyd.*: Source .* replaced with .*$
 .* .*rsyslog.*: .*rsyslogd was HUPed$
 .* .*fstrim.*: .*\([0-9]+ bytes\) trimmed on.*$
 .* .*systemd.*: Starting sysstat-collect\.service - system activity accounting tool.*$
@@ -14,14 +13,6 @@
 .* .*dmeventd.*: Monitoring thin pool.*$
 .* .*sh\[.*\]: Completed socket interaction for boot stage .*$
 .* .*cloud-init\[.*\]:.*$
-.* .*chronyd.*: chronyd version .* starting .*$
-.* .*chronyd.*: Loaded [0-9]+ symmetric keys$
-.* .*chronyd.*: Using leap second list .*$
-.* .*chronyd.*: Loaded seccomp filter .*$
-.* .*chronyd.*: Selected source .* \(.*\)$
-.* .*chronyd.*: System clock TAI offset set to [0-9]+ seconds$
-.* .*chronyd.*: System clock wrong by .* seconds$
-.* .*chronyd.*: System clock was stepped by .* seconds$
 .* .*apparmor\.systemd.*: Restarting AppArmor$
 .* .*(haveged).*: haveged\.service: Referenced but unset environment variable evaluates to an empty string: .*$
 .* .*haveged.*: haveged: command socket is listening at fd [0-9]+$
@@ -49,3 +40,4 @@
 .* .*xfs_scrub_all.*: Automatically enabling file data scrub\.$
 .* .*dbus-daemon.*: \[system\] Reloaded configuration$
 .*I am a logcheck test that should be filtered out.*$
+.* .*systemd-timesyncd.*: Timed out waiting for reply from .*$

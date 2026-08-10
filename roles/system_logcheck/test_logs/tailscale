@@ -162,3 +162,25 @@ Aug 05 06:50:49 server tailscaled[215146]: nodeBackend: peer [5xpK2] disco key c
 Aug 05 05:35:52 server tailscaled[215146]: nodeBackend: peer [EA9L/] disco key changed from "discokey:56ec4c24cdfbf8dabb3822e37a2d0e8740be5a95beb2b33b1c941811b2eeb804" to "discokey:8a19b2a2a30154c736e324c7343c220222de645c03b06361be442359b2e03c17"
 Aug 05 23:10:30 server tailscaled[352153]: magicsock: new contact: control-netmap usec=1804341 cached=false
 Aug 05 23:10:35 server tailscaled[352153]: updating netmap in disk cache
+Aug 09 17:10:54 server tailscaled[1032117]: c2n: update command failed: exit status 1, output: Running as unit: run-p2410527-i48541809.service
+Aug 09 17:10:54 server tailscaled[1032117]: Updating Tailscale from 1.98.9 to 1.102.2; --yes given, continuing without prompts.
+Aug 09 17:10:54 server tailscaled[1032117]: open /etc/apt/sources.list.d/tailscale.list: no such file or directory
+Aug 09 17:10:54 server tailscaled[1032117]: Finished with result: exit-code
+Aug 09 17:10:54 server tailscaled[1032117]: Main processes terminated with: code=exited, status=1/FAILURE
+Aug 09 17:10:54 server tailscaled[1032117]: Service runtime: 350ms
+Aug 09 17:10:54 server tailscaled[1032117]: CPU time consumed: 131ms
+Aug 09 17:10:54 server tailscaled[1032117]: Memory peak: 12.8M (swap: 0B)
+Aug 09 14:47:26 server tailscaled[5756]: logpolicy.ConfigFromFile /var/lib/tailscale/tailscaled.log.conf: open /var/lib/tailscale/tailscaled.log.conf: no such file or directory
+Aug 09 14:47:26 server tailscaled[5756]: logpolicy.Config.Validate for /var/lib/tailscale/tailscaled.log.conf: config is nil
+Aug 09 14:47:26 server tailscaled[5756]: profile data directory: profile not found
+Aug 09 14:47:26 server tailscaled[5756]: blockEngineUpdates(true)
+Aug 09 14:47:30 server tailscaled[5756]: generating new machine key
+Aug 09 14:47:30 server tailscaled[5756]: machine key written to store
+Aug 09 14:47:30 server tailscaled[5756]: profile data directory: profile not found
+Aug 09 14:47:30 server tailscaled[5756]: blockEngineUpdates(true)
+Aug 09 14:47:30 server tailscaled[5756]: Reconfig(down): no changes made to Engine config
+Aug 09 14:47:30 server tailscaled[5756]: localapi: [POST] /localapi/v0/login-interactive
+Aug 09 14:47:30 server tailscaled[5756]: StartLoginInteractiveAs("root"): url=false
+Aug 09 14:47:30 server tailscaled[5756]: control: LoginInteractive -> regen=true
+Aug 09 14:47:31 server tailscaled[5756]: control: Generating a new nodekey.
+Aug 09 14:47:32 server tailscaled[5756]: blockEngineUpdates(false)
