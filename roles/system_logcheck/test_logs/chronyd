@@ -1,0 +1,9 @@
+Feb 20 22:11:42 au-melbourne chronyd[550]: Source 112.213.32.219 replaced with 2606:4700:f1::1 (2.debian.pool.ntp.org)
+Apr 06 07:38:01 localhost chronyd[796]: chronyd version 4.6.1 starting (+CMDMON +NTP +REFCLOCK +RTC +PRIVDROP +SCFILTER +SIGND +ASYNCDNS +NTS +SECHASH +IPV6 -DEBUG)
+Apr 06 07:38:01 localhost chronyd[796]: Loaded 0 symmetric keys
+Apr 06 07:38:01 localhost chronyd[796]: Using leap second list /usr/share/zoneinfo/leap-seconds.list
+Apr 06 07:38:01 localhost chronyd[796]: Loaded seccomp filter (level 1)
+Apr 06 07:38:06 localhost chronyd[796]: Selected source 203.29.241.127 (2.debian.pool.ntp.org)
+Apr 06 07:38:06 localhost chronyd[796]: System clock TAI offset set to 37 seconds
+Jun 10 03:34:37 localhost chronyd[777]: System clock wrong by 1.031349 seconds
+Jun 10 03:34:38 localhost chronyd[777]: System clock was stepped by 1.031349 seconds

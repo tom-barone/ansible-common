@@ -1,0 +1,9 @@
+.* .*chronyd.*: Source .* replaced with .*$
+.* .*chronyd.*: chronyd version .* starting .*$
+.* .*chronyd.*: Loaded [0-9]+ symmetric keys$
+.* .*chronyd.*: Using leap second list .*$
+.* .*chronyd.*: Loaded seccomp filter .*$
+.* .*chronyd.*: Selected source .* \(.*\)$
+.* .*chronyd.*: System clock TAI offset set to [0-9]+ seconds$
+.* .*chronyd.*: System clock wrong by .* seconds$
+.* .*chronyd.*: System clock was stepped by .* seconds$
