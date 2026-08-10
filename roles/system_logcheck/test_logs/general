@@ -75,3 +75,4 @@ Jun 16 06:15:07 server haveged[698]: haveged: Stopping due to signal 15
 Jun 16 06:15:07 server haveged[698]: tot tests(BA8): A:1/1 B:1/1 continuous tests(B): B:6/6  last entropy estimate 7.99947
 Jun 16 06:15:07 server haveged[698]: fills: 11, generated: 5.5 M bytes, RNDADDENTROPY: 5.148 M bytes
 Jul 17 03:00:36 server dbus-daemon[728]: [system] Reloaded configuration
+Aug 09 10:42:13 server systemd-timesyncd[325]: Timed out waiting for reply from 44.32.200.123:123 (0.debian.pool.ntp.org).

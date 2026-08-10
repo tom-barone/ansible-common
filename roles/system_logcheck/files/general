@@ -40,3 +40,4 @@
 .* .*xfs_scrub_all.*: Automatically enabling file data scrub\.$
 .* .*dbus-daemon.*: \[system\] Reloaded configuration$
 .*I am a logcheck test that should be filtered out.*$
+.* .*systemd-timesyncd.*: Timed out waiting for reply from .*$
