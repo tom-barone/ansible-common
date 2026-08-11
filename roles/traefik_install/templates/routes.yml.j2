@@ -1,24 +1,54 @@
 http:
+{% if traefik_install_tls_terminated_routes %}
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+{% endif %}
+
   routers:
-{% for route in traefik_install_routes %}
+{% for route in traefik_install_tls_passthrough_routes %}
     {{ route.domain | replace('.', '-') }}-http-router:
       rule: "Host(`{{ route.domain }}`)"
       entryPoints:
         - web
       service: {{ route.domain | replace('.', '-') }}-http-service
 {% endfor %}
+{% for route in traefik_install_tls_terminated_routes %}
+    {{ route.domain | replace('.', '-') }}-http-router:
+      rule: "Host(`{{ route.domain }}`)"
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-to-https
+      service: noop@internal
+    {{ route.domain | replace('.', '-') }}-https-router:
+      rule: "Host(`{{ route.domain }}`)"
+      entryPoints:
+        - websecure
+      service: {{ route.domain | replace('.', '-') }}-https-service
+      tls:
+        certResolver: letsencrypt
+{% endfor %}
 
   services:
-{% for route in traefik_install_routes %}
+{% for route in traefik_install_tls_passthrough_routes %}
     {{ route.domain | replace('.', '-') }}-http-service:
       loadBalancer:
         servers:
           - url: "http://{{ route.destination }}:80"
 {% endfor %}
+{% for route in traefik_install_tls_terminated_routes %}
+    {{ route.domain | replace('.', '-') }}-https-service:
+      loadBalancer:
+        servers:
+          - url: "http://{{ route.destination }}:{{ route.port }}"
+{% endfor %}
 
 tcp:
   routers:
-{% for route in traefik_install_routes %}
+{% for route in traefik_install_tls_passthrough_routes %}
     {{ route.domain | replace('.', '-') }}-tcp-router:
       entryPoints:
         - websecure
@@ -29,7 +59,7 @@ tcp:
 {% endfor %}
 
   services:
-{% for route in traefik_install_routes %}
+{% for route in traefik_install_tls_passthrough_routes %}
     {{ route.domain | replace('.', '-') }}-tcp-service:
       loadBalancer:
         servers:

@@ -6,8 +6,11 @@
       ansible.builtin.include_role:
         name: "traefik_install"
       vars:
-        traefik_install_routes:
+        traefik_install_acme_email: "test@example.com"
+        traefik_install_tls_passthrough_routes:
           - domain: "app.example.com"
             destination: "10.0.0.10"
+        traefik_install_tls_terminated_routes:
           - domain: "api.example.com"
             destination: "10.0.0.20"
+            port: 8080

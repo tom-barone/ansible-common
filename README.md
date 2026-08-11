@@ -26,7 +26,7 @@ A non-comprehensive list of the more interesting roles:
 | `system_smartmontools` | Install and configure [smartmontools](https://www.smartmontools.org/) to monitor disk health with emailed SMART alerts via the local MTA. |
 | `tailscale_install` | Connect to a [Tailscale](https://tailscale.com/) tailnet. |
 | `tailscale_subnet_router` | Configure Tailscale subnet routing with auto-discovery of local subnets. |
-| `traefik_install` | Install [Traefik](https://traefik.io/) reverse proxy with docker tagging and LetsEncrypt support. |
+| `traefik_install` | Install [Traefik](https://traefik.io/) reverse proxy with TLS passthrough and LetsEncrypt TLS terminated routes. |
 
 ## Development
 
