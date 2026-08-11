@@ -1,5 +1,31 @@
 ---
+# Required vars when traefik_install_tls_terminated_routes is non-empty:
+# traefik_install_acme_email: "admin@example.com"
+#
+# TLS passthrough routes: HTTP (port 80) is forwarded to the destination,
+# HTTPS (port 443) is passed through encrypted; the destination terminates
+# TLS itself.
+# traefik_install_tls_passthrough_routes:
+#   - domain: "app.example.com"
+#     destination: "192.168.1.10"
+#
+# TLS terminated routes: Traefik terminates TLS with a Let's Encrypt
+# certificate (ACME HTTP-01 challenge, so the host must be publicly
+# reachable on port 80) and forwards plain HTTP to destination:port.
+# Requests on port 80 are redirected to HTTPS.
+# traefik_install_tls_terminated_routes:
+#   - domain: "api.example.com"
+#     destination: "192.168.1.20"
+#     port: 8080
+
+# Traefik version to install (no "v" prefix).
 traefik_install_version: "3.6.10"
+
+# Directory holding traefik.yml, routes.yml and the ACME certificate store.
 traefik_install_config_dir: "/etc/traefik"
+
+# Where the traefik binary is installed.
 traefik_install_binary_path: "/usr/local/bin/traefik"
-traefik_install_routes: []
+
+traefik_install_tls_passthrough_routes: []
+traefik_install_tls_terminated_routes: []

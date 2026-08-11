@@ -55,19 +55,41 @@
 
     # Given traefik was installed with routes
     # When we read the routes config
-    # Then it contains the configured domains
+    # Then the passthrough route forwards TLS unterminated and the
+    # terminated route redirects HTTP and terminates TLS via letsencrypt
     - name: "Read routes config"
       ansible.builtin.slurp:
         src: "/etc/traefik/routes.yml"
       register: "_traefik_routes"
 
-    - name: "Assert routes contain configured domains"
+    - name: "Assert routes contain configured routes"
       vars:
         _routes_content: >-
           {{ _traefik_routes.content | b64decode }}
       ansible.builtin.assert:
         that:
           - "'app.example.com' in _routes_content"
+          - "'passthrough: true' in _routes_content"
+          - '''address: "10.0.0.10:443"'' in _routes_content'
           - "'api.example.com' in _routes_content"
-          - "'10.0.0.10' in _routes_content"
-          - "'10.0.0.20' in _routes_content"
+          - "'certResolver: letsencrypt' in _routes_content"
+          - "'redirect-to-https' in _routes_content"
+          - '''url: "http://10.0.0.20:8080"'' in _routes_content'
+
+    # Given a TLS terminated route was configured
+    # When we read the traefik config
+    # Then it contains the ACME certificate resolver
+    - name: "Read traefik config"
+      ansible.builtin.slurp:
+        src: "/etc/traefik/traefik.yml"
+      register: "_traefik_config"
+
+    - name: "Assert traefik config contains ACME resolver"
+      vars:
+        _config_content: >-
+          {{ _traefik_config.content | b64decode }}
+      ansible.builtin.assert:
+        that:
+          - "'certificatesResolvers' in _config_content"
+          - "'email: test@example.com' in _config_content"
+          - "'httpChallenge' in _config_content"

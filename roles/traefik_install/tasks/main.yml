@@ -3,7 +3,12 @@
   ansible.builtin.assert:
     that:
       - "traefik_install_version is defined"
-    msg: "traefik_install_version must be defined"
+      - >-
+        traefik_install_tls_terminated_routes | length == 0
+        or traefik_install_acme_email is defined
+    msg: >-
+      traefik_install_version must be defined, and traefik_install_acme_email
+      must be defined when traefik_install_tls_terminated_routes is set
 
 - name: "Detect architecture"
   ansible.builtin.set_fact:
