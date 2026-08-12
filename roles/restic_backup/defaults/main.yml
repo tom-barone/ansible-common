@@ -13,6 +13,8 @@
 
 restic_backup_env: {}
 restic_backup_timer_schedule: "*-*-* 03:00:00 UTC"
+restic_backup_verify_timer_schedule: "Sun *-*-* 05:00:00 UTC"
+restic_backup_verify_read_data_subset: "5%"
 restic_backup_retention_daily: 7
 restic_backup_retention_weekly: 4
 restic_backup_retention_monthly: 9999

@@ -15,3 +15,6 @@
           AWS_SECRET_ACCESS_KEY: "testpassword"
         restic_backup_restic_password: "testpassword"
         restic_backup_path: "/opt/test-data"
+        # A percentage subset of a tiny test repo could select no pack
+        # files at all, so read everything.
+        restic_backup_verify_read_data_subset: "100%"
