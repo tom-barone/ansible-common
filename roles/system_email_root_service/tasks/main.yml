@@ -1,0 +1,35 @@
+---
+# Deploy an email-root@.service template unit that emails root a summary
+# of a failed systemd unit. Use it from other units like so:
+#
+#   [Unit]
+#   OnFailure=email-root@%n.service
+#
+# Installs postfix for /usr/sbin/sendmail; Debian's stock config delivers
+# mail for root locally. Apply postfix_relay/postfix_config to send mail
+# off-host.
+#
+# Tests to confirm working:
+#   $ systemctl start email-root@dummy.service
+#   $ mail  # (or read /var/mail/root)
+
+- name: "Install postfix"
+  ansible.builtin.apt:
+    name:
+      - "postfix"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Deploy email-root script"
+  ansible.builtin.copy:
+    src: "email-root.sh"
+    dest: "/usr/local/bin/email-root"
+    mode: "0755"
+
+- name: "Deploy email-root systemd template unit"
+  ansible.builtin.copy:
+    src: "email-root@.service"
+    dest: "/etc/systemd/system/email-root@.service"
+    mode: "0644"
+  notify: "Reload email-root systemd"

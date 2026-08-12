@@ -1,0 +1,7 @@
+# Managed by Ansible role: system_email_root_service
+[Unit]
+Description=Email root about failure of %i
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/email-root %i

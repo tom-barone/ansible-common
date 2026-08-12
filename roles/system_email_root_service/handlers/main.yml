@@ -1,0 +1,4 @@
+---
+- name: "Reload email-root systemd"
+  ansible.builtin.systemd:
+    daemon_reload: true
