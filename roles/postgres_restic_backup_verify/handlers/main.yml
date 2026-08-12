@@ -1,6 +1,0 @@
----
-- name: "Restart postgres backup verify timer"
-  ansible.builtin.systemd:
-    name: "postgres-restic-backup-verify.timer"
-    state: "restarted"
-    daemon_reload: true
