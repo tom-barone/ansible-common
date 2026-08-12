@@ -24,20 +24,52 @@
           - "verify_script.stat.exists"
           - "verify_script.stat.mode == '0700'"
 
-    - name: "Read cron job file"
-      ansible.builtin.slurp:
-        src: "/etc/cron.d/immich-restic-backup-verify"
-      register: "cron_file"
+    - name: "Get verify timer status"
+      ansible.builtin.systemd:
+        name: "immich-restic-backup-verify.timer"
+      register: "verify_timer"
 
-    - name: "Assert cron job is configured correctly"
-      vars:
-        content: "{{ cron_file.content | b64decode }}"
+    - name: "Assert verify timer is enabled and active"
       ansible.builtin.assert:
         that:
-          - "'CRON_TZ=UTC' in content"
-          - >-
-            'chronic /opt/immich-backup-verify/verify.sh'
-            in content
+          - "verify_timer.status.UnitFileState == 'enabled'"
+          - "verify_timer.status.ActiveState == 'active'"
+
+    - name: "Read timer unit file"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/immich-restic-backup-verify.timer"
+      register: "timer_unit"
+
+    - name: "Assert timer schedule is configured"
+      vars:
+        content: "{{ timer_unit.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'OnCalendar=Sun *-*-* 05:00:00 UTC' in content"
+          - "'Persistent=true' in content"
+
+    - name: "Read service unit file"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/immich-restic-backup-verify.service"
+      register: "service_unit"
+
+    - name: "Assert service runs the verify script"
+      vars:
+        content: "{{ service_unit.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'ExecStart=/opt/immich-backup-verify/verify.sh' in content"
+          - "'OnFailure=email-root@%n.service' in content"
+
+    - name: "Check legacy cron job file"
+      ansible.builtin.stat:
+        path: "/etc/cron.d/immich-restic-backup-verify"
+      register: "legacy_cron"
+
+    - name: "Assert legacy cron job file is absent"
+      ansible.builtin.assert:
+        that:
+          - "not legacy_cron.stat.exists"
 
     - name: "Run verify script manually"
       ansible.builtin.command:

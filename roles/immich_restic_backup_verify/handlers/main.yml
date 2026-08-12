@@ -1,0 +1,6 @@
+---
+- name: "Restart immich backup verify timer"
+  ansible.builtin.systemd:
+    name: "immich-restic-backup-verify.timer"
+    state: "restarted"
+    daemon_reload: true
