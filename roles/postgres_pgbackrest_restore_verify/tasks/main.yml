@@ -1,0 +1,54 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "postgres_pgbackrest_restore_verify_queries is defined"
+      - "postgres_pgbackrest_restore_verify_queries | length > 0"
+      - "postgres_pgbackrest_restore_verify_image is defined"
+      - "postgres_pgbackrest_restore_verify_image | length > 0"
+      - "postgres_pgbackrest_restore_verify_conf_file is defined"
+      - "postgres_pgbackrest_restore_verify_conf_file | length > 0"
+      - "postgres_pgbackrest_restore_verify_stanza is defined"
+      - "postgres_pgbackrest_restore_verify_stanza | length > 0"
+      - "postgres_pgbackrest_restore_verify_pgdata is defined"
+      - "postgres_pgbackrest_restore_verify_pgdata | length > 0"
+      - "postgres_pgbackrest_restore_verify_container_name is defined"
+      - "postgres_pgbackrest_restore_verify_container_name | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Apply system_email_root_service role"
+  ansible.builtin.include_role:
+    name: "system_email_root_service"
+
+- name: "Create verify directory"
+  ansible.builtin.file:
+    path: "{{ postgres_pgbackrest_restore_verify_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy verify script"
+  ansible.builtin.template:
+    src: "verify.sh.j2"
+    dest: "{{ postgres_pgbackrest_restore_verify_dir }}/verify.sh"
+    mode: "0700"
+
+- name: "Deploy verify systemd service"
+  ansible.builtin.template:
+    src: "verify.service.j2"
+    dest: "/etc/systemd/system/postgres-pgbackrest-restore-verify.service"
+    mode: "0644"
+  notify: "Restart verify timer"
+
+- name: "Deploy verify systemd timer"
+  ansible.builtin.template:
+    src: "verify.timer.j2"
+    dest: "/etc/systemd/system/postgres-pgbackrest-restore-verify.timer"
+    mode: "0644"
+  notify: "Restart verify timer"
+
+- name: "Enable and start verify timer"
+  ansible.builtin.systemd:
+    name: "postgres-pgbackrest-restore-verify.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true

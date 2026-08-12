@@ -1,0 +1,21 @@
+---
+# Required vars:
+# postgres_pgbackrest_restore_verify_queries:
+#   - "SELECT count(*) FROM users;"
+
+postgres_pgbackrest_restore_verify_dir: "/opt/pgbackrest-restore-verify"
+postgres_pgbackrest_restore_verify_image: "postgres-pgbackrest:18.3"
+postgres_pgbackrest_restore_verify_conf_file: "/opt/postgres/pgbackrest.conf"
+postgres_pgbackrest_restore_verify_stanza: "main"
+postgres_pgbackrest_restore_verify_data_dir: "/var/lib/postgresql"
+# Must match PGDATA of the postgres image (postgres >= 18 layout)
+postgres_pgbackrest_restore_verify_pgdata: "/var/lib/postgresql/18/docker"
+# Docker network to attach when the S3 endpoint is only reachable on a
+# docker network; empty means the default bridge
+postgres_pgbackrest_restore_verify_network: ""
+postgres_pgbackrest_restore_verify_container_name: "pgbackrest-restore-verify"
+postgres_pgbackrest_restore_verify_postgres_user: "postgres"
+postgres_pgbackrest_restore_verify_postgres_database: "postgres"
+postgres_pgbackrest_restore_verify_container_uid: "999"
+postgres_pgbackrest_restore_verify_container_gid: "999"
+postgres_pgbackrest_restore_verify_timer_schedule: "Sun *-*-* 06:00:00 UTC"

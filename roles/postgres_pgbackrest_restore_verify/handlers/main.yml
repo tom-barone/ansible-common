@@ -1,0 +1,6 @@
+---
+- name: "Restart verify timer"
+  ansible.builtin.systemd:
+    name: "postgres-pgbackrest-restore-verify.timer"
+    state: "restarted"
+    daemon_reload: true

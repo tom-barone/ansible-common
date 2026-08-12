@@ -1,0 +1,10 @@
+# Managed by Ansible role: postgres_pgbackrest_restore_verify
+[Unit]
+Description=pgBackRest restore verify timer
+
+[Timer]
+OnCalendar={{ postgres_pgbackrest_restore_verify_timer_schedule }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

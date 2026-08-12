@@ -1,0 +1,8 @@
+# Managed by Ansible role: postgres_pgbackrest_restore_verify
+[Unit]
+Description=pgBackRest restore verify
+OnFailure=email-root@%n.service
+
+[Service]
+Type=oneshot
+ExecStart={{ postgres_pgbackrest_restore_verify_dir }}/verify.sh
