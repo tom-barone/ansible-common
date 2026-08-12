@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+BACKUP_TYPE="${1:-diff}"
+
+# Retention (repoN-retention-full) is applied automatically after backup
+{% for repo in postgres_pgbackrest_install_repos %}
+docker exec -u postgres {{ postgres_pgbackrest_install_container_name }} \
+  pgbackrest --stanza={{ postgres_pgbackrest_install_stanza }} \
+  --repo={{ loop.index }} --type="${BACKUP_TYPE}" backup
+{% endfor %}

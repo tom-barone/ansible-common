@@ -1,0 +1,60 @@
+---
+# Required vars:
+# postgres_pgbackrest_install_password: "secret"
+# postgres_pgbackrest_install_network: "postgres"
+#
+# Repositories mirror the pgBackRest repoN-* options: each list entry
+# is rendered verbatim as repo<position>-<key>=<value>, so any
+# pgBackRest repository option works. Values are written as-is;
+# booleans must be given as "y"/"n".
+# postgres_pgbackrest_install_repos:
+#   - type: "s3"
+#     path: "/pgbackrest"
+#     s3-endpoint: "s3.amazonaws.com"
+#     s3-bucket: "my-backups"
+#     s3-region: "us-east-1"
+#     s3-key: "AKIA..."
+#     s3-key-secret: "secret"
+#     cipher-type: "aes-256-cbc"
+#     cipher-pass: "secret"
+#     retention-full: 4
+
+postgres_pgbackrest_install_version: "18.3"
+postgres_pgbackrest_install_dir: "/opt/postgres"
+postgres_pgbackrest_install_port: 5432
+postgres_pgbackrest_install_user: "postgres"
+postgres_pgbackrest_install_data_dir: "/var/lib/postgresql"
+# Must match PGDATA of the postgres image (postgres >= 18 layout)
+postgres_pgbackrest_install_pgdata: >-
+  {{ postgres_pgbackrest_install_data_dir }}/{{
+  postgres_pgbackrest_install_version.split(".") | first }}/docker
+postgres_pgbackrest_install_container_name: "postgres"
+postgres_pgbackrest_install_container_uid: "999"
+postgres_pgbackrest_install_container_gid: "999"
+postgres_pgbackrest_install_initdb_args: ""
+postgres_pgbackrest_install_image: >-
+  postgres-pgbackrest:{{ postgres_pgbackrest_install_version }}
+postgres_pgbackrest_install_pgbouncer_enabled: true
+postgres_pgbackrest_install_pgbouncer_version: "v1.25.1-p0"
+postgres_pgbackrest_install_pgbouncer_container_name: "pgbouncer"
+postgres_pgbackrest_install_pgbouncer_pool_mode: "session"
+postgres_pgbackrest_install_pgbouncer_max_client_conn: 100
+postgres_pgbackrest_install_pgbouncer_default_pool_size: 20
+postgres_pgbackrest_install_stanza: "main"
+postgres_pgbackrest_install_full_timer_schedule: "Sun *-*-* 03:00:00 UTC"
+postgres_pgbackrest_install_diff_timer_schedule: "Mon..Sat *-*-* 03:00:00 UTC"
+postgres_pgbackrest_install_verify_timer_schedule: "Sun *-*-* 05:00:00 UTC"
+postgres_pgbackrest_install_restore_on_bootstrap: true
+postgres_pgbackrest_install_jobs:
+  - name: "postgres-pgbackrest-backup-full"
+    description: "pgBackRest full backup"
+    exec: "{{ postgres_pgbackrest_install_dir }}/backup.sh full"
+    schedule: "{{ postgres_pgbackrest_install_full_timer_schedule }}"
+  - name: "postgres-pgbackrest-backup-diff"
+    description: "pgBackRest differential backup"
+    exec: "{{ postgres_pgbackrest_install_dir }}/backup.sh diff"
+    schedule: "{{ postgres_pgbackrest_install_diff_timer_schedule }}"
+  - name: "postgres-pgbackrest-verify"
+    description: "pgBackRest repository verify"
+    exec: "{{ postgres_pgbackrest_install_dir }}/verify.sh"
+    schedule: "{{ postgres_pgbackrest_install_verify_timer_schedule }}"

@@ -1,0 +1,182 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given a repo with a backup and an empty data dir
+    # When the role converges
+    # Then the seeded data is restored via bootstrap restore
+    - name: "Query restored marker row"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -d bootstrap_restore_test -t -A -c
+          "SELECT id FROM marker;"
+      register: "marker_query"
+      changed_when: false
+
+    - name: "Assert bootstrap restore recovered the marker row"
+      ansible.builtin.assert:
+        that:
+          - "marker_query.stdout | trim == '42'"
+
+    - name: "Check pgBouncer accepts connections"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec pgbouncer
+          pg_isready -h localhost -p 6432 -U postgres
+      changed_when: false
+
+    - name: "Check pgbackrest.conf permissions"
+      ansible.builtin.stat:
+        path: "/opt/postgres/pgbackrest.conf"
+      register: "pgbackrest_conf"
+
+    - name: "Assert pgbackrest.conf is locked down"
+      ansible.builtin.assert:
+        that:
+          - "pgbackrest_conf.stat.exists"
+          - "pgbackrest_conf.stat.mode == '0600'"
+          - "pgbackrest_conf.stat.uid == 999"
+
+    - name: "Check WAL archiving works"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec -u postgres postgres
+          pgbackrest --stanza=main check
+      changed_when: false
+
+    - name: "Get backup info before diff backup"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec -u postgres postgres
+          pgbackrest --stanza=main --output=json info
+      register: "info_before"
+      changed_when: false
+
+    - name: "Assert stanza is healthy with at least one backup"
+      ansible.builtin.assert:
+        that:
+          - "(info_before.stdout | from_json | first).status.code == 0"
+          - "(info_before.stdout | from_json | first).backup | length > 0"
+
+    # Given two configured repositories
+    # When the backup script runs
+    # Then each repository holds its own backups
+    - name: "Get per-repo backup info"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec -u postgres postgres
+          pgbackrest --stanza=main --repo={{ item }} --output=json info
+      register: "per_repo_info"
+      changed_when: false
+      loop: [1, 2]
+
+    - name: "Assert every repository has at least one backup"
+      ansible.builtin.assert:
+        that:
+          - "(item.stdout | from_json | first).status.code == 0"
+          - "(item.stdout | from_json | first).backup | length > 0"
+      loop: "{{ per_repo_info.results }}"
+      loop_control:
+        label: "repo{{ item.item }}"
+
+    - name: "Run differential backup"
+      ansible.builtin.command:
+        cmd: "/opt/postgres/backup.sh diff"
+      changed_when: true
+
+    - name: "Get backup info after diff backup"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec -u postgres postgres
+          pgbackrest --stanza=main --output=json info
+      register: "info_after"
+      changed_when: false
+
+    - name: "Assert diff backup was created"
+      ansible.builtin.assert:
+        that:
+          - >-
+            (info_after.stdout | from_json | first).backup | length
+            > (info_before.stdout | from_json | first).backup | length
+          - >-
+            ((info_after.stdout | from_json | first).backup | last).type
+            == 'diff'
+
+    - name: "Run verify script manually"
+      ansible.builtin.command:
+        cmd: "/opt/postgres/verify.sh"
+      register: "verify_run"
+      changed_when: false
+
+    - name: "Assert verify script passed for every repository"
+      ansible.builtin.assert:
+        that:
+          - "verify_run.rc == 0"
+          - "'PASS' in verify_run.stdout"
+          - "'FAIL' not in verify_run.stdout"
+          - "'All repositories verified.' in verify_run.stdout"
+
+    - name: "Get timer status"
+      ansible.builtin.systemd:
+        name: "{{ item.unit }}.timer"
+      register: "timer_status"
+      loop: &pgbackrest_units
+        - unit: "postgres-pgbackrest-backup-full"
+          schedule: "Sun *-*-* 03:00:00 UTC"
+          exec: "/opt/postgres/backup.sh full"
+        - unit: "postgres-pgbackrest-backup-diff"
+          schedule: "Mon..Sat *-*-* 03:00:00 UTC"
+          exec: "/opt/postgres/backup.sh diff"
+        - unit: "postgres-pgbackrest-verify"
+          schedule: "Sun *-*-* 05:00:00 UTC"
+          exec: "/opt/postgres/verify.sh"
+      loop_control:
+        label: "{{ item.unit }}"
+
+    - name: "Assert timers are enabled and active"
+      ansible.builtin.assert:
+        that:
+          - "item.status.UnitFileState == 'enabled'"
+          - "item.status.ActiveState == 'active'"
+      loop: "{{ timer_status.results }}"
+      loop_control:
+        label: "{{ item.item.unit }}"
+
+    - name: "Read timer unit files"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/{{ item.unit }}.timer"
+      register: "timer_units"
+      loop: *pgbackrest_units
+      loop_control:
+        label: "{{ item.unit }}"
+
+    - name: "Assert timer schedules are configured"
+      vars:
+        content: "{{ item.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'OnCalendar=' + item.item.schedule in content"
+          - "'Persistent=true' in content"
+      loop: "{{ timer_units.results }}"
+      loop_control:
+        label: "{{ item.item.unit }}"
+
+    - name: "Read service unit files"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/{{ item.unit }}.service"
+      register: "service_units"
+      loop: *pgbackrest_units
+      loop_control:
+        label: "{{ item.unit }}"
+
+    - name: "Assert services run the scripts"
+      vars:
+        content: "{{ item.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'ExecStart=' + item.item.exec in content"
+          - "'OnFailure=email-root@%n.service' in content"
+      loop: "{{ service_units.results }}"
+      loop_control:
+        label: "{{ item.item.unit }}"

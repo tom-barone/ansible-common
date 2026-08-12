@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euo pipefail
+
+FAILED=0
+{% for repo in postgres_pgbackrest_install_repos %}
+
+echo "Running pgbackrest verify for repo{{ loop.index }}..."
+if OUTPUT=$(docker exec -u postgres \
+  {{ postgres_pgbackrest_install_container_name }} \
+  pgbackrest --stanza={{ postgres_pgbackrest_install_stanza }} \
+  --repo={{ loop.index }} --log-level-console=info verify 2>&1); then
+  RC=0
+else
+  RC=1
+fi
+echo "${OUTPUT}"
+
+# Some pgbackrest versions report per-file problems in the output while
+# still exiting 0, so grep the output as well
+if [ "${RC}" -ne 0 ] || echo "${OUTPUT}" | grep -qE "ERROR|invalid"; then
+  echo "FAIL: pgbackrest verify reported errors for repo{{ loop.index }}."
+  FAILED=1
+else
+  echo "PASS: pgbackrest verify passed for repo{{ loop.index }}."
+fi
+{% endfor %}
+
+if [ "${FAILED}" -ne 0 ]; then
+  exit 1
+fi
+
+echo "All repositories verified."
