@@ -12,3 +12,6 @@
           AWS_ACCESS_KEY_ID: "test"
           AWS_SECRET_ACCESS_KEY: "testpassword"
         immich_restic_backup_restic_password: "testpassword"
+        # A percentage subset of a tiny test repo could select no pack
+        # files at all, so read everything.
+        immich_restic_backup_verify_read_data_subset: "100%"

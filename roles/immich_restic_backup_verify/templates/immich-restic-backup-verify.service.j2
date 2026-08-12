@@ -1,8 +1,0 @@
-# Managed by Ansible role: immich_restic_backup_verify
-[Unit]
-Description=Immich restic backup verify
-OnFailure=email-root@%n.service
-
-[Service]
-Type=oneshot
-ExecStart={{ immich_restic_backup_verify_dir }}/verify.sh
