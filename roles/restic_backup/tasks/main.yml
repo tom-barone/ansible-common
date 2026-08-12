@@ -9,8 +9,8 @@
       - "restic_backup_restic_password | length > 0"
       - "restic_backup_dir is defined"
       - "restic_backup_dir | length > 0"
-      - "restic_backup_cron_job_name is defined"
-      - "restic_backup_cron_job_name | length > 0"
+      - "restic_backup_job_name is defined"
+      - "restic_backup_job_name | length > 0"
       - "restic_backup_command is defined"
       - "restic_backup_command | length > 0"
     msg: "Missing a required variable"
@@ -19,11 +19,13 @@
   ansible.builtin.apt:
     name:
       - "restic"
-      - "cron"
-      - "moreutils"
     state: "present"
     update_cache: true
     cache_valid_time: 3600
+
+- name: "Apply system_email_root_service role"
+  ansible.builtin.include_role:
+    name: "system_email_root_service"
 
 - name: "Create backup directory"
   ansible.builtin.file:
@@ -62,8 +64,28 @@
   when: "restic_backup_repo_check.rc != 0"
   changed_when: true
 
-- name: "Deploy backup cron job"
+- name: "Deploy backup systemd service"
   ansible.builtin.template:
-    src: "cron.j2"
-    dest: "/etc/cron.d/{{ restic_backup_cron_job_name }}"
+    src: "backup.service.j2"
+    dest: "/etc/systemd/system/{{ restic_backup_job_name }}.service"
     mode: "0644"
+  notify: "Restart backup timer"
+
+- name: "Deploy backup systemd timer"
+  ansible.builtin.template:
+    src: "backup.timer.j2"
+    dest: "/etc/systemd/system/{{ restic_backup_job_name }}.timer"
+    mode: "0644"
+  notify: "Restart backup timer"
+
+- name: "Enable and start backup timer"
+  ansible.builtin.systemd:
+    name: "{{ restic_backup_job_name }}.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true
+
+- name: "Remove legacy cron job"
+  ansible.builtin.file:
+    path: "/etc/cron.d/{{ restic_backup_job_name }}"
+    state: "absent"

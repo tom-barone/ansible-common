@@ -30,9 +30,9 @@
     name: "restic_backup"
   vars:
     restic_backup_dir: "{{ immich_restic_backup_dir }}"
-    restic_backup_cron_schedule: "{{ immich_restic_backup_cron_schedule }}"
-    restic_backup_cron_timezone: "{{ immich_restic_backup_cron_timezone }}"
-    restic_backup_cron_job_name: "immich-restic-backup"
+    restic_backup_timer_schedule: >-
+      {{ immich_restic_backup_timer_schedule }}
+    restic_backup_job_name: "immich-restic-backup"
     restic_backup_forget_group_by: "host"
     restic_backup_retention_daily: >-
       {{ immich_restic_backup_retention_daily }}

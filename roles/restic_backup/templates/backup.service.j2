@@ -1,0 +1,8 @@
+# Managed by Ansible role: restic_backup
+[Unit]
+Description=Restic backup ({{ restic_backup_job_name }})
+OnFailure=email-root@%n.service
+
+[Service]
+Type=oneshot
+ExecStart={{ restic_backup_dir }}/backup.sh

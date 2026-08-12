@@ -1,0 +1,6 @@
+---
+- name: "Restart backup timer"
+  ansible.builtin.systemd:
+    name: "{{ restic_backup_job_name }}.timer"
+    state: "restarted"
+    daemon_reload: true

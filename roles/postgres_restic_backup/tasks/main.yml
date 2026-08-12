@@ -18,9 +18,9 @@
     name: "restic_backup"
   vars:
     restic_backup_dir: "{{ postgres_restic_backup_dir }}"
-    restic_backup_cron_schedule: "{{ postgres_restic_backup_cron_schedule }}"
-    restic_backup_cron_timezone: "{{ postgres_restic_backup_cron_timezone }}"
-    restic_backup_cron_job_name: "postgres-restic-backup"
+    restic_backup_timer_schedule: >-
+      {{ postgres_restic_backup_timer_schedule }}
+    restic_backup_job_name: "postgres-restic-backup"
     restic_backup_retention_daily: >-
       {{ postgres_restic_backup_retention_daily }}
     restic_backup_retention_weekly: >-
