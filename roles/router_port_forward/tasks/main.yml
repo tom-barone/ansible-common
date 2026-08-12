@@ -12,6 +12,7 @@
   ansible.builtin.apt:
     name:
       - "miniupnpc"
+      - "moreutils"
     state: "present"
     update_cache: true
     cache_valid_time: 3600
