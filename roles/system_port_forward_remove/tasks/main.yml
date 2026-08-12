@@ -59,6 +59,7 @@
       /etc/systemd/system/{{ system_port_forward_remove_unit_name }}.service
   notify: "Reload port forward systemd"
 
+# TODO: remove once this has run on all hosts
 - name: "Check for crontab binary"
   ansible.builtin.stat:
     path: "/usr/bin/crontab"

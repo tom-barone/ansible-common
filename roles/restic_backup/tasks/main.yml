@@ -112,6 +112,7 @@
     state: "started"
     daemon_reload: true
 
+# TODO: remove once this has run on all hosts
 - name: "Remove legacy cron job"
   ansible.builtin.file:
     path: "/etc/cron.d/{{ restic_backup_job_name }}"
