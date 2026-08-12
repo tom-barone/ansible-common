@@ -12,7 +12,7 @@ postgres_restic_backup_env: {}
 postgres_restic_backup_dir: "/opt/postgres-backup"
 postgres_restic_backup_timer_schedule: "*-*-* 03:00:00 UTC"
 postgres_restic_backup_verify_timer_schedule: "Sun *-*-* 04:00:00 UTC"
-postgres_restic_backup_verify_read_data_subset: "5%"
+postgres_restic_backup_verify_read_data_subset: "50M"
 postgres_restic_backup_retention_daily: 7
 postgres_restic_backup_retention_weekly: 4
 postgres_restic_backup_retention_monthly: 9999
