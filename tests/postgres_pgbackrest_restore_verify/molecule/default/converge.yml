@@ -1,0 +1,11 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "postgres_pgbackrest_restore_verify"
+      vars:
+        postgres_pgbackrest_restore_verify_queries:
+          - "SELECT count(*) FROM users"
+        postgres_pgbackrest_restore_verify_network: "postgres_network"

@@ -1,0 +1,85 @@
+#!/bin/bash
+set -euo pipefail
+
+CONTAINER_NAME="{{ postgres_pgbackrest_restore_verify_container_name }}"
+POSTGRES_USER="{{ postgres_pgbackrest_restore_verify_postgres_user }}"
+POSTGRES_DB="{{ postgres_pgbackrest_restore_verify_postgres_database }}"
+TMP_DIR=$(mktemp -d "{{ postgres_pgbackrest_restore_verify_dir }}/restore.XXXXXX")
+
+# Cleanup function - always remove temp container and restore dir
+cleanup() {
+  echo "Cleaning up temporary postgres container and restore dir..."
+  docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+  rm -rf "${TMP_DIR}"
+}
+trap cleanup EXIT
+
+# Remove any leftover container from a previous run
+docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+
+chown {{ postgres_pgbackrest_restore_verify_container_uid }}:{{
+postgres_pgbackrest_restore_verify_container_gid }} "${TMP_DIR}"
+chmod 0700 "${TMP_DIR}"
+
+# Restore the latest backup into the throwaway dir. --archive-mode=off
+# stops the restored cluster from pushing WAL into the real repo.
+echo "Restoring latest backup..."
+docker run --rm -u postgres \
+{% if postgres_pgbackrest_restore_verify_network %}
+  --network {{ postgres_pgbackrest_restore_verify_network }} \
+{% endif %}
+  -v "${TMP_DIR}:{{ postgres_pgbackrest_restore_verify_data_dir }}" \
+  -v "{{ postgres_pgbackrest_restore_verify_conf_file }}:/etc/pgbackrest/pgbackrest.conf:ro" \
+  --entrypoint bash \
+  "{{ postgres_pgbackrest_restore_verify_image }}" \
+  -c "mkdir -p {{ postgres_pgbackrest_restore_verify_pgdata }} \
+    && pgbackrest --stanza={{ postgres_pgbackrest_restore_verify_stanza }} \
+    --archive-mode=off restore"
+
+# Start postgres on the restored data dir; the entrypoint skips initdb
+# because PG_VERSION exists. The conf is mounted so WAL replay can fetch
+# archived segments via restore_command.
+echo "Starting temporary postgres container..."
+docker run -d --name "${CONTAINER_NAME}" \
+{% if postgres_pgbackrest_restore_verify_network %}
+  --network {{ postgres_pgbackrest_restore_verify_network }} \
+{% endif %}
+  -v "${TMP_DIR}:{{ postgres_pgbackrest_restore_verify_data_dir }}" \
+  -v "{{ postgres_pgbackrest_restore_verify_conf_file }}:/etc/pgbackrest/pgbackrest.conf:ro" \
+  "{{ postgres_pgbackrest_restore_verify_image }}"
+
+echo "Waiting for postgres to finish recovery and promote..."
+for i in $(seq 1 60); do
+  if [ "$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -t -A \
+      -c 'SELECT pg_is_in_recovery();' 2>/dev/null)" = "f" ]; then
+    echo "Postgres is ready."
+    break
+  fi
+  if [ "$i" -eq 60 ]; then
+    echo "ERROR: Postgres did not become ready in time."
+    exit 1
+  fi
+  sleep 2
+done
+
+echo "Restore complete. Running verification queries..."
+
+FAILED=0
+{% for query in postgres_pgbackrest_restore_verify_queries %}
+
+echo "Running query {{ loop.index }}: {{ query }}"
+RESULT=$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -t -A -c "{{ query }}")
+if [ -z "${RESULT}" ] || [ "${RESULT}" = "0" ] || [ "${RESULT}" = "f" ]; then
+  echo "FAIL: Query {{ loop.index }} returned '${RESULT}'"
+  FAILED=1
+else
+  echo "PASS: Query {{ loop.index }} returned '${RESULT}'"
+fi
+{% endfor %}
+
+if [ "${FAILED}" -ne 0 ]; then
+  echo "ERROR: One or more verification queries failed."
+  exit 1
+fi
+
+echo "All verification queries passed."

@@ -1,0 +1,102 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Create Docker network"
+      ansible.builtin.include_role:
+        name: "docker_network_create"
+      vars:
+        docker_network_create_name: "postgres_network"
+
+    - name: "Create MinIO certs directory"
+      ansible.builtin.file:
+        path: "/opt/minio-certs"
+        state: "directory"
+        mode: "0755"
+
+    # pgBackRest only speaks TLS to object stores, so MinIO needs a
+    # self-signed certificate
+    - name: "Generate self-signed TLS certificate for MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          openssl req -x509 -newkey rsa:2048 -nodes -days 365
+          -keyout /opt/minio-certs/private.key
+          -out /opt/minio-certs/public.crt
+          -subj "/CN=minio"
+          -addext "subjectAltName=DNS:minio,DNS:localhost,IP:127.0.0.1"
+        creates: "/opt/minio-certs/public.crt"
+
+    - name: "Start MinIO with TLS"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          --network postgres_network
+          -p 9000:9000
+          -v /opt/minio-certs:/root/.minio/certs
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "https://localhost:9000/minio/health/live"
+        status_code: 200
+        validate_certs: false
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket
+      changed_when: true
+
+    - name: "Install and start PostgreSQL with pgBackRest"
+      ansible.builtin.include_role:
+        name: "postgres_pgbackrest_install"
+      vars:
+        postgres_pgbackrest_install_password: "testpassword123"
+        postgres_pgbackrest_install_network: "postgres_network"
+        postgres_pgbackrest_install_repos:
+          - type: "s3"
+            path: "/pgbackrest"
+            s3-endpoint: "minio"
+            s3-bucket: "test-backup-bucket"
+            s3-region: "us-east-1"
+            s3-key: "test"
+            s3-key-secret: "testpassword"
+            s3-uri-style: "path"
+            storage-port: 9000
+            storage-verify-tls: "n"
+            cipher-type: "aes-256-cbc"
+            cipher-pass: "testcipherpass"
+            retention-full: 2
+
+    - name: "Seed users table"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "CREATE TABLE users (name text);
+          INSERT INTO users VALUES ('alice'), ('bob'), ('charlie');"
+      changed_when: true
+
+    - name: "Run full backup"
+      ansible.builtin.command:
+        cmd: "/opt/postgres/backup.sh full"
+      changed_when: true

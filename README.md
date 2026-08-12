@@ -17,6 +17,7 @@ A non-comprehensive list of the more interesting roles:
 | `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |
 | `postgres_install_docker` | Deploy PostgreSQL via Docker. |
 | `postgres_pgbackrest_install` | Deploy PostgreSQL via Docker with [pgBackRest](https://pgbackrest.org/) WAL archiving, scheduled full/differential backups and weekly repository verification against one or more configurable repositories (S3 compatible etc.), including bootstrap restore. |
+| `postgres_pgbackrest_restore_verify` | Scheduled [pgBackRest](https://pgbackrest.org/) restore test into a throwaway PostgreSQL container with verification queries. |
 | `postgres_restic_backup` | Automated PostgreSQL backups to any [Restic](https://restic.net/) supported backend, including scheduled `restic check` verification. |
 | `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |
 | `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
