@@ -1,0 +1,54 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Deploy always-failing test unit"
+      ansible.builtin.copy:
+        dest: "/etc/systemd/system/email-root-test.service"
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Always failing unit to test email-root
+          OnFailure=email-root@%n.service
+
+          [Service]
+          Type=oneshot
+          ExecStart=/bin/false
+
+    - name: "Start failing test unit"
+      ansible.builtin.systemd:
+        name: "email-root-test.service"
+        state: "started"
+        daemon_reload: true
+      failed_when: false
+
+    - name: "Get test unit status"
+      ansible.builtin.systemd:
+        name: "email-root-test.service"
+      register: "fail_test_status"
+
+    - name: "Assert test unit failed"
+      ansible.builtin.assert:
+        that:
+          - "fail_test_status.status.ActiveState == 'failed'"
+        msg: "Test unit should fail to trigger email-root"
+
+    - name: "Wait for failure email in root mailbox"
+      ansible.builtin.wait_for:
+        path: "/var/mail/root"
+        search_regex: "email-root-test.service failed"
+        timeout: 60
+
+    - name: "Read root mailbox"
+      ansible.builtin.slurp:
+        src: "/var/mail/root"
+      register: "root_mailbox"
+
+    - name: "Assert email contains the failed unit summary"
+      vars:
+        mailbox: "{{ root_mailbox.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'email-root-test.service failed' in mailbox"
+          - "'Active: failed' in mailbox"
+        msg: "Failure email should contain the unit status summary"
