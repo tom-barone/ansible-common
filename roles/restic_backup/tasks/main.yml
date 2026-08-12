@@ -45,6 +45,12 @@
     dest: "{{ restic_backup_dir }}/backup.sh"
     mode: "0700"
 
+- name: "Deploy verify script"
+  ansible.builtin.template:
+    src: "verify.sh.j2"
+    dest: "{{ restic_backup_dir }}/verify.sh"
+    mode: "0700"
+
 - name: "Check if restic repository is initialized"
   ansible.builtin.command:
     cmd: >-
@@ -81,6 +87,27 @@
 - name: "Enable and start backup timer"
   ansible.builtin.systemd:
     name: "{{ restic_backup_job_name }}.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true
+
+- name: "Deploy verify systemd service"
+  ansible.builtin.template:
+    src: "verify.service.j2"
+    dest: "/etc/systemd/system/{{ restic_backup_job_name }}-verify.service"
+    mode: "0644"
+  notify: "Restart verify timer"
+
+- name: "Deploy verify systemd timer"
+  ansible.builtin.template:
+    src: "verify.timer.j2"
+    dest: "/etc/systemd/system/{{ restic_backup_job_name }}-verify.timer"
+    mode: "0644"
+  notify: "Restart verify timer"
+
+- name: "Enable and start verify timer"
+  ansible.builtin.systemd:
+    name: "{{ restic_backup_job_name }}-verify.timer"
     enabled: true
     state: "started"
     daemon_reload: true
