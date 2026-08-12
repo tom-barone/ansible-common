@@ -1,4 +1,0 @@
----
-- name: "Reload port forward systemd"
-  ansible.builtin.systemd:
-    daemon_reload: true
