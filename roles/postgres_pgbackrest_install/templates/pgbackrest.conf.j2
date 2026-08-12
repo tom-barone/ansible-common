@@ -1,0 +1,13 @@
+[global]
+{% for repo in postgres_pgbackrest_install_repos %}
+{% set repo_idx = loop.index %}
+{% for key, value in repo.items() %}
+repo{{ repo_idx }}-{{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+start-fast=y
+log-level-console=info
+log-level-file=off
+
+[{{ postgres_pgbackrest_install_stanza }}]
+pg1-path={{ postgres_pgbackrest_install_pgdata }}

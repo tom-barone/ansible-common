@@ -1,0 +1,255 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "postgres_pgbackrest_install_password is defined"
+      - "postgres_pgbackrest_install_password | length > 0"
+      - "postgres_pgbackrest_install_network is defined"
+      - "postgres_pgbackrest_install_network | length > 0"
+      - "postgres_pgbackrest_install_repos is defined"
+      - "postgres_pgbackrest_install_repos | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Apply system_email_root_service role"
+  ansible.builtin.include_role:
+    name: "system_email_root_service"
+
+- name: "Create install directory"
+  ansible.builtin.file:
+    path: "{{ postgres_pgbackrest_install_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy Dockerfile"
+  ansible.builtin.template:
+    src: "Dockerfile.j2"
+    dest: "{{ postgres_pgbackrest_install_dir }}/Dockerfile"
+    mode: "0644"
+  register: "postgres_pgbackrest_install_dockerfile"
+
+- name: "Check for existing image"
+  ansible.builtin.command:
+    cmd: >-
+      docker image inspect {{ postgres_pgbackrest_install_image }}
+  register: "postgres_pgbackrest_install_image_check"
+  failed_when: false
+  changed_when: false
+
+- name: "Build postgres image with pgbackrest"
+  ansible.builtin.command:
+    cmd: >-
+      docker build -t {{ postgres_pgbackrest_install_image }}
+      {{ postgres_pgbackrest_install_dir }}
+  changed_when: >-
+    postgres_pgbackrest_install_dockerfile.changed
+    or postgres_pgbackrest_install_image_check.rc != 0
+
+- name: "Deploy pgbackrest.conf"
+  ansible.builtin.template:
+    src: "pgbackrest.conf.j2"
+    dest: "{{ postgres_pgbackrest_install_dir }}/pgbackrest.conf"
+    owner: "{{ postgres_pgbackrest_install_container_uid }}"
+    group: "{{ postgres_pgbackrest_install_container_gid }}"
+    mode: "0600"
+
+- name: "Create data directory"
+  ansible.builtin.file:
+    path: "{{ postgres_pgbackrest_install_dir }}/data"
+    state: "directory"
+    owner: "{{ postgres_pgbackrest_install_container_uid }}"
+    group: "{{ postgres_pgbackrest_install_container_gid }}"
+    mode: "0700"
+
+- name: "Check for existing PostgreSQL data"
+  ansible.builtin.stat:
+    path: >-
+      {{ postgres_pgbackrest_install_dir }}/data/{{
+      postgres_pgbackrest_install_version.split(".") | first
+      }}/docker/PG_VERSION
+  register: "postgres_pgbackrest_install_pg_version"
+  when: "postgres_pgbackrest_install_restore_on_bootstrap | bool"
+
+- name: "Check pgbackrest repo for existing backups"
+  ansible.builtin.command:
+    cmd: >-
+      docker run --rm -u postgres
+      --network {{ postgres_pgbackrest_install_network }}
+      -v {{ postgres_pgbackrest_install_dir
+      }}/pgbackrest.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      --entrypoint pgbackrest
+      {{ postgres_pgbackrest_install_image }}
+      --stanza={{ postgres_pgbackrest_install_stanza }}
+      --output=json info
+  register: "postgres_pgbackrest_install_repo_info"
+  failed_when: false
+  changed_when: false
+  when:
+    - "postgres_pgbackrest_install_restore_on_bootstrap | bool"
+    - "not postgres_pgbackrest_install_pg_version.stat.exists"
+
+- name: "Decide whether to bootstrap-restore"
+  ansible.builtin.set_fact:
+    postgres_pgbackrest_install_should_restore: >-
+      {{
+        not postgres_pgbackrest_install_pg_version.stat.exists
+        and (postgres_pgbackrest_install_repo_info.rc
+             | default(1)) == 0
+        and ((postgres_pgbackrest_install_repo_info.stdout
+              | default('[]') | from_json | first | default({})).backup
+             | default([]) | length) > 0
+      }}
+  when: "postgres_pgbackrest_install_restore_on_bootstrap | bool"
+
+- name: "Restore latest backup into empty data directory"
+  ansible.builtin.command:
+    cmd: >-
+      docker run --rm -u postgres
+      --network {{ postgres_pgbackrest_install_network }}
+      -v {{ postgres_pgbackrest_install_dir }}/data:{{
+      postgres_pgbackrest_install_data_dir }}
+      -v {{ postgres_pgbackrest_install_dir
+      }}/pgbackrest.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      --entrypoint bash
+      {{ postgres_pgbackrest_install_image }}
+      -c "mkdir -p {{ postgres_pgbackrest_install_pgdata }}
+      && pgbackrest --stanza={{ postgres_pgbackrest_install_stanza }}
+      restore"
+  when:
+    - "postgres_pgbackrest_install_restore_on_bootstrap | bool"
+    - "postgres_pgbackrest_install_should_restore | bool"
+  changed_when: true
+
+- name: "Deploy docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ postgres_pgbackrest_install_dir }}/docker-compose.yml"
+    mode: "0600"
+  notify: "Restart postgres"
+
+- name: "Start postgres"
+  ansible.builtin.command:
+    cmd: "docker compose up -d"
+    chdir: "{{ postgres_pgbackrest_install_dir }}"
+  register: "postgres_pgbackrest_install_up"
+  changed_when: >
+    'Started' in postgres_pgbackrest_install_up.stderr or
+    'Created' in postgres_pgbackrest_install_up.stderr or
+    'Recreated' in postgres_pgbackrest_install_up.stderr
+
+- name: "Wait for PostgreSQL to be ready"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec {{ postgres_pgbackrest_install_container_name }}
+      pg_isready -U {{ postgres_pgbackrest_install_user }}
+  register: "postgres_pgbackrest_install_ready"
+  until: "postgres_pgbackrest_install_ready.rc == 0"
+  retries: 30
+  delay: 3
+  changed_when: false
+
+# A bootstrap restore replays WAL before the cluster promotes; wait so
+# later tasks always talk to a writable primary
+- name: "Wait for PostgreSQL recovery to complete"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec {{ postgres_pgbackrest_install_container_name }}
+      psql -U {{ postgres_pgbackrest_install_user }} -t -A -c
+      "SELECT pg_is_in_recovery();"
+  register: "postgres_pgbackrest_install_recovery"
+  until: "postgres_pgbackrest_install_recovery.stdout | trim == 'f'"
+  retries: 30
+  delay: 3
+  changed_when: false
+
+- name: "Wait for pgBouncer to be ready"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec
+      {{ postgres_pgbackrest_install_pgbouncer_container_name }}
+      pg_isready -h localhost -p 6432
+      -U {{ postgres_pgbackrest_install_user }}
+  register: "postgres_pgbackrest_install_pgbouncer_ready"
+  until: "postgres_pgbackrest_install_pgbouncer_ready.rc == 0"
+  retries: 15
+  delay: 3
+  changed_when: false
+  when: "postgres_pgbackrest_install_pgbouncer_enabled | bool"
+
+- name: "Check stanza status"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec -u postgres
+      {{ postgres_pgbackrest_install_container_name }}
+      pgbackrest --stanza={{ postgres_pgbackrest_install_stanza }}
+      --output=json info
+  register: "postgres_pgbackrest_install_stanza_info"
+  failed_when: false
+  changed_when: false
+
+# Status codes 0 and 2 mean the stanza exists on every repository;
+# anything else (missing or mixed across repos) needs stanza-create,
+# which is a safe no-op on repositories where the stanza already exists
+- name: "Create stanza"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec -u postgres
+      {{ postgres_pgbackrest_install_container_name }}
+      pgbackrest --stanza={{ postgres_pgbackrest_install_stanza }}
+      stanza-create
+  when: >-
+    postgres_pgbackrest_install_stanza_info.rc != 0
+    or ((postgres_pgbackrest_install_stanza_info.stdout
+         | from_json | first | default({})).status.code | default(1))
+       not in [0, 2]
+  changed_when: true
+
+- name: "Check WAL archiving works"
+  ansible.builtin.command:
+    cmd: >-
+      docker exec -u postgres
+      {{ postgres_pgbackrest_install_container_name }}
+      pgbackrest --stanza={{ postgres_pgbackrest_install_stanza }}
+      check
+  changed_when: false
+
+- name: "Deploy backup script"
+  ansible.builtin.template:
+    src: "backup.sh.j2"
+    dest: "{{ postgres_pgbackrest_install_dir }}/backup.sh"
+    mode: "0700"
+
+- name: "Deploy verify script"
+  ansible.builtin.template:
+    src: "verify.sh.j2"
+    dest: "{{ postgres_pgbackrest_install_dir }}/verify.sh"
+    mode: "0700"
+
+- name: "Deploy backup systemd services"
+  ansible.builtin.template:
+    src: "job.service.j2"
+    dest: "/etc/systemd/system/{{ item.name }}.service"
+    mode: "0644"
+  loop: "{{ postgres_pgbackrest_install_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: "Restart backup timers"
+
+- name: "Deploy backup systemd timers"
+  ansible.builtin.template:
+    src: "job.timer.j2"
+    dest: "/etc/systemd/system/{{ item.name }}.timer"
+    mode: "0644"
+  loop: "{{ postgres_pgbackrest_install_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: "Restart backup timers"
+
+- name: "Enable and start backup timers"
+  ansible.builtin.systemd:
+    name: "{{ item.name }}.timer"
+    enabled: true
+    state: "started"
+    daemon_reload: true
+  loop: "{{ postgres_pgbackrest_install_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"

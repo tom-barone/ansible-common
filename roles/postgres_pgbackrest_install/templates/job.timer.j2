@@ -1,0 +1,10 @@
+# Managed by Ansible role: postgres_pgbackrest_install
+[Unit]
+Description={{ item.description }} timer
+
+[Timer]
+OnCalendar={{ item.schedule }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

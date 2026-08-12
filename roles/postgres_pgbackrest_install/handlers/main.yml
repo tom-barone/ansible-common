@@ -1,0 +1,15 @@
+---
+- name: "Restart postgres"
+  ansible.builtin.command:
+    cmd: "docker compose up -d --force-recreate"
+    chdir: "{{ postgres_pgbackrest_install_dir }}"
+  changed_when: true
+
+- name: "Restart backup timers"
+  ansible.builtin.systemd:
+    name: "{{ item.name }}.timer"
+    state: "restarted"
+    daemon_reload: true
+  loop: "{{ postgres_pgbackrest_install_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"

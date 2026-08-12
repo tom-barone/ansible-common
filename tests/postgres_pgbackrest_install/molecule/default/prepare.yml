@@ -1,0 +1,138 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    - name: "Install Docker"
+      ansible.builtin.include_role:
+        name: "docker_install"
+      vars:
+        docker_install_storage_driver: "vfs"
+
+    - name: "Create Docker network"
+      ansible.builtin.include_role:
+        name: "docker_network_create"
+      vars:
+        docker_network_create_name: "postgres_network"
+
+    - name: "Create MinIO certs directory"
+      ansible.builtin.file:
+        path: "/opt/minio-certs"
+        state: "directory"
+        mode: "0755"
+
+    # pgBackRest only speaks TLS to object stores, so MinIO needs a
+    # self-signed certificate
+    - name: "Generate self-signed TLS certificate for MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          openssl req -x509 -newkey rsa:2048 -nodes -days 365
+          -keyout /opt/minio-certs/private.key
+          -out /opt/minio-certs/public.crt
+          -subj "/CN=minio"
+          -addext "subjectAltName=DNS:minio,DNS:localhost,IP:127.0.0.1"
+        creates: "/opt/minio-certs/public.crt"
+
+    - name: "Start MinIO with TLS"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          --network postgres_network
+          -p 9000:9000
+          -v /opt/minio-certs:/root/.minio/certs
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          minio/minio server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "https://localhost:9000/minio/health/live"
+        status_code: 200
+        validate_certs: false
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 buckets"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket-1 /data/test-backup-bucket-2
+      changed_when: true
+
+    - name: "Seed pgbackrest repo by applying role once"
+      ansible.builtin.include_role:
+        name: "postgres_pgbackrest_install"
+      vars:
+        postgres_pgbackrest_install_password: "testpassword123"
+        postgres_pgbackrest_install_network: "postgres_network"
+        postgres_pgbackrest_install_repos:
+          - type: "s3"
+            path: "/pgbackrest"
+            s3-endpoint: "minio"
+            s3-bucket: "test-backup-bucket-1"
+            s3-region: "us-east-1"
+            s3-key: "test"
+            s3-key-secret: "testpassword"
+            s3-uri-style: "path"
+            storage-port: 9000
+            storage-verify-tls: "n"
+            cipher-type: "aes-256-cbc"
+            cipher-pass: "testcipherpass"
+            retention-full: 2
+          - type: "s3"
+            path: "/pgbackrest"
+            s3-endpoint: "minio"
+            s3-bucket: "test-backup-bucket-2"
+            s3-region: "us-east-1"
+            s3-key: "test"
+            s3-key-secret: "testpassword"
+            s3-uri-style: "path"
+            storage-port: 9000
+            storage-verify-tls: "n"
+            cipher-type: "aes-256-cbc"
+            cipher-pass: "testcipherpass"
+            retention-full: 2
+
+    - name: "Create test database to restore"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -c
+          "CREATE DATABASE bootstrap_restore_test;"
+      changed_when: true
+
+    - name: "Seed test database with marker row"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -d bootstrap_restore_test -c
+          "CREATE TABLE marker (id int); INSERT INTO marker VALUES (42);"
+      changed_when: true
+
+    - name: "Run full backup to snapshot seeded data"
+      ansible.builtin.command:
+        cmd: "/opt/postgres/backup.sh full"
+      changed_when: true
+
+    # The role's restart handler runs at the end of the play and would
+    # resurrect the stack after the teardown below, so flush it first
+    - name: "Flush handlers"
+      ansible.builtin.meta: "flush_handlers"
+
+    - name: "Stop postgres stack"
+      ansible.builtin.command:
+        cmd: "docker compose down"
+        chdir: "/opt/postgres"
+      changed_when: true
+
+    - name: "Delete postgres data so converge bootstrap-restores"
+      ansible.builtin.file:
+        path: "/opt/postgres/data"
+        state: "absent"

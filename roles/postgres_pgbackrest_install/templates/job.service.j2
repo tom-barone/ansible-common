@@ -1,0 +1,8 @@
+# Managed by Ansible role: postgres_pgbackrest_install
+[Unit]
+Description={{ item.description }}
+OnFailure=email-root@%n.service
+
+[Service]
+Type=oneshot
+ExecStart={{ item.exec }}
