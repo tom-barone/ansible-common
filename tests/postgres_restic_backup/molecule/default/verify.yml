@@ -79,7 +79,7 @@
         cmd: >-
           bash -c
           'source /opt/postgres-backup/env
-          && restic backup --stdin-from-command
+          && restic backup --quiet --stdin-from-command
           --stdin-filename "fail.sql" -- false'
       register: "failing_backup"
       failed_when: false

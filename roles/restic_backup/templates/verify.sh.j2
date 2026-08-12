@@ -6,4 +6,5 @@ source "{{ restic_backup_dir }}/env"
 
 # Check repository integrity, reading a subset of the pack data
 restic check \
+  --quiet \
   --read-data-subset="{{ restic_backup_verify_read_data_subset }}"

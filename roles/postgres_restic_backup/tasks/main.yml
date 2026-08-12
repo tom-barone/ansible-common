@@ -39,7 +39,7 @@
     # --stdin-from-command discards the snapshot if pg_dumpall
     # fails, so a truncated dump never becomes "latest"
     restic_backup_command: >-
-      restic backup --stdin-from-command
+      restic backup --quiet --stdin-from-command
       --stdin-filename "pg_dumpall.sql" --
       docker exec {{ postgres_restic_backup_postgres_container }}
       pg_dumpall -U {{ postgres_restic_backup_postgres_user }}

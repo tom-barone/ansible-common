@@ -54,7 +54,7 @@
       pg_dumpall --clean --if-exists
       -U {{ immich_restic_backup_postgres_user }}
       > {{ immich_restic_backup_dir }}/db/pg_dumpall.sql
-      && restic backup {{ immich_restic_backup_dir }}/db
+      && restic backup --quiet {{ immich_restic_backup_dir }}/db
       {{ immich_restic_backup_media_dirs
       | map('regex_replace', '^',
       immich_restic_backup_upload_location ~ '/')
