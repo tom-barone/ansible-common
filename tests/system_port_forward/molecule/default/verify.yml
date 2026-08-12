@@ -24,16 +24,17 @@
           - "upnpc_binary.rc == 0"
         msg: "upnpc binary not found"
 
-    - name: "Check cron job was created by add role"
-      ansible.builtin.command: "crontab -l"
-      register: "crontab_after_add"
-      changed_when: false
+    - name: "Get refresh timer status"
+      ansible.builtin.systemd:
+        name: "upnpc-refresh-9090-tcp.timer"
+      register: "refresh_timer"
 
-    - name: "Assert cron job exists"
+    - name: "Assert refresh timer is enabled and active"
       ansible.builtin.assert:
         that:
-          - "'upnpc refresh 9090 TCP' in crontab_after_add.stdout"
-        msg: "Cron job should exist after add role"
+          - "refresh_timer.status.UnitFileState == 'enabled'"
+          - "refresh_timer.status.ActiveState == 'active'"
+        msg: "Refresh timer should be running after add role"
 
     - name: "Apply system_port_forward_remove role"
       ansible.builtin.include_role:
@@ -42,17 +43,19 @@
         system_port_forward_remove_external_port: "9090"
         system_port_forward_remove_protocol: "TCP"
 
-    - name: "Check crontab after remove"
-      ansible.builtin.command: "crontab -l"
-      register: "crontab_after_remove"
-      changed_when: false
-      failed_when: false
+    - name: "Check timer unit file after remove"
+      ansible.builtin.stat:
+        path: "/etc/systemd/system/upnpc-refresh-9090-tcp.timer"
+      register: "timer_after_remove"
 
-    - name: "Assert cron job was removed"
+    - name: "Check service unit file after remove"
+      ansible.builtin.stat:
+        path: "/etc/systemd/system/upnpc-refresh-9090-tcp.service"
+      register: "service_after_remove"
+
+    - name: "Assert refresh timer units were removed"
       ansible.builtin.assert:
         that:
-          - >-
-            crontab_after_remove.rc != 0 or
-            'upnpc refresh 9090 TCP'
-            not in crontab_after_remove.stdout
-        msg: "Cron job should be removed"
+          - "not timer_after_remove.stat.exists"
+          - "not service_after_remove.stat.exists"
+        msg: "Timer units should be removed"

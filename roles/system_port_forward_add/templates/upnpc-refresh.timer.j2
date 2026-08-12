@@ -1,0 +1,10 @@
+# Managed by Ansible role: system_port_forward_add
+[Unit]
+Description=Refresh UPnP port forward timer {{ system_port_forward_add_external_port }}/{{ system_port_forward_add_protocol }}
+
+[Timer]
+OnCalendar={{ system_port_forward_add_refresh_schedule }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
