@@ -1,0 +1,12 @@
+---
+# Required vars:
+# router_port_forward_description: "my-app"
+# router_port_forward_internal_port: 8080
+# router_port_forward_external_port: 8080
+# router_port_forward_protocol: "TCP"
+
+router_port_forward_refresh_timer: true
+router_port_forward_refresh_schedule: "*:0/30"
+router_port_forward_unit_name: >-
+  upnpc-refresh-{{ router_port_forward_external_port
+  }}-{{ router_port_forward_protocol | lower }}

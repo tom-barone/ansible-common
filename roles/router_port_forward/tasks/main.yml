@@ -2,10 +2,10 @@
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - "system_port_forward_add_description is defined"
-      - "system_port_forward_add_internal_port is defined"
-      - "system_port_forward_add_external_port is defined"
-      - "system_port_forward_add_protocol is defined"
+      - "router_port_forward_description is defined"
+      - "router_port_forward_internal_port is defined"
+      - "router_port_forward_external_port is defined"
+      - "router_port_forward_protocol is defined"
     msg: "Missing a required variable"
 
 - name: "Install required packages"
@@ -19,7 +19,7 @@
 - name: "Check if port forward already exists"
   ansible.builtin.command:
     cmd: "upnpc -l"
-  register: "system_port_forward_add_check"
+  register: "router_port_forward_check"
   changed_when: false
   failed_when: false
 
@@ -28,46 +28,46 @@
     argv:
       - "upnpc"
       - "-e"
-      - "{{ system_port_forward_add_description }}"
+      - "{{ router_port_forward_description }}"
       - "-a"
       - "@"
-      - "{{ system_port_forward_add_internal_port }}"
-      - "{{ system_port_forward_add_external_port }}"
-      - "{{ system_port_forward_add_protocol }}"
+      - "{{ router_port_forward_internal_port }}"
+      - "{{ router_port_forward_external_port }}"
+      - "{{ router_port_forward_protocol }}"
   when: >-
-    system_port_forward_add_external_port | string
-    not in (system_port_forward_add_check.stdout | default(''))
-  changed_when: "system_port_forward_add_result.rc == 0"
+    router_port_forward_external_port | string
+    not in (router_port_forward_check.stdout | default(''))
+  changed_when: "router_port_forward_result.rc == 0"
   failed_when: false
-  register: "system_port_forward_add_result"
+  register: "router_port_forward_result"
 
 - name: "Apply system_email_root_service role"
   ansible.builtin.include_role:
     name: "system_email_root_service"
-  when: "system_port_forward_add_refresh_timer"
+  when: "router_port_forward_refresh_timer"
 
 - name: "Deploy refresh systemd service"
   ansible.builtin.template:
     src: "upnpc-refresh.service.j2"
     dest: >-
-      /etc/systemd/system/{{ system_port_forward_add_unit_name }}.service
+      /etc/systemd/system/{{ router_port_forward_unit_name }}.service
     mode: "0644"
   notify: "Restart port forward refresh timer"
-  when: "system_port_forward_add_refresh_timer"
+  when: "router_port_forward_refresh_timer"
 
 - name: "Deploy refresh systemd timer"
   ansible.builtin.template:
     src: "upnpc-refresh.timer.j2"
     dest: >-
-      /etc/systemd/system/{{ system_port_forward_add_unit_name }}.timer
+      /etc/systemd/system/{{ router_port_forward_unit_name }}.timer
     mode: "0644"
   notify: "Restart port forward refresh timer"
-  when: "system_port_forward_add_refresh_timer"
+  when: "router_port_forward_refresh_timer"
 
 - name: "Enable and start refresh timer"
   ansible.builtin.systemd:
-    name: "{{ system_port_forward_add_unit_name }}.timer"
+    name: "{{ router_port_forward_unit_name }}.timer"
     enabled: true
     state: "started"
     daemon_reload: true
-  when: "system_port_forward_add_refresh_timer"
+  when: "router_port_forward_refresh_timer"

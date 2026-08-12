@@ -1,0 +1,12 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply router_port_forward role"
+      ansible.builtin.include_role:
+        name: "router_port_forward"
+      vars:
+        router_port_forward_description: "test-forward"
+        router_port_forward_internal_port: "8080"
+        router_port_forward_external_port: "9090"
+        router_port_forward_protocol: "TCP"
