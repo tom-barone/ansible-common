@@ -12,7 +12,7 @@ entryPoints:
 providers:
   file:
     filename: {{ traefik_install_config_dir }}/routes.yml
-    watch: true
+    watch: false
 {% if traefik_install_tls_terminated_routes %}
 
 certificatesResolvers:

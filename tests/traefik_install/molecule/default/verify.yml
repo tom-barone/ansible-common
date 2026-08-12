@@ -91,6 +91,9 @@
           - >-
             'Error while building configuration'
             not in _traefik_journal.stdout
+          - >-
+            'nonexistent certificate resolver'
+            not in _traefik_journal.stdout
 
     # Given a TLS terminated route was configured
     # When we read the traefik config
