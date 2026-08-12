@@ -76,6 +76,22 @@
           - "'redirect-to-https' in _routes_content"
           - '''url: "http://10.0.0.20:8080"'' in _routes_content'
 
+    # Given traefik loaded the dynamic routes config
+    # When we read the traefik journal
+    # Then it contains no configuration building errors
+    - name: "Read traefik journal"
+      ansible.builtin.command:
+        cmd: "journalctl -u traefik --no-pager"
+      register: "_traefik_journal"
+      changed_when: false
+
+    - name: "Assert no configuration errors in journal"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'Error while building configuration'
+            not in _traefik_journal.stdout
+
     # Given a TLS terminated route was configured
     # When we read the traefik config
     # Then it contains the ACME certificate resolver
