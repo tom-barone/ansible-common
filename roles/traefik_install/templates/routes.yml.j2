@@ -1,3 +1,4 @@
+{% if traefik_install_tls_passthrough_routes or traefik_install_tls_terminated_routes %}
 http:
 {% if traefik_install_tls_terminated_routes %}
   middlewares:
@@ -45,6 +46,8 @@ http:
         servers:
           - url: "http://{{ route.destination }}:{{ route.port }}"
 {% endfor %}
+{% endif %}
+{% if traefik_install_tls_passthrough_routes %}
 
 tcp:
   routers:
@@ -65,3 +68,4 @@ tcp:
         servers:
           - address: "{{ route.destination }}:443"
 {% endfor %}
+{% endif %}
