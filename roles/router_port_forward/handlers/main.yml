@@ -1,6 +1,6 @@
 ---
 - name: "Restart port forward refresh timer"
   ansible.builtin.systemd:
-    name: "{{ system_port_forward_add_unit_name }}.timer"
+    name: "{{ router_port_forward_unit_name }}.timer"
     state: "restarted"
     daemon_reload: true

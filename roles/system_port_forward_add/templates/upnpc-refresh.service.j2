@@ -1,8 +1,0 @@
-# Managed by Ansible role: system_port_forward_add
-[Unit]
-Description=Refresh UPnP port forward {{ system_port_forward_add_external_port }}/{{ system_port_forward_add_protocol }}
-OnFailure=email-root@%n.service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/upnpc -e '{{ system_port_forward_add_description }}' -a @ {{ system_port_forward_add_internal_port }} {{ system_port_forward_add_external_port }} {{ system_port_forward_add_protocol }}

@@ -1,0 +1,8 @@
+# Managed by Ansible role: router_port_forward
+[Unit]
+Description=Refresh UPnP port forward {{ router_port_forward_external_port }}/{{ router_port_forward_protocol }}
+OnFailure=email-root@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/upnpc -e '{{ router_port_forward_description }}' -a @ {{ router_port_forward_internal_port }} {{ router_port_forward_external_port }} {{ router_port_forward_protocol }}
