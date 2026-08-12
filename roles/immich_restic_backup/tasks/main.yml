@@ -32,6 +32,10 @@
     restic_backup_dir: "{{ immich_restic_backup_dir }}"
     restic_backup_timer_schedule: >-
       {{ immich_restic_backup_timer_schedule }}
+    restic_backup_verify_timer_schedule: >-
+      {{ immich_restic_backup_verify_timer_schedule }}
+    restic_backup_verify_read_data_subset: >-
+      {{ immich_restic_backup_verify_read_data_subset }}
     restic_backup_job_name: "immich-restic-backup"
     restic_backup_forget_group_by: "host"
     restic_backup_retention_daily: >-
@@ -129,3 +133,15 @@
     - "immich_restic_backup_restore_on_bootstrap | bool"
     - "immich_restic_backup_should_restore | bool"
   changed_when: true
+
+# TODO: remove once this has run on all hosts
+- name: "Remove legacy verify cron job"
+  ansible.builtin.file:
+    path: "/etc/cron.d/immich-restic-backup-verify"
+    state: "absent"
+
+# TODO: remove once this has run on all hosts
+- name: "Remove legacy verify directory"
+  ansible.builtin.file:
+    path: "/opt/immich-backup-verify"
+    state: "absent"
