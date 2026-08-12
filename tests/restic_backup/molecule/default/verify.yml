@@ -82,15 +82,49 @@
             (restored_file.content | b64decode)
             == 'hello from restic backup test'
 
-    - name: "Read cron job file"
-      ansible.builtin.slurp:
-        src: "/etc/cron.d/restic-backup"
-      register: "cron_file"
+    - name: "Get backup timer status"
+      ansible.builtin.systemd:
+        name: "restic-backup.timer"
+      register: "backup_timer"
 
-    - name: "Assert cron job is configured correctly"
-      vars:
-        content: "{{ cron_file.content | b64decode }}"
+    - name: "Assert backup timer is enabled and active"
       ansible.builtin.assert:
         that:
-          - "'CRON_TZ=UTC' in content"
-          - "'chronic /opt/restic-backup/backup.sh' in content"
+          - "backup_timer.status.UnitFileState == 'enabled'"
+          - "backup_timer.status.ActiveState == 'active'"
+
+    - name: "Read timer unit file"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/restic-backup.timer"
+      register: "timer_unit"
+
+    - name: "Assert timer schedule is configured"
+      vars:
+        content: "{{ timer_unit.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'OnCalendar=*-*-* 03:00:00 UTC' in content"
+          - "'Persistent=true' in content"
+
+    - name: "Read service unit file"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/restic-backup.service"
+      register: "service_unit"
+
+    - name: "Assert service runs the backup script"
+      vars:
+        content: "{{ service_unit.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'ExecStart=/opt/restic-backup/backup.sh' in content"
+          - "'OnFailure=email-root@%n.service' in content"
+
+    - name: "Check legacy cron job file"
+      ansible.builtin.stat:
+        path: "/etc/cron.d/restic-backup"
+      register: "legacy_cron"
+
+    - name: "Assert legacy cron job file is absent"
+      ansible.builtin.assert:
+        that:
+          - "not legacy_cron.stat.exists"

@@ -10,8 +10,7 @@
 
 postgres_restic_backup_env: {}
 postgres_restic_backup_dir: "/opt/postgres-backup"
-postgres_restic_backup_cron_schedule: "0 3 * * *"
-postgres_restic_backup_cron_timezone: "UTC"
+postgres_restic_backup_timer_schedule: "*-*-* 03:00:00 UTC"
 postgres_restic_backup_retention_daily: 7
 postgres_restic_backup_retention_weekly: 4
 postgres_restic_backup_retention_monthly: 9999

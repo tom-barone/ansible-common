@@ -10,8 +10,7 @@
 
 immich_restic_backup_env: {}
 immich_restic_backup_dir: "/opt/immich-backup"
-immich_restic_backup_cron_schedule: "0 3 * * *"
-immich_restic_backup_cron_timezone: "UTC"
+immich_restic_backup_timer_schedule: "*-*-* 03:00:00 UTC"
 immich_restic_backup_retention_daily: 7
 immich_restic_backup_retention_weekly: 4
 immich_restic_backup_retention_monthly: 9999
