@@ -50,6 +50,15 @@
                       _tailscale_install_hostname.stdout)
          | first | default({}) }}
 
+- name: "Determine if node is connected as the matching device"
+  ansible.builtin.set_fact:
+    _tailscale_install_connected: >-
+      {{ _tailscale_install_matching_device.id is defined
+         and _tailscale_install_current_ip.rc == 0
+         and _tailscale_install_current_ip.stdout | length > 0
+         and _tailscale_install_current_ip.stdout
+             in _tailscale_install_matching_device.addresses }}
+
 - name: "Delete stale matching device"
   ansible.builtin.uri:
     url: >-
@@ -62,13 +71,36 @@
         _tailscale_install_oauth_token.json.access_token }}
     status_code: [200, 204]
   when:
+    - "_tailscale_install_matching_device.id is defined"
+    - "not _tailscale_install_connected"
+
+- name: "Set desired tags fact"
+  ansible.builtin.set_fact:
+    _tailscale_install_desired_tags: >-
+      {{ tailscale_install_tags
+         | map('regex_replace', '^', 'tag:') | sort }}
+
+# Changing tags on a connected node via 'tailscale up' fails unless all
+# non-default flags are repeated, so update them server-side instead.
+- name: "Update device tags via API"
+  ansible.builtin.uri:
+    url: >-
+      https://api.tailscale.com/api/v2/device/{{
+      _tailscale_install_matching_device.id }}/tags
+    method: "POST"
+    headers:
+      Authorization: >-
+        Bearer {{ _tailscale_install_oauth_token.json.access_token }}
+    body_format: "json"
+    body:
+      tags: "{{ _tailscale_install_desired_tags }}"
+  changed_when: true
+  when:
+    - "_tailscale_install_connected"
+    - "tailscale_install_tags | length > 0"
     - >-
-      _tailscale_install_matching_device.id is defined
-    - >-
-      (_tailscale_install_current_ip.stdout | length == 0) or
-      (_tailscale_install_current_ip.rc != 0) or
-      (_tailscale_install_current_ip.stdout
-      not in _tailscale_install_matching_device.addresses)
+      _tailscale_install_matching_device.tags | default([]) | sort
+      != _tailscale_install_desired_tags
 
 - name: "Apply artis3n.tailscale.machine"
   ansible.builtin.include_role:
@@ -81,3 +113,4 @@
     tailscale_oauth_preauthorized: >-
       {{ tailscale_install_oauth_preauthorized }}
     tailscale_args: "{{ '--ssh' if tailscale_install_enable_ssh else '' }}"
+    tailscale_up_skip: "{{ _tailscale_install_connected }}"
