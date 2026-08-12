@@ -24,6 +24,30 @@
           - "upnpc_binary.rc == 0"
         msg: "upnpc binary not found"
 
+    - name: "Check chronic binary exists"
+      ansible.builtin.command: "which chronic"
+      register: "chronic_binary"
+      changed_when: false
+
+    - name: "Assert chronic binary exists"
+      ansible.builtin.assert:
+        that:
+          - "chronic_binary.rc == 0"
+        msg: "chronic binary not found"
+
+    - name: "Read refresh service unit"
+      ansible.builtin.slurp:
+        src: "/etc/systemd/system/upnpc-refresh-9090-tcp.service"
+      register: "refresh_service_unit"
+
+    - name: "Assert refresh service runs upnpc via chronic"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'ExecStart=/usr/bin/chronic /usr/bin/upnpc'
+            in (refresh_service_unit.content | b64decode)
+        msg: "Refresh service ExecStart should be wrapped with chronic"
+
     - name: "Get refresh timer status"
       ansible.builtin.systemd:
         name: "upnpc-refresh-9090-tcp.timer"
