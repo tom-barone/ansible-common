@@ -184,3 +184,4 @@ Aug 09 14:47:30 server tailscaled[5756]: StartLoginInteractiveAs("root"): url=fa
 Aug 09 14:47:30 server tailscaled[5756]: control: LoginInteractive -> regen=true
 Aug 09 14:47:31 server tailscaled[5756]: control: Generating a new nodekey.
 Aug 09 14:47:32 server tailscaled[5756]: blockEngineUpdates(false)
+Aug 13 00:47:19 quilava tailscaled[352153]: nodeBackend: [unexpected] using TSMP key for [DCpDc] (control stale): tsmp="discokey:d89af7e39b214aa6b0ff9ad3a828aa653ec8779bd23f5e78989c27e4d4e8b853" control="discokey:2023ee29c031355dae935d7a042870572bae581e38b1f0f1dec9e8400c981126" old="discokey:d89af7e39b214aa6b0ff9ad3a828aa653ec8779bd23f5e78989c27e4d4e8b853"

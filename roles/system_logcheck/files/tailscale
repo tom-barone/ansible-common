@@ -108,6 +108,7 @@
 .* .*tailscaled.*: using tailnet default auto-update setting: .*$
 .* .*tailscaled.*: dns: inotify: .*$
 .* .*tailscaled.*: wgengine: \[unexpected\] Reconfig: using TSMP key for \[.*\] \(control stale\): .*$
+.* .*tailscaled.*: nodeBackend: \[unexpected\] using TSMP key for \[.*\] \(control stale\): .*$
 .* .*tailscaled.*: wg: \[.*\] - Failed to derive keypair: .*$
 .* .*tailscaled.*: wg: \[.*\] - Failed to create response message: .*$
 .* .*tailscaled.*: control: controlclient direct: updating discoKey for .* via magicsock$
