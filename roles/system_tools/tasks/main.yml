@@ -5,6 +5,14 @@
   ansible.builtin.apt:
     name:
       - "btm"
+      - "ncdu"
+      - "tmux"
+      - "vim"
     state: "present"
     update_cache: true
     cache_valid_time: 3600
+
+- name: "Set default editor to vim"
+  community.general.alternatives:
+    name: "editor"
+    path: "/usr/bin/vim.basic"
