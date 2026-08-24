@@ -7,6 +7,11 @@
 # immich_restic_backup_env:
 #   AWS_ACCESS_KEY_ID: "AKIA..."
 #   AWS_SECRET_ACCESS_KEY: "secret"
+#
+# To run manually:
+#   $ cd /opt/immich-backup
+#   $ ./verify.sh
+#   $ ./backup.sh
 
 immich_restic_backup_env: {}
 immich_restic_backup_dir: "/opt/immich-backup"
