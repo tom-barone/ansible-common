@@ -1,0 +1,1 @@
+.* .*traefik.*: .*ERR Cannot retrieve the ACME challenge for .* providerName=acme$
