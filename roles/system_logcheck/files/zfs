@@ -1,0 +1,3 @@
+.* .*zed.*: Exiting$
+.* .*zed.*: ZFS Event Daemon .* \(PID [0-9]+\)$
+.* .*zed.*: Processing events since eid=[0-9]+$
