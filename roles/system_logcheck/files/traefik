@@ -1,1 +1,2 @@
 .* .*traefik.*: .*ERR Cannot retrieve the ACME challenge for .* providerName=acme$
+.* .*traefik.*: .*ERR Unable to get token error="missing token" providerName=acme$

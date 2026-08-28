@@ -1,1 +1,2 @@
 Aug 24 20:43:10 traefik traefik[5731]: 2026-08-24T20:43:10Z ERR Cannot retrieve the ACME challenge for livekit.language-lads.com (token "about.php") providerName=acme
+Aug 28 09:25:51 server traefik[5731]: 2026-08-28T09:25:51Z ERR Unable to get token error="missing token" providerName=acme
