@@ -13,3 +13,4 @@
 .* .*docker.*: .*level.error.*failed to validate image signature.*manifest.*v2.*$
 .* .*dockerd.*: .*level=error.*failed to cleanup.*snapshot.*does not exist: not found.*$
 .* .*systemd.*: Closed docker\.socket.*$
+.* .*dockerd.*: .*level=error.*Failed to get event.*error reading from server: EOF.*$
