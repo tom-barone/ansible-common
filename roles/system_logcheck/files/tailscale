@@ -143,3 +143,4 @@
 .* .*tailscaled.*: StartLoginInteractiveAs\(.*\): url=(true|false)$
 .* .*tailscaled.*: control: LoginInteractive -> regen=(true|false)$
 .* .*tailscaled.*: control: Generating a new nodekey\.$
+.* .*tailscaled.*: open-conn-track: flow .* got RST by peer$
