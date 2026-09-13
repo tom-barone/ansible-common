@@ -9,3 +9,4 @@ Jun 10 03:34:37 localhost chronyd[777]: System clock wrong by 1.031349 seconds
 Jun 10 03:34:38 localhost chronyd[777]: System clock was stepped by 1.031349 seconds
 Jul 29 06:51:24 server chronyd[794]: chronyd exiting
 Jul 29 06:51:24 server chronyd[53508]: Frequency -12.913 +/- 0.042 ppm read from /var/lib/chrony/chrony.drift
+Sep 08 12:58:05 server chronyd[722]: Detected falseticker 110.232.114.22 (2.debian.pool.ntp.org)

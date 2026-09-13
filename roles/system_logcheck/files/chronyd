@@ -9,3 +9,4 @@
 .* .*chronyd.*: System clock was stepped by .* seconds$
 .* .*chronyd.*: chronyd exiting$
 .* .*chronyd.*: Frequency .* ppm read from .*$
+.* .*chronyd.*: Detected falseticker .*$
