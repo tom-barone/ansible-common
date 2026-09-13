@@ -78,7 +78,11 @@
 .* .*systemd\[1\]: .* skipped, no trigger condition checks were met\.$
 .* .*systemd-tmpfiles.*: Opening file ".*" failed, proceeding without lock: No such device or address$
 .* .*systemd\[1\]: Reexecution requested from client PID [0-9]+ .*$
-.* .*systemd\[1\]: Reexecuting\.$
+.* .*systemd\[[0-9]+\]: Reexecuting\.$
 .* .*systemd\[1\]: Using hardware watchdog '.*', version [0-9]+, device /dev/.*$
 .* .*systemd\[1\]: Watchdog running with a hardware timeout of .*\.$
 .* .*systemd\[1\]: .*\.socket: Socket unit configuration has changed while unit has been running, no open socket file descriptor left\. The socket unit is not functional until restarted\.$
+.* .*systemd\[1\]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported\.$
+.* .*systemd\[[0-9]+\]: Received SIGRTMIN\+25 from PID 1 \(systemd\)\.$
+.* .*systemd-journald.*: Journal stopped$
+.* .*systemd-journald.*: Received SIGTERM from PID 1 \(systemd\)\.$
