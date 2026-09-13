@@ -211,3 +211,4 @@
 .* .*kernel.*: device-mapper: uevent: version .*$
 .* .*kernel.*: device-mapper: ioctl: .*initialised.*$
 .* .*kernel.*: overlayfs: .* is in-use as .* of another mount.*$
+.* .*kernel.*: tsc: Marking TSC unstable due to clocksource watchdog$
