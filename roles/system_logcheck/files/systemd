@@ -86,3 +86,5 @@
 .* .*systemd\[[0-9]+\]: Received SIGRTMIN\+25 from PID 1 \(systemd\)\.$
 .* .*systemd-journald.*: Journal stopped$
 .* .*systemd-journald.*: Received SIGTERM from PID 1 \(systemd\)\.$
+.* .*systemd-networkd.*: .*: Configuring with /run/systemd/network/.*\.network\.$
+.* .*systemd-networkd.*: .*: DHCPv4 address [0-9.]+/[0-9]+, gateway [0-9.]+ acquired from [0-9.]+$
