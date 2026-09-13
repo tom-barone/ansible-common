@@ -144,3 +144,4 @@
 .* .*tailscaled.*: control: LoginInteractive -> regen=(true|false)$
 .* .*tailscaled.*: control: Generating a new nodekey\.$
 .* .*tailscaled.*: open-conn-track: flow .* got RST by peer$
+.* .*tailscaled.*: nodeBackend: skipping WireGuard session reset \(TSMP key\): \[.*\] changed from "discokey:[0-9a-f]+" to "discokey:[0-9a-f]+"$
