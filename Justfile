@@ -5,7 +5,8 @@
 [doc("Install dependencies")]
 @install:
     uv sync --quiet
-    uv run ansible-galaxy install -r requirements.yml
+    # Galaxy resets connections now and then, so retry a few times
+    for i in 1 2 3; do uv run ansible-galaxy install -r requirements.yml && break; [ "$i" = 3 ] && exit 1; sleep 15; done
     npm install --silent
 
 [doc("Run linters")]
