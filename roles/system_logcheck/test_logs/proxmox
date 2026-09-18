@@ -76,3 +76,7 @@ Jul 17 03:01:23 server pvescheduler[1963]: restarting server
 Aug 06 03:00:11 server addgroup[396932]: The group `frrvty' already exists as a system group.
 Aug 06 03:00:11 server addgroup[396934]: The group `frr' already exists as a system group.
 Aug 06 03:00:11 server adduser[396936]: The system user `frr' already exists. Exiting.
+Sep 15 03:00:28 server pve-firewall[3149833]: send HUP to 1574
+Sep 15 03:00:28 server pve-firewall[1574]: received signal HUP
+Sep 15 03:00:28 server pve-firewall[1574]: server shutdown (restart)
+Sep 15 03:00:29 server pve-firewall[1574]: restarting server

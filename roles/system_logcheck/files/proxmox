@@ -24,11 +24,11 @@
 .* .*pve.*: .* qga command failed.*guest-ping.*$
 .* .*qm.*: .* qga command failed.*guest-ping.*$
 .* .*pve.*: auth key pair too old.*$
-.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: send HUP to .*$
-.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: received signal HUP$
-.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: server closing$
-.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: server shutdown \(restart\)$
-.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler).*: restarting server$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler|pve-firewall).*: send HUP to .*$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler|pve-firewall).*: received signal HUP$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler|pve-firewall).*: server closing$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler|pve-firewall).*: server shutdown \(restart\)$
+.* .*(pveproxy|spiceproxy|pvedaemon|pvestatd|pvescheduler|pve-firewall).*: restarting server$
 .* .*spiceproxy.*: worker exit.*$
 .* .*spiceproxy.*: worker .* finished.*$
 .* .*spiceproxy.*: worker .* started.*$
