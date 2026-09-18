@@ -46,7 +46,7 @@
           -v /opt/minio-certs:/root/.minio/certs
           -e MINIO_ROOT_USER=test
           -e MINIO_ROOT_PASSWORD=testpassword
-          minio/minio server /data
+          quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data
       changed_when: true
 
     - name: "Wait for MinIO to be ready"
