@@ -1,0 +1,157 @@
+---
+# Ansible role to create a Proxmox VM template from a Debian cloud image.
+#
+# The image is imported as the boot disk of a new VM with cloud-init (DHCP,
+# SSH keys and a vendor snippet that installs the QEMU guest agent) and a
+# serial console, then converted to a template. An existing template is
+# never modified: use a new ID to build one with different settings.
+#
+# Tests to confirm working:
+#   $ qm config <id>
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "proxmox_create_debian_template_id is defined"
+      - "proxmox_create_debian_template_name is defined"
+      - "proxmox_create_debian_template_image_url is defined"
+    msg: "Missing a required variable"
+
+- name: "Read VM config"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "config"
+      - "{{ proxmox_create_debian_template_id }}"
+  register: "proxmox_create_debian_template_config"
+  changed_when: false
+  failed_when: false
+
+- name: "Download cloud image"
+  ansible.builtin.get_url:
+    url: "{{ proxmox_create_debian_template_image_url }}"
+    dest: >-
+      /root/{{ proxmox_create_debian_template_image_url | basename }}
+    mode: "0644"
+  when: "proxmox_create_debian_template_config.rc != 0"
+
+- name: "Read snippet storage config"
+  ansible.builtin.command:
+    argv:
+      - "pvesh"
+      - "get"
+      - "/storage/{{ proxmox_create_debian_template_snippet_storage }}"
+      - "--output-format"
+      - "json"
+  register: "proxmox_create_debian_template_snippet_storage_config"
+  changed_when: false
+
+- name: "Enable snippets on the snippet storage"
+  vars:
+    content: >-
+      {{ (proxmox_create_debian_template_snippet_storage_config.stdout
+          | from_json).content }}
+  ansible.builtin.command:
+    argv:
+      - "pvesm"
+      - "set"
+      - "{{ proxmox_create_debian_template_snippet_storage }}"
+      - "--content"
+      - "{{ content }},snippets"
+  when: "'snippets' not in content.split(',')"
+  changed_when: true
+
+- name: "Ensure snippets directory exists"
+  vars:
+    path: >-
+      {{ (proxmox_create_debian_template_snippet_storage_config.stdout
+          | from_json).path }}
+  ansible.builtin.file:
+    path: "{{ path }}/snippets"
+    state: "directory"
+    mode: "0755"
+
+- name: "Create cloud-init vendor snippet"
+  vars:
+    path: >-
+      {{ (proxmox_create_debian_template_snippet_storage_config.stdout
+          | from_json).path }}
+  ansible.builtin.copy:
+    dest: "{{ path }}/snippets/qemu-agent-vendor.yaml"
+    mode: "0644"
+    content: |
+      #cloud-config
+      package_update: true
+      packages:
+        - qemu-guest-agent
+      runcmd:
+        - systemctl enable --now qemu-guest-agent
+
+- name: "Create VM from the cloud image"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "create"
+      - "{{ proxmox_create_debian_template_id }}"
+      - "--name"
+      - "{{ proxmox_create_debian_template_name }}"
+      - "--memory"
+      - "{{ proxmox_create_debian_template_memory }}"
+      - "--balloon"
+      - "0"
+      - "--cpu"
+      - "cputype=host"
+      - "--scsihw"
+      - "virtio-scsi-pci"
+      - "--scsi0"
+      - >-
+        {{ proxmox_create_debian_template_storage
+        }}:0,format=raw,import-from=/root/{{
+          proxmox_create_debian_template_image_url | basename }}
+      - "--ide2"
+      - "{{ proxmox_create_debian_template_storage }}:cloudinit"
+      - "--boot"
+      - "order=scsi0"
+      - "--net0"
+      - "virtio,bridge={{ proxmox_create_debian_template_bridge }}"
+      - "--serial0"
+      - "socket"
+      - "--agent"
+      - "enabled=1"
+      - "--ciuser"
+      - "{{ proxmox_create_debian_template_cloudinit_user }}"
+      - "--ipconfig0"
+      - "ip=dhcp,ip6=dhcp"
+      - "--sshkeys"
+      - "{{ proxmox_create_debian_template_ssh_keys_file }}"
+      - "--cicustom"
+      - >-
+        vendor={{ proxmox_create_debian_template_snippet_storage
+        }}:snippets/qemu-agent-vendor.yaml
+  when: "proxmox_create_debian_template_config.rc != 0"
+  changed_when: true
+
+- name: "Resize boot disk"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "disk"
+      - "resize"
+      - "{{ proxmox_create_debian_template_id }}"
+      - "scsi0"
+      - "{{ proxmox_create_debian_template_disk_size }}"
+  when:
+    - "'template: 1' not in proxmox_create_debian_template_config.stdout"
+    - >-
+      'size=' ~ proxmox_create_debian_template_disk_size
+      not in proxmox_create_debian_template_config.stdout
+  changed_when: true
+
+- name: "Convert VM to a template"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "template"
+      - "{{ proxmox_create_debian_template_id }}"
+  when: "'template: 1' not in proxmox_create_debian_template_config.stdout"
+  changed_when: true

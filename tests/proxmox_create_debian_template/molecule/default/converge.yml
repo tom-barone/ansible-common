@@ -1,0 +1,12 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "proxmox_create_debian_template"
+      vars:
+        proxmox_create_debian_template_id: 9000
+        proxmox_create_debian_template_name: "test-debian-template"
+        proxmox_create_debian_template_image_url: >-
+          file:///root/images/test-debian.qcow2

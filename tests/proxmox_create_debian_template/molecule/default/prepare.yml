@@ -1,0 +1,14 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Create image directory"
+      ansible.builtin.file:
+        path: "/root/images"
+        state: "directory"
+        mode: "0755"
+
+    - name: "Create a dummy cloud image"
+      ansible.builtin.command:
+        cmd: "qemu-img create -f qcow2 /root/images/test-debian.qcow2 1G"
+        creates: "/root/images/test-debian.qcow2"
