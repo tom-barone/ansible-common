@@ -1,14 +1,30 @@
 ---
+# Ansible role to set the GRUB boot menu timeout.
+#
+# The value goes into a drop-in under /etc/default/grub.d/ because Debian's
+# grub-mkconfig sources those after /etc/default/grub, and cloud images ship
+# a 15_timeout.cfg drop-in there that overrides anything set in
+# /etc/default/grub itself.
+#
+# Tests to confirm working:
+#   $ grep 'set timeout=' /boot/grub/grub.cfg
+
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
       - "system_grub_timeout is defined"
     msg: "Missing a required variable"
 
+- name: "Ensure grub drop-in directory exists"
+  ansible.builtin.file:
+    path: "/etc/default/grub.d"
+    state: "directory"
+    mode: "0755"
+
 - name: "Set GRUB_TIMEOUT"
-  ansible.builtin.lineinfile:
-    path: "/etc/default/grub"
-    regexp: "^GRUB_TIMEOUT="
-    line: "GRUB_TIMEOUT={{ system_grub_timeout }}"
-    backup: true
+  ansible.builtin.copy:
+    dest: "/etc/default/grub.d/99-timeout.cfg"
+    mode: "0644"
+    content: |
+      GRUB_TIMEOUT={{ system_grub_timeout }}
   notify: "Update grub"
