@@ -1,26 +1,6 @@
 ---
-- name: "Gather facts if needed"
-  ansible.builtin.setup:
-    gather_subset: "min"
-  when: "ansible_facts['system'] is not defined"
-
-- name: "Set architecture-specific defaults (aarch64)"
-  ansible.builtin.set_fact:
-    qemu_vm_create_debian_arch: "arm64"
-    qemu_vm_create_qemu_binary: "qemu-system-aarch64"
-    qemu_vm_create_machine: "virt"
-    qemu_vm_create_bios_path_darwin: >-
-      /opt/homebrew/share/qemu/edk2-aarch64-code.fd
-    qemu_vm_create_bios_path_linux: >-
-      /usr/share/qemu-efi-aarch64/QEMU_EFI.fd
-  when: "ansible_facts['architecture'] in ['aarch64', 'arm64']"
-
-- name: "Set architecture-specific defaults (x86_64)"
-  ansible.builtin.set_fact:
-    qemu_vm_create_debian_arch: "amd64"
-    qemu_vm_create_qemu_binary: "qemu-system-x86_64"
-    qemu_vm_create_machine: "q35"
-  when: "ansible_facts['architecture'] == 'x86_64'"
+- name: "Detect platform"
+  ansible.builtin.import_tasks: "platform.yml"
 
 - name: "Set platform-specific variables"
   ansible.builtin.set_fact:
@@ -31,17 +11,6 @@
         ~ qemu_vm_create_debian_arch
         ~ '-daily.qcow2')
       }}
-
-- name: "Set BIOS path for aarch64"
-  ansible.builtin.set_fact:
-    qemu_vm_create_bios_path: >-
-      {{ qemu_vm_create_bios_path | default(
-        (ansible_facts['system'] == 'Darwin')
-        | ternary(
-            qemu_vm_create_bios_path_darwin,
-            qemu_vm_create_bios_path_linux))
-      }}
-  when: "ansible_facts['architecture'] in ['aarch64', 'arm64']"
 
 - name: "Validate required variables"
   ansible.builtin.assert:
