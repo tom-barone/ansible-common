@@ -1,4 +1,3 @@
-# AI GENERATED - Tom Barone
 ---
 # Ansible role to build a Proxmox VE test image from the official ISO with
 # Proxmox "Automated Installation": download the ISO, embed an answer file
