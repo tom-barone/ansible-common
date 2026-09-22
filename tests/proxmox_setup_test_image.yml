@@ -11,3 +11,5 @@
         name: "proxmox_setup_test_image"
       vars:
         proxmox_setup_test_image_dir: "{{ lookup('env', 'CACHE_DIR') }}"
+        proxmox_setup_test_image_ssh_public_key: >-
+          {{ lookup('env', 'TEST_SSH_PUBLIC_KEY') }}

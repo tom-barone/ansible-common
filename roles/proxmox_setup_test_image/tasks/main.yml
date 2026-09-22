@@ -21,6 +21,7 @@
     that:
       - "proxmox_setup_test_image_dir is defined"
       - "proxmox_setup_test_image_dir | length > 0"
+      - "proxmox_setup_test_image_ssh_public_key is defined"
     msg: "Missing a required variable"
 
 - name: "Set image name"

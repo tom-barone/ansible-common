@@ -11,12 +11,15 @@ TESTS_DIR = Path("./tests").resolve()
 ROLES_DIR = Path("./roles").resolve()
 MOLECULE_DOCKER_IMAGE = "geerlingguy/docker-debian13-ansible:latest"  # Trixie
 CACHE_DIR = Path(".cache").resolve()
+SSH_KEY = TESTS_DIR / "id_ed25519"
 PROXMOX_IMAGE_PLAYBOOK = TESTS_DIR / "proxmox_setup_test_image.yml"
 ENV = {
     **os.environ,
     "ANSIBLE_ROLES_PATH": str(ROLES_DIR),
     "MOLECULE_DOCKER_IMAGE": MOLECULE_DOCKER_IMAGE,
     "CACHE_DIR": str(CACHE_DIR),
+    "ANSIBLE_PRIVATE_KEY_FILE": str(SSH_KEY),
+    "TEST_SSH_PUBLIC_KEY": SSH_KEY.with_suffix(".pub").read_text().strip(),
 }
 
 
@@ -69,6 +72,9 @@ def main():
         action="store_true",
     )
     args = parser.parse_args()
+
+    # Git drops the file mode and ssh refuses a group or world readable key
+    SSH_KEY.chmod(0o600)
 
     scenarios = list(find_molecule_scenarios(TESTS_DIR))
 

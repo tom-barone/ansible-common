@@ -75,10 +75,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y genisoimage qemu-utils qemu-system-x86
 
-      - name: "Generate SSH key for tests"
-        run: >-
-          ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
-
       - name: "Install dependencies"
         run: "just install"
 
