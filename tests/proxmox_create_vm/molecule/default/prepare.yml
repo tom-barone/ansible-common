@@ -1,0 +1,53 @@
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Create image directory"
+      ansible.builtin.file:
+        path: "/root/images"
+        state: "directory"
+        mode: "0755"
+
+    - name: "Create a dummy cloud image"
+      ansible.builtin.command:
+        cmd: "qemu-img create -f qcow2 /root/images/test-debian.qcow2 1G"
+        creates: "/root/images/test-debian.qcow2"
+
+    - name: "Create template to clone from"
+      ansible.builtin.include_role:
+        name: "proxmox_create_debian_template"
+      vars:
+        proxmox_create_debian_template_id: 9000
+        proxmox_create_debian_template_name: "test-debian-template"
+        proxmox_create_debian_template_image_url: >-
+          file:///root/images/test-debian.qcow2
+
+    # The test host has no nested virtualisation, so the VM can never really
+    # run. Fake the subcommands that need a running guest and pass everything
+    # else through to the real qm.
+    - name: "Install mock qm wrapper"
+      ansible.builtin.copy:
+        dest: "/usr/local/bin/qm"
+        mode: "0755"
+        content: |
+          #!/bin/bash
+          case "$1" in
+            start)
+              touch "/tmp/qm-started-$2"
+              ;;
+            status)
+              if [ -f "/tmp/qm-started-$2" ]; then
+                echo "status: running"
+              else
+                exec /usr/sbin/qm "$@"
+              fi
+              ;;
+            guest)
+              cat <<'JSON'
+          [{"name":"lo","ip-addresses":[{"ip-address":"127.0.0.1","ip-address-type":"ipv4"}]},{"name":"eth0","ip-addresses":[{"ip-address":"10.0.2.15","ip-address-type":"ipv4"}]}]
+          JSON
+              ;;
+            *)
+              exec /usr/sbin/qm "$@"
+              ;;
+          esac

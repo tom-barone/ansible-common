@@ -20,6 +20,7 @@ A non-comprehensive list of the more interesting roles:
 | `postgres_pgbackrest_restore_verify` | Scheduled [pgBackRest](https://pgbackrest.org/) restore test into a throwaway PostgreSQL container with verification queries. |
 | `postgres_restic_backup` | Automated PostgreSQL backups to any [Restic](https://restic.net/) supported backend, including scheduled `restic check` verification. |
 | `proxmox_create_debian_template` | Create a Proxmox VM template from a Debian cloud image with cloud-init, the QEMU guest agent and a serial console. |
+| `proxmox_create_vm` | Clone a Proxmox template into a running VM, optionally with a vhost-vsock device, and return its IP address. |
 | `proxmox_no_subscription` | Switch a Proxmox VE host to the no-subscription package repositories. |
 | `proxmox_setup_test_image` | Build a Proxmox VE test image from the official ISO with an unattended installation, used to test the `proxmox_*` roles under QEMU. |
 | `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |

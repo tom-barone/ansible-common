@@ -1,0 +1,20 @@
+---
+# Required vars:
+# proxmox_create_vm_template_id: 9000
+# proxmox_create_vm_id: 100
+# proxmox_create_vm_name: "my-vm"
+
+proxmox_create_vm_full_clone: true
+proxmox_create_vm_cores: 2
+proxmox_create_vm_memory: 2048
+proxmox_create_vm_memory_ballooning: true
+proxmox_create_vm_memory_ballooning_min: 1024
+# Grow the boot disk after cloning, e.g. "20G". Empty keeps the template size.
+proxmox_create_vm_disk_size: ""
+# The guest agent only answers once cloud-init has installed it on first boot
+proxmox_create_vm_agent_wait_seconds: 5
+proxmox_create_vm_agent_max_retries: 60
+# Attach a vhost-vsock device so host and guest can talk over vsock.
+# The context ID must be unique per VM and at least 3.
+proxmox_create_vm_vsock_enabled: true
+proxmox_create_vm_vsock_cid: "{{ proxmox_create_vm_id }}"

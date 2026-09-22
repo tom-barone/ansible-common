@@ -1,0 +1,167 @@
+---
+# Ansible role to clone a Proxmox template into a running VM
+#
+# Clones the template, sets CPU, memory and autostart, optionally grows the
+# boot disk and attaches a vhost-vsock device, starts the VM and waits for
+# the QEMU guest agent. Sets the fact proxmox_create_vm_ip to the guest's
+# first IPv4 address.
+#
+# Tests to confirm working:
+#   $ qm config <id>
+#   $ qm guest cmd <id> network-get-interfaces
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "proxmox_create_vm_template_id is defined"
+      - "proxmox_create_vm_id is defined"
+      - "proxmox_create_vm_name is defined"
+    msg: "Missing a required variable"
+
+- name: "Read VM config"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "config"
+      - "{{ proxmox_create_vm_id }}"
+  register: "proxmox_create_vm_config"
+  changed_when: false
+  failed_when: false
+
+- name: "Clone template"
+  ansible.builtin.command:
+    argv: >-
+      {{ [
+        'qm', 'clone',
+        proxmox_create_vm_template_id | string,
+        proxmox_create_vm_id | string,
+        '--name', proxmox_create_vm_name
+      ] + (proxmox_create_vm_full_clone | ternary(['--full'], [])) }}
+  when: "proxmox_create_vm_config.rc != 0"
+  changed_when: true
+
+- name: "Read VM config after clone"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "config"
+      - "{{ proxmox_create_vm_id }}"
+  register: "proxmox_create_vm_config"
+  changed_when: false
+
+- name: "Set CPU, memory and autostart"
+  vars:
+    balloon: >-
+      {{ proxmox_create_vm_memory_ballooning
+         | ternary(proxmox_create_vm_memory_ballooning_min, 0) }}
+    wanted:
+      - "cores: {{ proxmox_create_vm_cores }}"
+      - "memory: {{ proxmox_create_vm_memory }}"
+      - "balloon: {{ balloon }}"
+      - "onboot: 1"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "set"
+      - "{{ proxmox_create_vm_id }}"
+      - "--cores"
+      - "{{ proxmox_create_vm_cores }}"
+      - "--memory"
+      - "{{ proxmox_create_vm_memory }}"
+      - "--balloon"
+      - "{{ balloon }}"
+      - "--onboot"
+      - "1"
+  when: >-
+    wanted | difference(proxmox_create_vm_config.stdout_lines) | length > 0
+  changed_when: true
+
+- name: "Resize boot disk"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "disk"
+      - "resize"
+      - "{{ proxmox_create_vm_id }}"
+      - "scsi0"
+      - "{{ proxmox_create_vm_disk_size }}"
+  when:
+    - "proxmox_create_vm_disk_size | length > 0"
+    - >-
+      'size=' ~ proxmox_create_vm_disk_size
+      not in proxmox_create_vm_config.stdout
+  changed_when: true
+
+- name: "Load vhost_vsock kernel module"
+  community.general.modprobe:
+    name: "vhost_vsock"
+    state: "present"
+    persistent: "present"
+  when: "proxmox_create_vm_vsock_enabled | bool"
+
+- name: "Attach vhost-vsock device"
+  vars:
+    existing_args: >-
+      {{ proxmox_create_vm_config.stdout_lines
+         | select('match', '^args: ')
+         | map('regex_replace', '^args: ', '')
+         | first | default('') }}
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "set"
+      - "{{ proxmox_create_vm_id }}"
+      - "--args"
+      - >-
+        {{ (existing_args ~ ' -device vhost-vsock-pci,guest-cid='
+            ~ proxmox_create_vm_vsock_cid) | trim }}
+  when:
+    - "proxmox_create_vm_vsock_enabled | bool"
+    - "'vhost-vsock-pci' not in existing_args"
+  changed_when: true
+
+- name: "Read VM status"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "status"
+      - "{{ proxmox_create_vm_id }}"
+  register: "proxmox_create_vm_status"
+  changed_when: false
+
+- name: "Start VM"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "start"
+      - "{{ proxmox_create_vm_id }}"
+  when: "'status: running' not in proxmox_create_vm_status.stdout"
+  changed_when: true
+
+- name: "Wait for the guest agent and get network interfaces"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "guest"
+      - "cmd"
+      - "{{ proxmox_create_vm_id }}"
+      - "network-get-interfaces"
+  register: "proxmox_create_vm_network"
+  until: "proxmox_create_vm_network.rc == 0"
+  retries: "{{ proxmox_create_vm_agent_max_retries }}"
+  delay: "{{ proxmox_create_vm_agent_wait_seconds }}"
+  changed_when: false
+
+- name: "Parse IP address"
+  ansible.builtin.set_fact:
+    proxmox_create_vm_ip: >-
+      {{
+        proxmox_create_vm_network.stdout
+        | from_json
+        | selectattr('name', 'ne', 'lo')
+        | map(attribute='ip-addresses')
+        | flatten
+        | selectattr('ip-address-type', 'eq', 'ipv4')
+        | map(attribute='ip-address')
+        | first
+      }}
