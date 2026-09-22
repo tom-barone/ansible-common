@@ -30,14 +30,12 @@
 
 - name: "Set paths for image creation"
   ansible.builtin.set_fact:
-    qemu_vm_create_images_dir: >-
-      {{ qemu_vm_create_dir }}/images
     qemu_vm_create_vm_dir: >-
       {{ qemu_vm_create_dir }}/{{ qemu_vm_create_name }}
     qemu_vm_create_base_image: >-
       {{ qemu_vm_create_base_image
          if qemu_vm_create_base_image is defined
-         else qemu_vm_create_dir ~ '/images/'
+         else qemu_vm_create_images_dir ~ '/'
            ~ (qemu_vm_create_image_url | basename) }}
     qemu_vm_create_disk_image: >-
       {{ qemu_vm_create_dir }}/{{
