@@ -60,6 +60,12 @@
     - "{{ qemu_vm_create_vm_dir }}"
     - "{{ qemu_vm_create_seed_dir }}"
 
+# Delete the cached image to force a re-download
+- name: "Check if the base image already exists"
+  ansible.builtin.stat:
+    path: "{{ qemu_vm_create_base_image }}"
+  register: "qemu_vm_create_base_image_stat"
+
 - name: "Download cloud base image"
   ansible.builtin.get_url:
     url: "{{ qemu_vm_create_image_url }}"
@@ -70,7 +76,9 @@
   retries: 5
   delay: 15
   until: "qemu_vm_create_download_result is succeeded"
-  when: "qemu_vm_create_image_url is defined"
+  when:
+    - "qemu_vm_create_image_url is defined"
+    - "not qemu_vm_create_base_image_stat.stat.exists"
 
 - name: "Create COW overlay from base image"
   ansible.builtin.command:
