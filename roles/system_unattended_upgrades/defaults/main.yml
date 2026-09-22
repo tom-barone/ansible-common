@@ -3,3 +3,7 @@
 # "confnew" installs the maintainer's new version (old file kept as .dpkg-old).
 # "confold" keeps the locally modified file (new one saved as .dpkg-dist).
 system_unattended_upgrades_conffile_action: "confnew"
+
+# Extra Unattended-Upgrade::Origins-Pattern entries on top of the Debian
+# defaults, e.g. ["origin=Proxmox"] on Proxmox VE hosts.
+system_unattended_upgrades_origins: []
