@@ -1,0 +1,22 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    # A Linux guest gets a modern machine type, so Proxmox attaches the USB
+    # device to an xhci controller like it would on a real host. The test
+    # host has no nested virtualisation, so KVM is disabled or qm showcmd
+    # refuses to build the QEMU command line.
+    - name: "Create a VM to pass the USB device through to"
+      ansible.builtin.command:
+        argv:
+          - "qm"
+          - "create"
+          - "100"
+          - "--name"
+          - "test-vm"
+          - "--ostype"
+          - "l26"
+          - "--kvm"
+          - "0"
+        creates: "/etc/pve/qemu-server/100.conf"

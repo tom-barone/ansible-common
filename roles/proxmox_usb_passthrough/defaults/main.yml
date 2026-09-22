@@ -1,0 +1,10 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# proxmox_usb_passthrough_vm_id: 100
+# USB vendor:product ID from lsusb on the host, or a bus-port like "1-2"
+# to pass through whatever is plugged into that physical port
+# proxmox_usb_passthrough_device: "0781:5583"
+
+# Proxmox USB device slot usbN. Use a different slot for each device.
+proxmox_usb_passthrough_index: 0
