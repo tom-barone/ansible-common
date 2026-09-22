@@ -1,0 +1,71 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role created a template from the cloud image
+    # When we read the VM configuration
+    # Then it is a template with the expected name, disks, network,
+    # serial console and cloud-init settings
+    - name: "Read VM configuration"
+      ansible.builtin.command:
+        cmd: "qm config 9000"
+      register: "vm_config"
+      changed_when: false
+
+    - name: "Assert VM is a template with the expected settings"
+      ansible.builtin.assert:
+        that:
+          - "'template: 1' in vm_config.stdout"
+          - "'name: test-debian-template' in vm_config.stdout"
+          - "'ide2: local-lvm:vm-9000-cloudinit' in vm_config.stdout"
+          - "'net0: virtio=' in vm_config.stdout"
+          - "'bridge=vmbr0' in vm_config.stdout"
+          - "'serial0: socket' in vm_config.stdout"
+          - "'ciuser: root' in vm_config.stdout"
+          - "'ipconfig0: ip=dhcp,ip6=dhcp' in vm_config.stdout"
+          - "'sshkeys: ' in vm_config.stdout"
+          - >-
+            'cicustom: vendor=local:snippets/qemu-agent-vendor.yaml'
+            in vm_config.stdout
+        msg: "Unexpected VM configuration: {{ vm_config.stdout }}"
+
+    # Given the role resized the imported disk
+    # When we look at the boot disk line
+    # Then its size is the configured 5G
+    - name: "Assert boot disk was resized"
+      ansible.builtin.assert:
+        that:
+          - >-
+            vm_config.stdout_lines
+            | select('match', '^scsi0: local-lvm:.*size=5G$')
+            | length == 1
+        msg: "Boot disk was not resized to 5G: {{ vm_config.stdout }}"
+
+    # Given the role wrote the cloud-init vendor snippet
+    # When we stat it on the snippet storage
+    # Then it exists
+    - name: "Stat vendor snippet"
+      ansible.builtin.stat:
+        path: "/var/lib/vz/snippets/qemu-agent-vendor.yaml"
+      register: "snippet"
+
+    - name: "Assert vendor snippet exists"
+      ansible.builtin.assert:
+        that:
+          - "snippet.stat.exists"
+        msg: "Vendor snippet is missing"
+
+    # Given the role enabled snippets on the local storage
+    # When we read the storage configuration
+    # Then snippets is an allowed content type
+    - name: "Read local storage configuration"
+      ansible.builtin.command:
+        cmd: "pvesh get /storage/local --output-format json"
+      register: "local_storage"
+      changed_when: false
+
+    - name: "Assert snippets content type is enabled"
+      ansible.builtin.assert:
+        that:
+          - "'snippets' in (local_storage.stdout | from_json).content"
+        msg: "snippets is not enabled on local storage"

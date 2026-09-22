@@ -1,0 +1,17 @@
+---
+# Required vars:
+# proxmox_create_debian_template_id: 9000
+# proxmox_create_debian_template_name: "debian-13-template"
+# proxmox_create_debian_template_image_url: >-
+#   https://cloud.debian.org/images/cloud/trixie/latest/
+#   debian-13-generic-amd64.qcow2
+
+proxmox_create_debian_template_disk_size: "5G"
+proxmox_create_debian_template_memory: 2048
+proxmox_create_debian_template_cloudinit_user: "root"
+proxmox_create_debian_template_storage: "local-lvm"
+# Directory storage holding the cloud-init vendor snippet
+proxmox_create_debian_template_snippet_storage: "local"
+proxmox_create_debian_template_bridge: "vmbr0"
+# SSH public keys cloud-init installs into VMs cloned from the template
+proxmox_create_debian_template_ssh_keys_file: "/root/.ssh/authorized_keys"
