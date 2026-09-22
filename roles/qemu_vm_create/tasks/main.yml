@@ -6,10 +6,10 @@
   ansible.builtin.set_fact:
     qemu_vm_create_image_url: >-
       {{ qemu_vm_create_image_url | default(
-        'https://cloud.debian.org/images/cloud/trixie/daily'
+        'https://cloud.debian.org/images/cloud/trixie'
         ~ '/latest/debian-13-generic-'
         ~ qemu_vm_create_debian_arch
-        ~ '-daily.qcow2')
+        ~ '.qcow2')
       }}
   when: "qemu_vm_create_base_image is not defined"
 
