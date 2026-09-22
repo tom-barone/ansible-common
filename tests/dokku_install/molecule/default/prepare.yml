@@ -40,8 +40,6 @@
     - name: "Install Docker"
       ansible.builtin.include_role:
         name: "docker_install"
-      vars:
-        docker_install_version: "5:27.5.1-1~debian.12~bookworm"
 
     - name: "Generate test SSH keypair"
       ansible.builtin.command:
