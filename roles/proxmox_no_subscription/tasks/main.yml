@@ -1,0 +1,58 @@
+---
+# Ansible role to switch a Proxmox VE host without a subscription from the
+# enterprise repositories (which fail with 401) to the no-subscription ones.
+#
+# The sources files are written directly instead of with deb822_repository:
+# that module needs python3-debian, which apt cannot install while the
+# enterprise repositories still break apt-get update.
+#
+# Tests to confirm working:
+#   $ apt-get update
+#   $ apt-cache policy pve-manager
+
+- name: "Disable PVE enterprise repository"
+  ansible.builtin.copy:
+    dest: "/etc/apt/sources.list.d/pve-enterprise.sources"
+    mode: "0644"
+    content: |
+      Types: deb
+      URIs: https://enterprise.proxmox.com/debian/pve
+      Suites: {{ ansible_facts['distribution_release'] }}
+      Components: pve-enterprise
+      Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+      Enabled: no
+  register: "proxmox_no_subscription_pve_enterprise"
+
+- name: "Add PVE no-subscription repository"
+  ansible.builtin.copy:
+    dest: "/etc/apt/sources.list.d/proxmox.sources"
+    mode: "0644"
+    content: |
+      Types: deb
+      URIs: http://download.proxmox.com/debian/pve
+      Suites: {{ ansible_facts['distribution_release'] }}
+      Components: pve-no-subscription
+      Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+  register: "proxmox_no_subscription_pve"
+
+# The installer writes the enterprise Ceph repository to this same file
+- name: "Replace Ceph enterprise repository with no-subscription"
+  ansible.builtin.copy:
+    dest: "/etc/apt/sources.list.d/ceph.sources"
+    mode: "0644"
+    content: |
+      Types: deb
+      URIs: http://download.proxmox.com/debian/ceph-{{
+        proxmox_no_subscription_ceph_release }}
+      Suites: {{ ansible_facts['distribution_release'] }}
+      Components: no-subscription
+      Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+  register: "proxmox_no_subscription_ceph"
+
+- name: "Update apt cache"
+  ansible.builtin.apt:
+    update_cache: true
+  when: >-
+    proxmox_no_subscription_pve_enterprise is changed
+    or proxmox_no_subscription_pve is changed
+    or proxmox_no_subscription_ceph is changed

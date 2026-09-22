@@ -1,0 +1,79 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role disabled the enterprise repository
+    # When we read the enterprise sources file
+    # Then it is marked as not enabled
+    - name: "Read pve-enterprise.sources"
+      ansible.builtin.slurp:
+        src: "/etc/apt/sources.list.d/pve-enterprise.sources"
+      register: "pve_enterprise"
+
+    - name: "Assert enterprise repository is disabled"
+      vars:
+        content: "{{ pve_enterprise.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'Enabled: no' in content"
+        msg: "pve-enterprise.sources is not disabled"
+
+    # Given the role added the no-subscription repository
+    # When we read the proxmox sources file
+    # Then it points at the no-subscription component for this release
+    - name: "Read proxmox.sources"
+      ansible.builtin.slurp:
+        src: "/etc/apt/sources.list.d/proxmox.sources"
+      register: "proxmox_sources"
+
+    - name: "Assert no-subscription repository is configured"
+      vars:
+        content: "{{ proxmox_sources.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'Components: pve-no-subscription' in content"
+          - "'URIs: http://download.proxmox.com/debian/pve' in content"
+          - "'Suites: trixie' in content"
+        msg: "proxmox.sources is not configured correctly"
+
+    # Given the role replaced the Ceph enterprise repository
+    # When we read the ceph sources file
+    # Then it uses the no-subscription component and not the enterprise host
+    - name: "Read ceph.sources"
+      ansible.builtin.slurp:
+        src: "/etc/apt/sources.list.d/ceph.sources"
+      register: "ceph_sources"
+
+    - name: "Assert Ceph no-subscription repository is configured"
+      vars:
+        content: "{{ ceph_sources.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'Components: no-subscription' in content"
+          - "'enterprise.proxmox.com' not in content"
+        msg: "ceph.sources is not configured correctly"
+
+    # Given only no-subscription repositories are enabled
+    # When apt refreshes its package lists
+    # Then it succeeds (no 401 from the enterprise host)
+    - name: "Refresh apt package lists"
+      ansible.builtin.apt:
+        update_cache: true
+      changed_when: false
+
+    # Given the sources files were written by hand
+    # When Proxmox parses the repository configuration
+    # Then it reports no errors
+    - name: "Read repositories through the Proxmox API"
+      ansible.builtin.command:
+        cmd: >-
+          pvesh get /nodes/{{ ansible_facts['hostname'] }}/apt/repositories
+          --output-format json
+      register: "repositories"
+      changed_when: false
+
+    - name: "Assert Proxmox parses the repositories without errors"
+      ansible.builtin.assert:
+        that:
+          - "(repositories.stdout | from_json).errors | length == 0"
+        msg: "Proxmox reports repository errors: {{ repositories.stdout }}"
