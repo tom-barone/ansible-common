@@ -10,6 +10,7 @@
 # qemu_vm_create_bios_path: "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"
 
 qemu_vm_create_dir: "/tmp/qemu-vms"
+qemu_vm_create_images_dir: "{{ qemu_vm_create_dir }}/images"
 qemu_vm_create_name: "qemu-vm"
 qemu_vm_create_disk_size: "20G"
 qemu_vm_create_memory: "2G"
