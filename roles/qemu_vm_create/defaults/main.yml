@@ -2,6 +2,9 @@
 # Optional vars (no default):
 # qemu_vm_create_groups: ["vms"]
 
+# Optional vars (no default, skips the download when set):
+# qemu_vm_create_base_image: "/path/to/local/image.qcow2"
+
 # Optional vars (auto-detected if unset):
 # qemu_vm_create_image_url: "https://example.com/debian-13.qcow2"
 # qemu_vm_create_bios_path: "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"
