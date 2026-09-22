@@ -1,0 +1,4 @@
+---
+# Ceph release paired with this Proxmox VE release, see
+# https://pve.proxmox.com/wiki/Package_Repositories
+proxmox_no_subscription_ceph_release: "tentacle"
