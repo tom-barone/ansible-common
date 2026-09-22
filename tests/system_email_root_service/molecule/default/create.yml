@@ -9,4 +9,5 @@
         name: "qemu_vm_create"
       vars:
         qemu_vm_create_name: "email-root-vm"
+        qemu_vm_create_images_dir: "{{ lookup('env', 'CACHE_DIR') }}"
         qemu_vm_create_ssh_port: 2237
