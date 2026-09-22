@@ -1,0 +1,37 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role was applied with system_grub_timeout 2
+    # When we read the grub drop-in it writes
+    # Then GRUB_TIMEOUT is set to 2
+    - name: "Read grub timeout drop-in"
+      ansible.builtin.slurp:
+        src: "/etc/default/grub.d/99-timeout.cfg"
+      register: "grub_dropin"
+
+    - name: "Assert GRUB_TIMEOUT is set to 2"
+      vars:
+        content: "{{ grub_dropin.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "content | trim == 'GRUB_TIMEOUT=2'"
+        msg: "Unexpected drop-in content: {{ content }}"
+
+    # Given the role notified the update-grub handler
+    # When we read the generated grub.cfg
+    # Then the boot menu timeout is 2, despite the cloud image's own
+    # 15_timeout.cfg drop-in
+    - name: "Read /boot/grub/grub.cfg"
+      ansible.builtin.slurp:
+        src: "/boot/grub/grub.cfg"
+      register: "grub_cfg"
+
+    - name: "Assert grub.cfg was regenerated with timeout 2"
+      vars:
+        content: "{{ grub_cfg.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'set timeout=2' in content"
+        msg: "grub.cfg does not contain set timeout=2"

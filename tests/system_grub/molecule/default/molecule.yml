@@ -1,0 +1,32 @@
+# AI GENERATED - Tom Barone
+---
+driver:
+  name: "default"
+platforms:
+  - name: "grub-vm"
+provisioner:
+  name: "ansible"
+  inventory:
+    host_vars:
+      grub-vm:
+        ansible_host: "127.0.0.1"
+        ansible_port: 2244
+        ansible_user: "root"
+        ansible_python_interpreter: "/usr/bin/python3"
+        ansible_ssh_common_args: >-
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+scenario:
+  test_sequence:
+    # - dependency
+    # - cleanup
+    - "destroy"
+    - "syntax"
+    - "create"
+    # - prepare
+    - "converge"
+    - "idempotence"
+    # - side_effect
+    - "verify"
+    # - cleanup
+    - "destroy"
