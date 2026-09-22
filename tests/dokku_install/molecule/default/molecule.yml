@@ -3,8 +3,7 @@ driver:
   name: "docker"
 platforms:
   - name: "${TEST_NAME}"
-    # Dokku v0.35.x doesn't support Debian 13 (trixie)
-    image: "geerlingguy/docker-debian12-ansible:latest"
+    image: "${MOLECULE_DOCKER_IMAGE}"
     pre_build_image: true
     # Necessary for systemd to work properly
     privileged: true

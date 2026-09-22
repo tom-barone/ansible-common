@@ -11,7 +11,7 @@
       ansible.builtin.include_role:
         name: "dokku_install"
       vars:
-        dokku_install_version: "v0.35.15"
+        dokku_install_version: "v0.38.28"
         dokku_install_domain: "test.example.com"
         dokku_install_admin_ssh_key: >-
           {{ test_ssh_key.content | b64decode | trim }}
