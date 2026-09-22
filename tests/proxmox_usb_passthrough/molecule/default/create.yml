@@ -10,6 +10,8 @@
         name: "proxmox_setup_test_image"
       vars:
         proxmox_setup_test_image_dir: "{{ lookup('env', 'CACHE_DIR') }}"
+        proxmox_setup_test_image_ssh_public_key: >-
+          {{ lookup('env', 'TEST_SSH_PUBLIC_KEY') }}
 
     - name: "Create VM"
       ansible.builtin.include_role:
@@ -20,3 +22,5 @@
         qemu_vm_create_memory: "2G"
         qemu_vm_create_disk_size: "32G"
         qemu_vm_create_base_image: "{{ proxmox_setup_test_image_path }}"
+        qemu_vm_create_ssh_public_key: >-
+          {{ lookup('env', 'TEST_SSH_PUBLIC_KEY') }}

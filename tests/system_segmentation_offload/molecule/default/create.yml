@@ -11,3 +11,5 @@
         qemu_vm_create_name: "segoffload-vm"
         qemu_vm_create_images_dir: "{{ lookup('env', 'CACHE_DIR') }}"
         qemu_vm_create_ssh_port: 2233
+        qemu_vm_create_ssh_public_key: >-
+          {{ lookup('env', 'TEST_SSH_PUBLIC_KEY') }}

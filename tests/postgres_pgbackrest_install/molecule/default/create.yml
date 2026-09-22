@@ -14,4 +14,4 @@
         qemu_vm_create_memory: "4G"
         qemu_vm_create_disk_size: "30G"
         qemu_vm_create_ssh_public_key: >-
-          {{ lookup('file', '~/.ssh/id_ed25519.pub') }}
+          {{ lookup('env', 'TEST_SSH_PUBLIC_KEY') }}

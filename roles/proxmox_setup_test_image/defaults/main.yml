@@ -1,6 +1,7 @@
 ---
 # Required vars:
 # proxmox_setup_test_image_dir: "/path/to/.cache"
+# proxmox_setup_test_image_ssh_public_key: "ssh-ed25519 AAAA... admin"
 
 proxmox_setup_test_image_version: "9.2-1"
 # From https://enterprise.proxmox.com/iso/SHA256SUMS
@@ -14,7 +15,5 @@ proxmox_setup_test_image_memory: "4G"
 proxmox_setup_test_image_cpus: 2
 # The installer insists on a root password. Tests log in with the SSH key.
 proxmox_setup_test_image_root_password: "proxmox-test-image"
-proxmox_setup_test_image_ssh_public_key: >-
-  {{ lookup('file', '~/.ssh/id_ed25519.pub') }}
 # Seconds to wait for the unattended installer to finish and power off
 proxmox_setup_test_image_install_timeout: 1800
