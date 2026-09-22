@@ -1,0 +1,8 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  gather_facts: false
+  tasks:
+    - name: "Check connectivity"
+      ansible.builtin.ping: {}

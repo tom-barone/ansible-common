@@ -1,0 +1,213 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to build a Proxmox VE test image from the official ISO with
+# Proxmox "Automated Installation": download the ISO, embed an answer file
+# with proxmox-auto-install-assistant (run in Docker), run the installer
+# headless under QEMU until it powers off, and keep the resulting qcow2.
+#
+# Sets the fact proxmox_setup_test_image_path (pass it to qemu_vm_create as
+# qemu_vm_create_base_image). Delete the qcow2 to force a rebuild, for
+# example after changing the SSH key that gets baked into the image.
+#
+# Tests to confirm working:
+#   $ qemu-img info .cache/proxmox-ve_<version>.qcow2
+
+- name: "Detect platform"
+  ansible.builtin.include_role:
+    name: "qemu_vm_create"
+    tasks_from: "platform"
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "proxmox_setup_test_image_dir is defined"
+      - "proxmox_setup_test_image_dir | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Set image name"
+  ansible.builtin.set_fact:
+    proxmox_setup_test_image_stem: >-
+      {{ proxmox_setup_test_image_dir }}/proxmox-ve_{{
+        proxmox_setup_test_image_version }}{{
+        '-arm64' if qemu_vm_create_debian_arch == 'arm64' else '' }}
+
+- name: "Set image paths"
+  ansible.builtin.set_fact:
+    proxmox_setup_test_image_iso: "{{ proxmox_setup_test_image_stem }}.iso"
+    proxmox_setup_test_image_auto_iso: >-
+      {{ proxmox_setup_test_image_stem }}-auto.iso
+    proxmox_setup_test_image_answer: >-
+      {{ proxmox_setup_test_image_stem }}-answer.toml
+    proxmox_setup_test_image_partial: >-
+      {{ proxmox_setup_test_image_stem }}.qcow2.partial
+    proxmox_setup_test_image_path: "{{ proxmox_setup_test_image_stem }}.qcow2"
+    proxmox_setup_test_image_pidfile: >-
+      {{ proxmox_setup_test_image_stem }}-install.pid
+    proxmox_setup_test_image_serial_log: >-
+      {{ proxmox_setup_test_image_stem }}-install.log
+
+- name: "Check if the image already exists"
+  ansible.builtin.stat:
+    path: "{{ proxmox_setup_test_image_path }}"
+  register: "proxmox_setup_test_image_stat"
+
+- name: "Build the image"
+  when: "not proxmox_setup_test_image_stat.stat.exists"
+  block:
+    - name: "Create image directory"
+      ansible.builtin.file:
+        path: "{{ proxmox_setup_test_image_dir }}"
+        state: "directory"
+        mode: "0755"
+
+    - name: "Download Proxmox VE ISO"
+      ansible.builtin.get_url:
+        url: >-
+          https://enterprise.proxmox.com/iso/{{
+            proxmox_setup_test_image_iso | basename }}
+        dest: "{{ proxmox_setup_test_image_iso }}"
+        checksum: >-
+          {{ proxmox_setup_test_image_iso_checksums[
+            qemu_vm_create_debian_arch] }}
+        mode: "0644"
+        timeout: 60
+      register: "proxmox_setup_test_image_download"
+      retries: 5
+      delay: 15
+      until: "proxmox_setup_test_image_download is succeeded"
+
+    - name: "Write the answer file"
+      ansible.builtin.template:
+        src: "answer.toml.j2"
+        dest: "{{ proxmox_setup_test_image_answer }}"
+        mode: "0600"
+
+    - name: "Build the auto-install assistant container image"
+      ansible.builtin.command:
+        argv:
+          - "docker"
+          - "build"
+          - "--quiet"
+          - "--tag"
+          - "proxmox-auto-install-assistant"
+          - "{{ role_path }}/files"
+      changed_when: false
+
+    - name: "Embed the answer file into the ISO"
+      ansible.builtin.command:
+        argv:
+          - "docker"
+          - "run"
+          - "--rm"
+          - "--user"
+          - "{{ ansible_facts['user_uid'] }}:{{ ansible_facts['user_gid'] }}"
+          - "--volume"
+          - "{{ proxmox_setup_test_image_dir }}:/work"
+          - "proxmox-auto-install-assistant"
+          - "prepare-iso"
+          - "/work/{{ proxmox_setup_test_image_iso | basename }}"
+          - "--fetch-from"
+          - "iso"
+          - "--answer-file"
+          - "/work/{{ proxmox_setup_test_image_answer | basename }}"
+          - "--output"
+          - "/work/{{ proxmox_setup_test_image_auto_iso | basename }}"
+        creates: "{{ proxmox_setup_test_image_auto_iso }}"
+
+    # Always start from an empty disk so a failed earlier attempt cannot
+    # leave a half-installed system that boots instead of the installer.
+    - name: "Create empty disk image"
+      ansible.builtin.command:
+        argv:
+          - "qemu-img"
+          - "create"
+          - "-f"
+          - "qcow2"
+          - "{{ proxmox_setup_test_image_partial }}"
+          - "{{ proxmox_setup_test_image_disk_size }}"
+      changed_when: true
+
+    # Same device order as qemu_vm_create so the installed system finds its
+    # disk and NIC (which vmbr0 is bound to) at the same PCI slots later.
+    # The installer only looks for its ISO on sr*/sd*/nvme* devices, never on
+    # virtio disks, so the ISO is attached as a SCSI CD-ROM after the NIC.
+    - name: "Build QEMU command arguments"
+      ansible.builtin.set_fact:
+        proxmox_setup_test_image_argv: >-
+          {{ [
+            qemu_vm_create_qemu_binary,
+            '-machine', qemu_vm_create_machine,
+            '-cpu', 'host',
+            '-accel',
+            (ansible_facts['system'] == 'Darwin') | ternary('hvf', 'kvm')
+          ]
+          + (qemu_vm_create_bios_path is defined)
+            | ternary(
+                ['-bios', qemu_vm_create_bios_path],
+                [])
+          + [
+            '-m', proxmox_setup_test_image_memory,
+            '-smp', proxmox_setup_test_image_cpus | string,
+            '-drive',
+            'file=' ~ proxmox_setup_test_image_partial
+              ~ ',if=virtio,format=qcow2',
+            '-netdev', 'user,id=net0',
+            '-device', 'virtio-net-pci,netdev=net0',
+            '-device', 'virtio-scsi-pci',
+            '-drive',
+            'id=iso,if=none,media=cdrom,readonly=on,file='
+              ~ proxmox_setup_test_image_auto_iso,
+            '-device', 'scsi-cd,drive=iso',
+            '-display', 'none',
+            '-serial', 'file:' ~ proxmox_setup_test_image_serial_log,
+            '-pidfile', proxmox_setup_test_image_pidfile,
+            '-daemonize'
+          ] }}
+
+    - name: "Run the unattended installer"
+      ansible.builtin.command:
+        argv: "{{ proxmox_setup_test_image_argv }}"
+      changed_when: true
+
+    - name: "Wait for the installer to power off"
+      ansible.builtin.shell:
+        cmd: >-
+          while kill -0 "$(cat {{ proxmox_setup_test_image_pidfile }})"
+          2>/dev/null; do sleep 5; done
+      changed_when: false
+      timeout: "{{ proxmox_setup_test_image_install_timeout }}"
+
+    # A failed installer leaves the disk untouched (a few hundred KB)
+    - name: "Check that the installer wrote the disk"
+      ansible.builtin.stat:
+        path: "{{ proxmox_setup_test_image_partial }}"
+      register: "proxmox_setup_test_image_partial_stat"
+      failed_when: >-
+        proxmox_setup_test_image_partial_stat.stat.size
+        < 1024 * 1024 * 1024
+
+    - name: "Mark the image as complete"
+      ansible.builtin.command:
+        argv:
+          - "mv"
+          - "{{ proxmox_setup_test_image_partial }}"
+          - "{{ proxmox_setup_test_image_path }}"
+      changed_when: true
+
+    - name: "Remove the prepared ISO"
+      ansible.builtin.file:
+        path: "{{ proxmox_setup_test_image_auto_iso }}"
+        state: "absent"
+
+  rescue:
+    - name: "Stop the installer"
+      ansible.builtin.shell:
+        cmd: 'kill "$(cat {{ proxmox_setup_test_image_pidfile }})"'
+      changed_when: true
+      failed_when: false
+
+    - name: "Report the failure"
+      ansible.builtin.fail:
+        msg: >-
+          Building the Proxmox VE test image failed, see
+          {{ proxmox_setup_test_image_serial_log }}
