@@ -24,3 +24,19 @@
         that:
           - "'--force-confnew' in dpkg_options.stdout"
         msg: "Dpkg::Options does not contain --force-confnew"
+
+    # Given the role was applied with an extra origin
+    # When we dump the Origins-Pattern apt config
+    # Then it contains the extra origin and still the Debian defaults
+    - name: "Dump apt Origins-Pattern"
+      ansible.builtin.command:
+        cmd: "apt-config dump Unattended-Upgrade::Origins-Pattern"
+      changed_when: false
+      register: "origins"
+
+    - name: "Assert extra origin is added and defaults are kept"
+      ansible.builtin.assert:
+        that:
+          - "'origin=Proxmox' in origins.stdout"
+          - "'origin=Debian' in origins.stdout"
+        msg: "Origins-Pattern is missing origin=Proxmox or origin=Debian"

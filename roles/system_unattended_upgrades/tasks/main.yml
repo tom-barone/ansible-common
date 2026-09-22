@@ -39,6 +39,22 @@
          "--force-{{ system_unattended_upgrades_conffile_action }}";
       };
 
+# apt merges list scopes across files, so this only appends to the origins
+# already defined in 50unattended-upgrades.
+- name: "Add extra origins for unattended upgrades"
+  ansible.builtin.copy:
+    dest: "/etc/apt/apt.conf.d/52unattended-upgrades-origins"
+    mode: "0644"
+    content: |
+      // Extra origins on top of the defaults in 50unattended-upgrades
+      {% if system_unattended_upgrades_origins %}
+      Unattended-Upgrade::Origins-Pattern {
+      {% for origin in system_unattended_upgrades_origins %}
+         "{{ origin }}";
+      {% endfor %}
+      };
+      {% endif %}
+
 - name: "Ensure unattended-upgrades is enabled and started"
   ansible.builtin.systemd:
     name: "unattended-upgrades"
