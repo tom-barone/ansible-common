@@ -75,6 +75,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y genisoimage qemu-utils qemu-system-x86
 
+      # Scenarios with a create.yml boot a QEMU VM from the Debian cloud image,
+      # except the proxmox ones, which boot the Proxmox image below instead
+      - name: "Cache the Debian cloud image"
+        if: "!startsWith(matrix.test, 'proxmox_') && hashFiles(format('tests/{0}/molecule/default/create.yml', matrix.test)) != ''"
+        uses: actions/cache@v6
+        with:
+          path: ".cache/debian-*.qcow2"
+          key: "debian-cloud-image-${{ hashFiles('roles/qemu_vm_create/tasks/main.yml') }}"
+
+      - name: "Cache the Proxmox VE test image"
+        if: "startsWith(matrix.test, 'proxmox_')"
+        uses: actions/cache@v6
+        with:
+          path: ".cache/proxmox-ve_*.qcow2"
+          key: "proxmox-test-image-${{ hashFiles('roles/proxmox_setup_test_image/**', 'tests/id_ed25519.pub') }}"
+
       - name: "Install dependencies"
         run: "just install"
 
