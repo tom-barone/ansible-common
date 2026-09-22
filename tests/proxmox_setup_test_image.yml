@@ -1,4 +1,3 @@
-# AI GENERATED - Tom Barone
 ---
 # Run once by tests/run.py before the proxmox_* scenarios start, so parallel
 # scenarios never race to build the same image.

@@ -1,4 +1,3 @@
-# AI GENERATED - Tom Barone
 ---
 - name: "Create QEMU VM"
   hosts: "localhost"

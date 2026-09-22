@@ -1,4 +1,3 @@
-# AI GENERATED - Tom Barone
 # proxmox-auto-install-assistant is only packaged for Debian, so run it in
 # a container. The Proxmox repository ships it for amd64 and arm64.
 FROM debian:trixie-slim

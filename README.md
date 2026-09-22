@@ -19,10 +19,6 @@ A non-comprehensive list of the more interesting roles:
 | `postgres_pgbackrest_install` | Deploy PostgreSQL via Docker with [pgBackRest](https://pgbackrest.org/) WAL archiving, scheduled full/differential backups and weekly repository verification against one or more configurable repositories (S3 compatible etc.), including bootstrap restore. |
 | `postgres_pgbackrest_restore_verify` | Scheduled [pgBackRest](https://pgbackrest.org/) restore test into a throwaway PostgreSQL container with verification queries. |
 | `postgres_restic_backup` | Automated PostgreSQL backups to any [Restic](https://restic.net/) supported backend, including scheduled `restic check` verification. |
-| `proxmox_create_debian_template` | Create a Proxmox VM template from a Debian cloud image with cloud-init, the QEMU guest agent and a serial console. |
-| `proxmox_create_vm` | Clone a Proxmox template into a running VM, optionally with a vhost-vsock device, and return its IP address. |
-| `proxmox_no_subscription` | Switch a Proxmox VE host to the no-subscription package repositories. |
-| `proxmox_setup_test_image` | Build a Proxmox VE test image from the official ISO with an unattended installation, used to test the `proxmox_*` roles under QEMU. |
 | `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |
 | `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
 | `system_harden_ssh` | Harden SSH setting up authorized keys, and configuring sshd security parameters. |
@@ -40,8 +36,6 @@ See the `Justfile` for development tasks.
 ## Testing
 
 Every role has a corresponding [molecule](https://docs.ansible.com/projects/molecule/) test and are required to pass idempotence checks.
-
-The `proxmox_*` tests boot a Proxmox VE image that `proxmox_setup_test_image` builds into `.cache/`. The first run needs Docker running, downloads the 1.6 GB ISO and then installs Proxmox VE unattended under QEMU, which takes 5 to 10 minutes. Delete `.cache/proxmox-ve_*.qcow2` to rebuild the image, for example after changing the SSH key that gets baked into it.
 
 Use this task in a playbook to pause execution and allow for manual verification of the container state during testing:
 
