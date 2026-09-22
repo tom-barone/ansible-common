@@ -1,0 +1,35 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role passed the USB device through
+    # When we read the VM configuration
+    # Then usb0 is the requested vendor:product ID
+    - name: "Read VM configuration"
+      ansible.builtin.command:
+        cmd: "qm config 100"
+      register: "vm_config"
+      changed_when: false
+
+    - name: "Assert the USB device is in the VM configuration"
+      ansible.builtin.assert:
+        that:
+          - "'usb0: host=0781:5583' in vm_config.stdout"
+        msg: "Unexpected VM configuration: {{ vm_config.stdout }}"
+
+    # Given the USB device is in the VM configuration
+    # When Proxmox builds the QEMU command line for the VM
+    # Then it hands QEMU a usb-host device with that vendor and product ID
+    - name: "Read the QEMU command line"
+      ansible.builtin.command:
+        cmd: "qm showcmd 100"
+      register: "vm_command"
+      changed_when: false
+
+    - name: "Assert QEMU gets the USB device"
+      ansible.builtin.assert:
+        that:
+          - "'usb-host,' in vm_command.stdout"
+          - "'vendorid=0x0781,productid=0x5583' in vm_command.stdout"
+        msg: "Unexpected QEMU command line: {{ vm_command.stdout }}"

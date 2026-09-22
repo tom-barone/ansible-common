@@ -1,0 +1,47 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to pass a USB device plugged into a Proxmox host through to
+# a VM.
+#
+# The device is named the way Proxmox addresses USB devices: by its USB
+# vendor:product ID (from lsusb on the host) or by bus-port. Both survive
+# reboots and do not depend on device names like sdb. Two identical devices
+# cannot be told apart by ID, so use bus-port for those.
+#
+# Proxmox hot-plugs the device into a running VM with machine version 7.1
+# or later; otherwise it is attached at the next start.
+#
+# Tests to confirm working:
+#   $ qm config <id>
+#     -> "usb0: host=0781:5583"
+#   $ lsusb   (in the guest)
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "proxmox_usb_passthrough_vm_id is defined"
+      - "proxmox_usb_passthrough_device is defined"
+    msg: "Missing a required variable"
+
+- name: "Read VM config"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "config"
+      - "{{ proxmox_usb_passthrough_vm_id }}"
+  register: "proxmox_usb_passthrough_config"
+  changed_when: false
+
+- name: "Pass the USB device through to the VM"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "set"
+      - "{{ proxmox_usb_passthrough_vm_id }}"
+      - "--usb{{ proxmox_usb_passthrough_index }}"
+      - "host={{ proxmox_usb_passthrough_device }}"
+  when: >-
+    'usb' ~ proxmox_usb_passthrough_index ~ ': host='
+    ~ proxmox_usb_passthrough_device
+    not in proxmox_usb_passthrough_config.stdout
+  changed_when: true
