@@ -1,0 +1,71 @@
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role cloned the template and configured the VM
+    # When we read the VM configuration with the real qm
+    # Then it has the expected name, resources, autostart and inherited
+    # serial console
+    - name: "Read VM configuration"
+      ansible.builtin.command:
+        cmd: "/usr/sbin/qm config 100"
+      register: "vm_config"
+      changed_when: false
+
+    - name: "Assert VM is configured as requested"
+      ansible.builtin.assert:
+        that:
+          - "'name: test-vm' in vm_config.stdout"
+          - "'cores: 2' in vm_config.stdout"
+          - "'memory: 2048' in vm_config.stdout"
+          - "'balloon: 1024' in vm_config.stdout"
+          - "'onboot: 1' in vm_config.stdout"
+          - "'serial0: socket' in vm_config.stdout"
+        msg: "Unexpected VM configuration: {{ vm_config.stdout }}"
+
+    # Given the role resized the boot disk
+    # When we look at the boot disk line
+    # Then its size is the requested 6G
+    - name: "Assert boot disk was resized"
+      ansible.builtin.assert:
+        that:
+          - >-
+            vm_config.stdout_lines
+            | select('match', '^scsi0: local-lvm:.*size=6G$')
+            | length == 1
+        msg: "Boot disk was not resized to 6G: {{ vm_config.stdout }}"
+
+    # Given vsock is enabled
+    # When we look at the extra QEMU arguments
+    # Then a vhost-vsock device with the VM ID as context ID is attached
+    - name: "Assert vhost-vsock device is attached"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'args: -device vhost-vsock-pci,guest-cid=100'
+            in vm_config.stdout
+        msg: "vhost-vsock device is missing: {{ vm_config.stdout }}"
+
+    # Given vsock is enabled
+    # When we check the kernel modules
+    # Then vhost_vsock is loaded now and at boot
+    - name: "List loaded kernel modules"
+      ansible.builtin.command:
+        cmd: "lsmod"
+      register: "lsmod"
+      changed_when: false
+
+    - name: "Read vhost_vsock modules-load config"
+      ansible.builtin.slurp:
+        src: "/etc/modules-load.d/vhost_vsock.conf"
+      register: "modules_load"
+
+    - name: "Assert vhost_vsock is loaded now and at boot"
+      vars:
+        content: "{{ modules_load.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - >-
+            lsmod.stdout_lines | select('match', '^vhost_vsock ') | length == 1
+          - "'vhost_vsock' in content"
+        msg: "vhost_vsock is not loaded persistently"

@@ -1,0 +1,21 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "proxmox_create_vm"
+      vars:
+        proxmox_create_vm_template_id: 9000
+        proxmox_create_vm_id: 100
+        proxmox_create_vm_name: "test-vm"
+        proxmox_create_vm_disk_size: "6G"
+
+    # Given the role waited for the (mocked) guest agent
+    # When we look at the fact it sets
+    # Then it holds the guest's first non-loopback IPv4 address
+    - name: "Assert the guest IP was parsed"
+      ansible.builtin.assert:
+        that:
+          - "proxmox_create_vm_ip == '10.0.2.15'"
+        msg: "Unexpected guest IP: {{ proxmox_create_vm_ip }}"
