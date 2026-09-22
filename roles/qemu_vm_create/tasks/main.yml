@@ -11,11 +11,14 @@
         ~ qemu_vm_create_debian_arch
         ~ '-daily.qcow2')
       }}
+  when: "qemu_vm_create_base_image is not defined"
 
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - "qemu_vm_create_image_url is defined"
+      - >-
+        qemu_vm_create_image_url is defined
+        or qemu_vm_create_base_image is defined
       - "qemu_vm_create_dir is defined"
       - "qemu_vm_create_name is defined"
       - "qemu_vm_create_disk_size is defined"
@@ -32,9 +35,10 @@
     qemu_vm_create_vm_dir: >-
       {{ qemu_vm_create_dir }}/{{ qemu_vm_create_name }}
     qemu_vm_create_base_image: >-
-      {{ qemu_vm_create_dir }}/images/{{
-        qemu_vm_create_image_url | basename
-      }}
+      {{ qemu_vm_create_base_image
+         if qemu_vm_create_base_image is defined
+         else qemu_vm_create_dir ~ '/images/'
+           ~ (qemu_vm_create_image_url | basename) }}
     qemu_vm_create_disk_image: >-
       {{ qemu_vm_create_dir }}/{{
         qemu_vm_create_name
@@ -68,6 +72,7 @@
   retries: 5
   delay: 15
   until: "qemu_vm_create_download_result is succeeded"
+  when: "qemu_vm_create_image_url is defined"
 
 - name: "Create COW overlay from base image"
   ansible.builtin.command:
