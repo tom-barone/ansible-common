@@ -1,0 +1,19 @@
+# AI GENERATED - Tom Barone
+# https://pve.proxmox.com/wiki/Automated_Installation
+[global]
+keyboard = "en-us"
+country = "au"
+fqdn = "proxmox-test.local"
+mailto = "root@proxmox-test.local"
+timezone = "UTC"
+root-password = "{{ proxmox_setup_test_image_root_password }}"
+root-ssh-keys = ["{{ proxmox_setup_test_image_ssh_public_key }}"]
+reboot-on-error = false
+reboot-mode = "power-off"
+
+[network]
+source = "from-dhcp"
+
+[disk-setup]
+filesystem = "ext4"
+disk-list = ["vda"]

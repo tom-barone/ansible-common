@@ -1,0 +1,14 @@
+# AI GENERATED - Tom Barone
+---
+# Run once by tests/run.py before the proxmox_* scenarios start, so parallel
+# scenarios never race to build the same image.
+- name: "Build the Proxmox VE test image"
+  hosts: "localhost"
+  connection: "local"
+  gather_facts: false
+  tasks:
+    - name: "Build image"
+      ansible.builtin.include_role:
+        name: "proxmox_setup_test_image"
+      vars:
+        proxmox_setup_test_image_dir: "{{ lookup('env', 'CACHE_DIR') }}"

@@ -1,0 +1,21 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# proxmox_setup_test_image_dir: "/path/to/.cache"
+
+proxmox_setup_test_image_version: "9.2-1"
+# From https://enterprise.proxmox.com/iso/SHA256SUMS
+proxmox_setup_test_image_iso_checksums:
+  amd64: >-
+    sha256:4e88fe416df9b527624a175f24c9aa07c714d3332afb1ee3dbf3879573ef2c6c
+  arm64: >-
+    sha256:b1619dcd1f5b1a6d67d77b59e7e2fa2033174551d1e1b9dc22b2171ec093abbd
+proxmox_setup_test_image_disk_size: "32G"
+proxmox_setup_test_image_memory: "4G"
+proxmox_setup_test_image_cpus: 2
+# The installer insists on a root password. Tests log in with the SSH key.
+proxmox_setup_test_image_root_password: "proxmox-test-image"
+proxmox_setup_test_image_ssh_public_key: >-
+  {{ lookup('file', '~/.ssh/id_ed25519.pub') }}
+# Seconds to wait for the unattended installer to finish and power off
+proxmox_setup_test_image_install_timeout: 1800

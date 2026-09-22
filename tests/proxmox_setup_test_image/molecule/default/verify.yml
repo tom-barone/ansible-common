@@ -1,0 +1,55 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  gather_facts: false
+  tasks:
+    # Given the image was built by the unattended installer
+    # When we query the Proxmox VE version
+    # Then it reports the expected major release
+    - name: "Get Proxmox VE version"
+      ansible.builtin.command:
+        cmd: "pveversion"
+      register: "pveversion"
+      changed_when: false
+
+    - name: "Assert Proxmox VE 9.2 is installed"
+      ansible.builtin.assert:
+        that:
+          - "'pve-manager/9.2' in pveversion.stdout"
+        msg: "Unexpected pveversion output: {{ pveversion.stdout }}"
+
+    # Given the installer configured the network from DHCP
+    # When we look for the default bridge
+    # Then vmbr0 exists
+    - name: "Show vmbr0"
+      ansible.builtin.command:
+        cmd: "ip link show vmbr0"
+      register: "vmbr0"
+      changed_when: false
+
+    - name: "Assert vmbr0 exists"
+      ansible.builtin.assert:
+        that:
+          - "vmbr0.rc == 0"
+        msg: "vmbr0 bridge is missing"
+
+    # Given the installer set up ext4 on LVM
+    # When we list the storages
+    # Then local and local-lvm are active
+    - name: "List storages"
+      ansible.builtin.command:
+        cmd: "pvesm status"
+      register: "pvesm"
+      changed_when: false
+
+    - name: "Assert default storages are active"
+      ansible.builtin.assert:
+        that:
+          - >-
+            pvesm.stdout_lines
+            | select('match', '^local\\s+dir\\s+active') | length == 1
+          - >-
+            pvesm.stdout_lines
+            | select('match', '^local-lvm\\s+lvmthin\\s+active') | length == 1
+        msg: "Unexpected pvesm status output: {{ pvesm.stdout }}"
