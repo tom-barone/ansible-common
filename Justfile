@@ -11,7 +11,7 @@ lint:
     # https://github.com/ansible/ansible-lint/issues/4533
     rm -rf .ansible
     uv run yamllint --strict tests roles
-    actionlint
+    actionlint -color
     git ls-files -z '*.sh' | xargs -0 shellcheck --severity=style
     # Test logcheck matchers
     ./roles/system_logcheck/test.sh
