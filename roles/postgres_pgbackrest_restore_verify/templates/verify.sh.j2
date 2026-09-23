@@ -67,8 +67,8 @@ echo "Restore complete. Running verification queries..."
 FAILED=0
 {% for query in postgres_pgbackrest_restore_verify_queries %}
 
-echo "Running query {{ loop.index }}: {{ query }}"
-RESULT=$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -t -A -c "{{ query }}")
+echo "Running query {{ loop.index }}:" {{ query | quote }}
+RESULT=$(docker exec "${CONTAINER_NAME}" psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -t -A -c {{ query | quote }})
 if [ -z "${RESULT}" ] || [ "${RESULT}" = "0" ] || [ "${RESULT}" = "f" ]; then
   echo "FAIL: Query {{ loop.index }} returned '${RESULT}'"
   FAILED=1
