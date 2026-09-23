@@ -10,7 +10,7 @@ ADD --chmod=644 \
 RUN echo "deb [signed-by=/usr/share/keyrings/proxmox-archive-keyring.gpg] http://download.proxmox.com/debian/pve trixie pve-no-subscription" \
     > /etc/apt/sources.list.d/pve.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends proxmox-auto-install-assistant xorriso \
+    && apt-get install -y --no-install-recommends proxmox-auto-install-assistant=9.2.8 xorriso=1.5.6-1.2+b1 \
     && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["proxmox-auto-install-assistant"]
