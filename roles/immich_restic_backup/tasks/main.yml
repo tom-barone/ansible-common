@@ -1,6 +1,6 @@
 ---
-# Run immich_install first: the restore guard query needs the Immich
-# schema, and a restored dump needs the same VectorChord postgres image.
+# Run immich_install first so the server container exists to stop
+# around a bootstrap restore.
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
@@ -9,8 +9,6 @@
       - "immich_restic_backup_env is mapping"
       - "immich_restic_backup_restic_password is defined"
       - "immich_restic_backup_restic_password | length > 0"
-      - "immich_restic_backup_postgres_container is defined"
-      - "immich_restic_backup_postgres_container | length > 0"
       - "immich_restic_backup_server_container is defined"
       - "immich_restic_backup_server_container | length > 0"
       - "immich_restic_backup_upload_location is defined"
@@ -18,12 +16,6 @@
       - "immich_restic_backup_media_dirs is defined"
       - "immich_restic_backup_media_dirs | length > 0"
     msg: "Missing a required variable"
-
-- name: "Create database dump directory"
-  ansible.builtin.file:
-    path: "{{ immich_restic_backup_dir }}/db"
-    state: "directory"
-    mode: "0700"
 
 - name: "Apply restic_backup role"
   ansible.builtin.include_role:
@@ -50,15 +42,7 @@
     restic_backup_restic_password: >-
       {{ immich_restic_backup_restic_password }}
     restic_backup_command: >-
-      docker exec {{ immich_restic_backup_postgres_container }}
-      pg_dumpall --clean --if-exists
-      -U {{ immich_restic_backup_postgres_user }}
-      > {{ immich_restic_backup_dir }}/db/pg_dumpall.sql
-      && restic backup --quiet {{ immich_restic_backup_dir }}/db
-      {{ immich_restic_backup_media_dirs
-      | map('regex_replace', '^',
-      immich_restic_backup_upload_location ~ '/')
-      | join(' ') }}
+      restic backup --quiet {{ immich_restic_backup_media_paths }}
 
 - name: "Check restic repo for existing snapshots"
   ansible.builtin.command:
@@ -69,14 +53,16 @@
   changed_when: false
   when: "immich_restic_backup_restore_on_bootstrap | bool"
 
-- name: "Count Immich users in the running database"
+# Immich writes a .immich marker into every media directory on startup,
+# so ignore it when deciding whether the media is still empty. find
+# exits non-zero when a directory does not exist yet.
+- name: "Check for existing media files"
   ansible.builtin.command:
     cmd: >-
-      docker exec {{ immich_restic_backup_postgres_container }}
-      psql -U {{ immich_restic_backup_postgres_user }}
-      -d {{ immich_restic_backup_database }} -t -A -c
-      '{{ immich_restic_backup_restore_guard_query }}'
-  register: "immich_restic_backup_user_count"
+      find {{ immich_restic_backup_media_paths }}
+      -type f ! -name .immich -print -quit
+  register: "immich_restic_backup_media_files"
+  failed_when: false
   changed_when: false
   when: "immich_restic_backup_restore_on_bootstrap | bool"
 
@@ -87,8 +73,8 @@
         immich_restic_backup_restore_on_bootstrap | bool
         and (immich_restic_backup_latest_snapshots.stdout
              | default('[]') | from_json | length) > 0
-        and (immich_restic_backup_user_count.stdout
-             | default('0') | trim | int) == 0
+        and (immich_restic_backup_media_files.stdout
+             | default('') | length) == 0
       }}
   when: "immich_restic_backup_restore_on_bootstrap | bool"
 
@@ -106,20 +92,6 @@
       set -euo pipefail;
       source {{ immich_restic_backup_dir }}/env;
       restic restore latest --target /
-    executable: "/bin/bash"
-  when:
-    - "immich_restic_backup_restore_on_bootstrap | bool"
-    - "immich_restic_backup_should_restore | bool"
-  changed_when: true
-
-- name: "Restore database from the latest snapshot dump"
-  ansible.builtin.shell:
-    cmd: >-
-      set -euo pipefail;
-      source {{ immich_restic_backup_dir }}/env;
-      restic dump latest {{ immich_restic_backup_dir }}/db/pg_dumpall.sql
-      | docker exec -i {{ immich_restic_backup_postgres_container }}
-      psql -U {{ immich_restic_backup_postgres_user }} -d postgres
     executable: "/bin/bash"
   when:
     - "immich_restic_backup_restore_on_bootstrap | bool"

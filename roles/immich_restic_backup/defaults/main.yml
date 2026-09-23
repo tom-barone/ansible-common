@@ -8,6 +8,9 @@
 #   AWS_ACCESS_KEY_ID: "AKIA..."
 #   AWS_SECRET_ACCESS_KEY: "secret"
 #
+# Only the original media is backed up here; the database is covered by
+# postgres_pgbackrest_install.
+#
 # To run manually:
 #   $ cd /opt/immich-backup
 #   $ ./verify.sh
@@ -27,11 +30,9 @@ immich_restic_backup_media_dirs:
   - "library"
   - "upload"
   - "profile"
-immich_restic_backup_postgres_container: "immich_postgres"
+immich_restic_backup_media_paths: >-
+  {{ immich_restic_backup_media_dirs
+  | map('regex_replace', '^', immich_restic_backup_upload_location ~ '/')
+  | join(' ') }}
 immich_restic_backup_server_container: "immich_server"
-immich_restic_backup_postgres_user: >-
-  {{ immich_install_db_username | default('postgres') }}
-immich_restic_backup_database: >-
-  {{ immich_install_db_database_name | default('immich') }}
 immich_restic_backup_restore_on_bootstrap: true
-immich_restic_backup_restore_guard_query: 'SELECT count(*) FROM "user";'
