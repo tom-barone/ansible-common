@@ -37,6 +37,12 @@ postgres_pgbackrest_install_container_name: "postgres"
 postgres_pgbackrest_install_container_uid: "999"
 postgres_pgbackrest_install_container_gid: "999"
 postgres_pgbackrest_install_initdb_args: ""
+# Extra postgres settings, rendered as -c key=value on the command line
+postgres_pgbackrest_install_settings: {}
+# Database created at initdb (POSTGRES_DB); a bootstrap restore brings
+# its own databases, so this only matters on a fresh cluster
+postgres_pgbackrest_install_database: ""
+postgres_pgbackrest_install_shm_size: "128mb"
 postgres_pgbackrest_install_image: >-
   postgres-pgbackrest:{{ postgres_pgbackrest_install_version }}
 postgres_pgbackrest_install_pgbouncer_enabled: true

@@ -19,6 +19,22 @@
         that:
           - "marker_query.stdout | trim == '42'"
 
+    # Given an entry in postgres_pgbackrest_install_settings
+    # When postgres starts with it on the command line
+    # Then SHOW reports that value
+    - name: "Show a setting passed on the command line"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec postgres
+          psql -U postgres -t -A -c "SHOW max_connections;"
+      register: "max_connections"
+      changed_when: false
+
+    - name: "Assert the extra setting is applied"
+      ansible.builtin.assert:
+        that:
+          - "max_connections.stdout | trim == '150'"
+
     - name: "Check pgBouncer accepts connections"
       ansible.builtin.command:
         cmd: >-
