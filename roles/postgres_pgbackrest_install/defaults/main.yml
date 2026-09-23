@@ -20,6 +20,11 @@
 #     retention-full: 4
 
 postgres_pgbackrest_install_version: "18.3"
+# The pgbackrest pin must match the Debian release of the base image
+# (pgdg13 = trixie, pgdg12 = bookworm)
+postgres_pgbackrest_install_base_image: >-
+  postgres:{{ postgres_pgbackrest_install_version }}
+postgres_pgbackrest_install_pgbackrest_version: "2.59.0-1.pgdg13+1"
 postgres_pgbackrest_install_dir: "/opt/postgres"
 postgres_pgbackrest_install_port: 5432
 postgres_pgbackrest_install_user: "postgres"
