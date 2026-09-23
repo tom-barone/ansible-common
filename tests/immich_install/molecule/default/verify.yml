@@ -35,23 +35,58 @@
       ansible.builtin.assert:
         that:
           - "'immich_server' in running_containers.stdout_lines"
-          - "'immich_postgres' in running_containers.stdout_lines"
           - "'immich_redis' in running_containers.stdout_lines"
+          - "'postgres' in running_containers.stdout_lines"
+          - "'immich_postgres' not in running_containers.stdout_lines"
           - "'immich_machine_learning' not in running_containers.stdout_lines"
 
-    # Pins the schema assumption behind immich_restic_backup's restore
-    # guard query. If a future Immich version renames the table, this
-    # test fails before any production backup role misbehaves.
+    # Given a fresh Immich using the external database
+    # When the first admin signs up through the API
+    # Then the user row lands in the external database
+    - name: "Create the admin user"
+      ansible.builtin.uri:
+        url: "http://localhost:2283/api/auth/admin-sign-up"
+        method: "POST"
+        body_format: "json"
+        body:
+          email: "admin@example.com"
+          password: "testpassword123"
+          name: "Admin"
+        status_code: 201
+
+    # Pins the schema assumption behind the restore verify query in
+    # converge.yml. If a future Immich version renames the table, this
+    # test fails before the production restore verify does.
     - name: "Count rows in the user table"
       ansible.builtin.command:
         cmd: >-
-          docker exec immich_postgres
+          docker exec postgres
           psql -U postgres -d immich -t -A -c
           'SELECT count(*) FROM "user";'
       register: "user_count"
       changed_when: false
 
-    - name: "Assert fresh Immich has an empty user table"
+    - name: "Assert the admin user is in the external database"
       ansible.builtin.assert:
         that:
-          - "user_count.stdout | trim | int == 0"
+          - "user_count.stdout | trim | int == 1"
+
+    # Given a full pgBackRest backup of the Immich database
+    # When the restore verify script runs
+    # Then the throwaway restore answers the user query
+    - name: "Run full backup"
+      ansible.builtin.command:
+        cmd: "/opt/postgres/backup.sh full"
+      changed_when: true
+
+    - name: "Run restore verify script"
+      ansible.builtin.command:
+        cmd: "/opt/pgbackrest-restore-verify/verify.sh"
+      register: "verify_run"
+      changed_when: false
+
+    - name: "Assert the Immich database restores and verifies"
+      ansible.builtin.assert:
+        that:
+          - "'PASS' in verify_run.stdout"
+          - "'FAIL' not in verify_run.stdout"

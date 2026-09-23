@@ -72,6 +72,9 @@
       vars:
         postgres_pgbackrest_install_password: "testpassword123"
         postgres_pgbackrest_install_network: "postgres_network"
+        postgres_pgbackrest_install_database: "bootstrap_restore_test"
+        postgres_pgbackrest_install_settings:
+          max_connections: 150
         postgres_pgbackrest_install_repos:
           - type: "s3"
             path: "/pgbackrest"
@@ -99,14 +102,6 @@
             cipher-type: "aes-256-cbc"
             cipher-pass: "testcipherpass"
             retention-full: 2
-
-    - name: "Create test database to restore"
-      ansible.builtin.command:
-        cmd: >-
-          docker exec postgres
-          psql -U postgres -c
-          "CREATE DATABASE bootstrap_restore_test;"
-      changed_when: true
 
     - name: "Seed test database with marker row"
       ansible.builtin.command:

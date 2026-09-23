@@ -20,6 +20,11 @@
 #     retention-full: 4
 
 postgres_pgbackrest_install_version: "18.3"
+# The pgbackrest pin must match the Debian release of the base image
+# (pgdg13 = trixie, pgdg12 = bookworm)
+postgres_pgbackrest_install_base_image: >-
+  postgres:{{ postgres_pgbackrest_install_version }}
+postgres_pgbackrest_install_pgbackrest_version: "2.59.0-1.pgdg13+1"
 postgres_pgbackrest_install_dir: "/opt/postgres"
 postgres_pgbackrest_install_port: 5432
 postgres_pgbackrest_install_user: "postgres"
@@ -32,6 +37,12 @@ postgres_pgbackrest_install_container_name: "postgres"
 postgres_pgbackrest_install_container_uid: "999"
 postgres_pgbackrest_install_container_gid: "999"
 postgres_pgbackrest_install_initdb_args: ""
+# Extra postgres settings, rendered as -c key=value on the command line
+postgres_pgbackrest_install_settings: {}
+# Database created at initdb (POSTGRES_DB); a bootstrap restore brings
+# its own databases, so this only matters on a fresh cluster
+postgres_pgbackrest_install_database: ""
+postgres_pgbackrest_install_shm_size: "128mb"
 postgres_pgbackrest_install_image: >-
   postgres-pgbackrest:{{ postgres_pgbackrest_install_version }}
 postgres_pgbackrest_install_pgbouncer_enabled: true

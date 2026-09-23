@@ -25,25 +25,27 @@
     src: "Dockerfile"
     dest: "{{ postgres_pgbackrest_install_dir }}/Dockerfile"
     mode: "0644"
-  register: "postgres_pgbackrest_install_dockerfile"
 
-- name: "Check for existing image"
+- name: "Get current image ID"
   ansible.builtin.command:
-    cmd: >-
-      docker image inspect {{ postgres_pgbackrest_install_image }}
-  register: "postgres_pgbackrest_install_image_check"
-  failed_when: false
+    cmd: "docker images -q --no-trunc {{ postgres_pgbackrest_install_image }}"
+  register: "postgres_pgbackrest_install_image_before"
   changed_when: false
 
+# Always build: an unchanged build is a cache hit that returns the same
+# ID, while a new base image, pin or Dockerfile yields a new one
 - name: "Build postgres image with pgbackrest"
   ansible.builtin.command:
     cmd: >-
-      docker build -t {{ postgres_pgbackrest_install_image }}
-      --build-arg POSTGRES_VERSION={{ postgres_pgbackrest_install_version }}
+      docker build -q -t {{ postgres_pgbackrest_install_image }}
+      --build-arg BASE_IMAGE={{ postgres_pgbackrest_install_base_image }}
+      --build-arg PGBACKREST_VERSION={{
+      postgres_pgbackrest_install_pgbackrest_version }}
       {{ postgres_pgbackrest_install_dir }}
+  register: "postgres_pgbackrest_install_build"
   changed_when: >-
-    postgres_pgbackrest_install_dockerfile.changed
-    or postgres_pgbackrest_install_image_check.rc != 0
+    postgres_pgbackrest_install_build.stdout | trim
+    != postgres_pgbackrest_install_image_before.stdout | trim
 
 - name: "Deploy pgbackrest.conf"
   ansible.builtin.template:

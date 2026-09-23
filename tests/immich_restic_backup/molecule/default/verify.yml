@@ -182,20 +182,6 @@
         that:
           - "not legacy_verify_dir.stat.exists"
 
-    - name: "Query restored marker user"
-      ansible.builtin.command:
-        cmd: >-
-          docker exec immich_postgres
-          psql -U postgres -d immich -t -A -c
-          'SELECT name FROM "user";'
-      register: "marker_query"
-      changed_when: false
-
-    - name: "Assert restored database data matches"
-      ansible.builtin.assert:
-        that:
-          - "marker_query.stdout | trim == 'marker'"
-
     - name: "Read restored marker media file"
       ansible.builtin.slurp:
         src: "/opt/immich/data/library/marker.jpg"
