@@ -1,0 +1,18 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "system_mount_path is defined"
+      - "system_mount_path | length > 0"
+      - "system_mount_state is defined"
+      - "system_mount_state | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Manage mount"
+  ansible.posix.mount:
+    path: "{{ system_mount_path }}"
+    state: "{{ system_mount_state }}"
+    src: "{{ system_mount_src | default(omit) }}"
+    fstype: "{{ system_mount_fstype | default(omit) }}"
+    opts: "{{ system_mount_opts | default(omit) }}"

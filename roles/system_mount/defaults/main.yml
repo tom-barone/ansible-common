@@ -1,0 +1,10 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# system_mount_path: "/mnt/data"
+# system_mount_state: "mounted"
+
+# Optional vars (no default):
+# system_mount_src: "/dev/sdb1"
+# system_mount_fstype: "ext4"
+# system_mount_opts: "defaults,noatime"
