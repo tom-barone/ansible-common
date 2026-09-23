@@ -12,6 +12,11 @@ services:
         archive_command=pgbackrest
         --stanza={{ postgres_pgbackrest_install_stanza }}
         archive-push %p
+{% for key, value in postgres_pgbackrest_install_settings.items() %}
+      - "-c"
+      - "{{ key }}={{ value }}"
+{% endfor %}
+    shm_size: "{{ postgres_pgbackrest_install_shm_size }}"
 {% if postgres_pgbackrest_install_pgbouncer_enabled %}
     expose:
       - "5432"
@@ -25,6 +30,9 @@ services:
     environment:
       POSTGRES_USER: "{{ postgres_pgbackrest_install_user }}"
       POSTGRES_PASSWORD: "{{ postgres_pgbackrest_install_password }}"
+{% if postgres_pgbackrest_install_database %}
+      POSTGRES_DB: "{{ postgres_pgbackrest_install_database }}"
+{% endif %}
 {% if postgres_pgbackrest_install_initdb_args %}
       POSTGRES_INITDB_ARGS: "{{ postgres_pgbackrest_install_initdb_args }}"
 {% endif %}
