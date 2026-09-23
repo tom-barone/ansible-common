@@ -12,6 +12,7 @@ lint:
     rm -rf .ansible
     uv run yamllint --strict tests roles
     actionlint -color
+    git ls-files -z -- '*Dockerfile*' | xargs -0 -r hadolint
     git ls-files -z '*.sh' | xargs -0 shellcheck --severity=style
     # Test logcheck matchers
     ./roles/system_logcheck/test.sh
