@@ -21,8 +21,8 @@
     mode: "0755"
 
 - name: "Deploy Dockerfile"
-  ansible.builtin.template:
-    src: "Dockerfile.j2"
+  ansible.builtin.copy:
+    src: "Dockerfile"
     dest: "{{ postgres_pgbackrest_install_dir }}/Dockerfile"
     mode: "0644"
   register: "postgres_pgbackrest_install_dockerfile"
@@ -39,6 +39,7 @@
   ansible.builtin.command:
     cmd: >-
       docker build -t {{ postgres_pgbackrest_install_image }}
+      --build-arg POSTGRES_VERSION={{ postgres_pgbackrest_install_version }}
       {{ postgres_pgbackrest_install_dir }}
   changed_when: >-
     postgres_pgbackrest_install_dockerfile.changed
