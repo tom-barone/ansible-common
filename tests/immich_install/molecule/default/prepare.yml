@@ -14,3 +14,84 @@
         name: "docker_network_create"
       vars:
         docker_network_create_name: "immich_network"
+
+    - name: "Create MinIO certs directory"
+      ansible.builtin.file:
+        path: "/opt/minio-certs"
+        state: "directory"
+        mode: "0755"
+
+    # pgBackRest only speaks TLS to object stores, so MinIO needs a
+    # self-signed certificate
+    - name: "Generate self-signed TLS certificate for MinIO"
+      ansible.builtin.command:
+        cmd: >-
+          openssl req -x509 -newkey rsa:2048 -nodes -days 365
+          -keyout /opt/minio-certs/private.key
+          -out /opt/minio-certs/public.crt
+          -subj "/CN=minio"
+          -addext "subjectAltName=DNS:minio,DNS:localhost,IP:127.0.0.1"
+        creates: "/opt/minio-certs/public.crt"
+
+    - name: "Start MinIO with TLS"
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d
+          --name minio
+          --network immich_network
+          -p 9000:9000
+          -v /opt/minio-certs:/root/.minio/certs
+          -e MINIO_ROOT_USER=test
+          -e MINIO_ROOT_PASSWORD=testpassword
+          quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data
+      changed_when: true
+
+    - name: "Wait for MinIO to be ready"
+      ansible.builtin.uri:
+        url: "https://localhost:9000/minio/health/live"
+        status_code: 200
+        validate_certs: false
+      register: "minio_health"
+      until: "minio_health.status == 200"
+      retries: 30
+      delay: 5
+
+    - name: "Create S3 bucket"
+      ansible.builtin.command:
+        cmd: >-
+          docker exec minio
+          mkdir /data/test-backup-bucket
+      changed_when: true
+
+    # Immich needs the VectorChord extension, which its own postgres
+    # image ships (Debian bookworm, hence the pgdg12 pgbackrest pin).
+    # config_file loads that image's tuned postgresql.conf, which sets
+    # shared_preload_libraries. Immich connects to postgres:5432 on the
+    # shared network, so pgbouncer is not needed.
+    - name: "Install PostgreSQL with pgBackRest on Immich's postgres image"
+      ansible.builtin.include_role:
+        name: "postgres_pgbackrest_install"
+      vars:
+        postgres_pgbackrest_install_password: "testpassword123"
+        postgres_pgbackrest_install_network: "immich_network"
+        postgres_pgbackrest_install_base_image: >-
+          ghcr.io/immich-app/postgres:18-vectorchord1.1.1-pgvector0.8.5
+        postgres_pgbackrest_install_pgbackrest_version: "2.59.0-1.pgdg12+1"
+        postgres_pgbackrest_install_settings:
+          config_file: "/etc/postgresql/postgresql.conf"
+        postgres_pgbackrest_install_database: "immich"
+        postgres_pgbackrest_install_pgbouncer_enabled: false
+        postgres_pgbackrest_install_repos:
+          - type: "s3"
+            path: "/pgbackrest"
+            s3-endpoint: "minio"
+            s3-bucket: "test-backup-bucket"
+            s3-region: "us-east-1"
+            s3-key: "test"
+            s3-key-secret: "testpassword"
+            s3-uri-style: "path"
+            storage-port: 9000
+            storage-verify-tls: "n"
+            cipher-type: "aes-256-cbc"
+            cipher-pass: "testcipherpass"
+            retention-full: 2

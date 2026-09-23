@@ -8,7 +8,8 @@ services:
       # The container follows the host timezone
       - "/etc/localtime:/etc/localtime:ro"
     environment:
-      DB_HOSTNAME: "database"
+      DB_HOSTNAME: "{{ immich_install_db_hostname }}"
+      DB_PORT: "{{ immich_install_db_port }}"
       DB_USERNAME: "{{ immich_install_db_username }}"
       DB_PASSWORD: "{{ immich_install_db_password }}"
       DB_DATABASE_NAME: "{{ immich_install_db_database_name }}"
@@ -20,7 +21,6 @@ services:
       - "{{ immich_install_host }}:{{ immich_install_port }}:2283"
     depends_on:
       - "redis"
-      - "database"
     healthcheck:
       disable: false
 
@@ -41,21 +41,6 @@ services:
     restart: "unless-stopped"
     healthcheck:
       test: "redis-cli ping || exit 1"
-
-  database:
-    image: "{{ immich_install_postgres_image }}"
-    container_name: "{{ immich_install_postgres_container_name }}"
-    restart: "unless-stopped"
-    environment:
-      POSTGRES_PASSWORD: "{{ immich_install_db_password }}"
-      POSTGRES_USER: "{{ immich_install_db_username }}"
-      POSTGRES_DB: "{{ immich_install_db_database_name }}"
-      POSTGRES_INITDB_ARGS: "--data-checksums"
-    volumes:
-      - "{{ immich_install_db_data_location }}:/var/lib/postgresql/data"
-    shm_size: "128mb"
-    healthcheck:
-      disable: false
 
 {% if immich_install_machine_learning %}
 volumes:

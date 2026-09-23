@@ -42,8 +42,8 @@
     'Started' in immich_install_up.stderr or
     'Created' in immich_install_up.stderr
 
-# A 200 ping implies the server finished its database migrations, so
-# dependent roles (e.g. immich_restic_backup) can rely on the schema.
+# A 200 ping implies the server reached the database and finished its
+# migrations, so dependent roles can rely on the schema.
 - name: "Wait for Immich server to be ready"
   ansible.builtin.uri:
     url: "http://localhost:{{ immich_install_port }}/api/server/ping"

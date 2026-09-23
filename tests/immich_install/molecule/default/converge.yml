@@ -9,3 +9,12 @@
         immich_install_db_password: "testpassword123"
         immich_install_network: "immich_network"
         immich_install_machine_learning: false
+
+    - name: "Schedule pgBackRest restore verification"
+      ansible.builtin.include_role:
+        name: "postgres_pgbackrest_restore_verify"
+      vars:
+        postgres_pgbackrest_restore_verify_network: "immich_network"
+        postgres_pgbackrest_restore_verify_postgres_database: "immich"
+        postgres_pgbackrest_restore_verify_queries:
+          - 'SELECT count(*) FROM "user"'
