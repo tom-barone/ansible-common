@@ -8,4 +8,6 @@
       vars:
         postgres_pgbackrest_restore_verify_queries:
           - "SELECT count(*) FROM users"
+          # A quoted identifier proves the queries are shell-quoted
+          - 'SELECT count(*) FROM "users"'
         postgres_pgbackrest_restore_verify_network: "postgres_network"
