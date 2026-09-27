@@ -1,0 +1,17 @@
+---
+# The host's smartd still has the disk on its list from boot and logs an
+# open() failure every poll cycle once QEMU has claimed the device. Restart it
+# so it re-scans, but only if it exists and is running.
+
+- name: "Gather service facts"
+  ansible.builtin.service_facts: {}
+  listen: "Refresh smartd device list"
+
+- name: "Restart smartmontools"
+  ansible.builtin.service:
+    name: "smartmontools"
+    state: "restarted"
+  when: >-
+    (ansible_facts.services | default({}))['smartmontools.service'] is defined
+    and ansible_facts.services['smartmontools.service'].state == 'running'
+  listen: "Refresh smartd device list"

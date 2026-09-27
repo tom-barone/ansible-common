@@ -45,3 +45,4 @@
     ~ proxmox_usb_passthrough_device
     not in proxmox_usb_passthrough_config.stdout
   changed_when: true
+  notify: "Refresh smartd device list"
