@@ -11,7 +11,7 @@
         postgres_pgbackrest_install_repos:
           - type: "s3"
             path: "/pgbackrest"
-            s3-endpoint: "minio"
+            s3-endpoint: "s3"
             s3-bucket: "test-backup-bucket-1"
             s3-region: "us-east-1"
             s3-key: "test"
@@ -24,7 +24,7 @@
             retention-full: 2
           - type: "s3"
             path: "/pgbackrest"
-            s3-endpoint: "minio"
+            s3-endpoint: "s3"
             s3-bucket: "test-backup-bucket-2"
             s3-region: "us-east-1"
             s3-key: "test"

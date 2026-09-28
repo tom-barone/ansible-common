@@ -92,32 +92,34 @@
           "DROP TABLE guard_check;"
       changed_when: true
 
-    - name: "Start MinIO"
+    - name: "Create S3 bucket"
+      ansible.builtin.file:
+        path: "/opt/s3/test-backup-bucket"
+        state: "directory"
+        mode: "0755"
+
+    - name: "Start S3 server"
       ansible.builtin.command:
         cmd: >-
           docker run -d
-          --name minio
+          --name s3
           -p 9000:9000
-          -e MINIO_ROOT_USER=test
-          -e MINIO_ROOT_PASSWORD=testpassword
-          quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data
+          -v /opt/s3:/data
+          -e ROOT_ACCESS_KEY=test
+          -e ROOT_SECRET_KEY=testpassword
+          versity/versitygw:v1.8.0
+          --port :9000 --health /health
+          posix /data
       changed_when: true
 
-    - name: "Wait for MinIO to be ready"
+    - name: "Wait for S3 server to be ready"
       ansible.builtin.uri:
-        url: "http://localhost:9000/minio/health/live"
+        url: "http://localhost:9000/health"
         status_code: 200
-      register: "minio_health"
-      until: "minio_health.status == 200"
+      register: "s3_health"
+      until: "s3_health.status == 200"
       retries: 30
       delay: 5
-
-    - name: "Create S3 bucket"
-      ansible.builtin.command:
-        cmd: >-
-          docker exec minio
-          mkdir /data/test-backup-bucket
-      changed_when: true
 
     - name: "Seed restic repo by applying role once"
       ansible.builtin.include_role:
