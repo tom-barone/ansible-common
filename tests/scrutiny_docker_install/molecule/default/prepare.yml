@@ -14,3 +14,45 @@
         # where no copy-on-write filesystem can be used.
         # Performance is poor, and not generally recommended for production use.
         docker_install_storage_driver: "vfs"
+
+    # The VM only has a virtio disk, so fake lsblk with a fixed set: a SATA
+    # HDD and SSD, an NVMe drive, two USB disks (one with uppercase and a
+    # colon in its name), a zvol-like disk with no transport, a virtio disk
+    # with no by-id link, a loop device and an optical drive.
+    - name: "Install mock lsblk"
+      ansible.builtin.copy:
+        dest: "/usr/local/bin/lsblk"
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          cat <<'JSON'
+          {"blockdevices": [
+            {"type":"disk","tran":"sata","id-link":"wwn-0xhdd"},
+            {"type":"disk","tran":"sata","id-link":"wwn-0xssd"},
+            {"type":"disk","tran":"nvme","id-link":"nvme-eui.1"},
+            {"type":"disk","tran":"usb","id-link":"usb-WD_Elements-0:0"},
+            {"type":"disk","tran":"usb","id-link":"usb-NoSmart"},
+            {"type":"disk","tran":null,"id-link":null},
+            {"type":"disk","tran":"virtio","id-link":null},
+            {"type":"loop","tran":null,"id-link":null},
+            {"type":"rom","tran":"sata","id-link":"ata-DVD"}
+          ]}
+          JSON
+
+    - name: "Create by-id directory"
+      ansible.builtin.file:
+        path: "/dev/disk/by-id"
+        state: "directory"
+        mode: "0755"
+
+    # Docker needs a real block device behind every disk it maps.
+    - name: "Link the monitored mock disks to the virtio disk"
+      ansible.builtin.file:
+        src: "/dev/vda"
+        dest: "/dev/disk/by-id/{{ item }}"
+        state: "link"
+      loop:
+        - "wwn-0xhdd"
+        - "wwn-0xssd"
+        - "nvme-eui.1"
+        - "usb-WD_Elements-0:0"

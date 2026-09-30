@@ -28,6 +28,56 @@
         that:
           - "container_name in content"
 
+    # Given lsblk reports physical, virtual and optical disks
+    # When the role is applied with one explicit and one ignored device
+    # Then only the explicit and the discovered physical disks are mapped
+    - name: "Assert docker-compose.yml maps the monitored devices"
+      vars:
+        compose: "{{ compose_file.content | b64decode | from_yaml }}"
+        expected:
+          - source: "/dev/disk/by-id/wwn-0xssd"
+            target: "/dev/disk/by-id/wwn-0xssd"
+            permissions: "rwm"
+          - source: "/dev/disk/by-id/wwn-0xhdd"
+            target: "/dev/disk/by-id/wwn-0xhdd"
+            permissions: "rwm"
+          - source: "/dev/disk/by-id/nvme-eui.1"
+            target: "/dev/disk/by-id/nvme-eui.1"
+            permissions: "rwm"
+          - source: "/dev/disk/by-id/usb-WD_Elements-0:0"
+            target: "/dev/disk/by-id/usb-wd_elements-0:0"
+            permissions: "rwm"
+      ansible.builtin.assert:
+        that:
+          - "compose.services.scrutiny.devices == expected"
+        msg: "Unexpected devices: {{ compose.services.scrutiny.devices }}"
+
+    - name: "Read collector.yaml"
+      ansible.builtin.slurp:
+        src: "/opt/scrutiny/config/collector.yaml"
+      register: "collector_yaml"
+
+    # Given lsblk reports physical, virtual and optical disks
+    # When the role is applied with one explicit and one ignored device
+    # Then the explicit entry comes first and replaces its discovered one,
+    # and each discovered physical disk follows with its smartctl type
+    - name: "Assert collector.yaml lists the monitored devices"
+      vars:
+        collector: "{{ collector_yaml.content | b64decode | from_yaml }}"
+        expected:
+          - device: "/dev/disk/by-id/wwn-0xssd"
+            type: "sntasmedia"
+          - device: "/dev/disk/by-id/wwn-0xhdd"
+            type: "sat"
+          - device: "/dev/disk/by-id/nvme-eui.1"
+            type: "nvme"
+          - device: "/dev/disk/by-id/usb-WD_Elements-0:0"
+            type: "sat"
+      ansible.builtin.assert:
+        that:
+          - "collector.devices == expected"
+        msg: "Unexpected devices: {{ collector.devices }}"
+
     - name: "Validate compose config"
       ansible.builtin.command:
         cmd: "docker compose config --quiet"
@@ -45,6 +95,20 @@
       ansible.builtin.assert:
         that:
           - "container_name in compose_ps.stdout"
+
+    # Given a by-id name with uppercase letters and a colon
+    # When the container is started
+    # Then the disk is a block device at the lowercased path the collector uses
+    - name: "Check the USB disk is mapped into the container"
+      ansible.builtin.command:
+        argv:
+          - "docker"
+          - "exec"
+          - "{{ container_name }}"
+          - "test"
+          - "-b"
+          - "/dev/disk/by-id/usb-wd_elements-0:0"
+      changed_when: false
 
     - name: "Check Scrutiny responds on HTTP port"
       ansible.builtin.uri:
