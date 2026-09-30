@@ -1,0 +1,7 @@
+{# AI GENERATED - Tom Barone #}
+version: 1
+
+devices:
+{% for d in _scrutiny_docker_install_devices %}
+  - {{ d | to_json }}
+{% endfor %}

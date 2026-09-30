@@ -9,3 +9,8 @@
         scrutiny_docker_install_notify_urls:
           - "discord://token@id"
         scrutiny_docker_install_repeat_notifications: false
+        scrutiny_docker_install_devices:
+          - device: "/dev/disk/by-id/wwn-0xssd"
+            type: "sntasmedia"
+          - device: "/dev/disk/by-id/usb-NoSmart"
+            ignore: true

@@ -12,9 +12,13 @@ services:
       - "/run/udev:/run/udev:ro"
       - "{{ scrutiny_docker_install_dir }}/config:/opt/scrutiny/config"
       - "{{ scrutiny_docker_install_dir }}/influxdb:/opt/scrutiny/influxdb"
-{% if scrutiny_docker_install_devices | length > 0 %}
+{% if _scrutiny_docker_install_devices | length > 0 %}
+    # The collector lowercases device paths, so map each disk to the
+    # lowercased path. Long syntax because by-id names can contain ":".
     devices:
-{% for device in scrutiny_docker_install_devices %}
-      - "{{ device }}"
+{% for d in _scrutiny_docker_install_devices %}
+      - source: "{{ d.device }}"
+        target: "{{ d.device | lower }}"
+        permissions: "rwm"
 {% endfor %}
 {% endif %}

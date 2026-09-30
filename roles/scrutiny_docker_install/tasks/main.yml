@@ -1,27 +1,34 @@
 ---
-- name: "Install smartmontools"
-  ansible.builtin.apt:
-    pkg:
-      - "smartmontools"
-    state: "present"
-    update_cache: true
-    cache_valid_time: 3600
+# Tests to confirm working:
+#   $ lsblk -dn -o NAME,TYPE,TRAN,ID-LINK
+#   $ cat /opt/scrutiny/config/collector.yaml
+#   $ docker exec scrutiny scrutiny-collector-metrics run
 
-- name: "Discover S.M.A.R.T. devices via smartctl --scan"
-  ansible.builtin.command:
-    cmd: "smartctl --scan"
-  register: "scrutiny_docker_install_scan"
+- name: "Discover physical disks"
+  ansible.builtin.command: "lsblk -dJ -o TYPE,TRAN,ID-LINK"
+  register: "_scrutiny_docker_install_lsblk"
   changed_when: false
+  check_mode: false
 
-- name: "Parse discovered device paths"
+# Explicit entries first, then every discovered disk that has a transport
+# and a by-id link and is not listed explicitly.
+- name: "Build the list of monitored devices"
   ansible.builtin.set_fact:
-    scrutiny_docker_install_devices: >-
-      {{
-        scrutiny_docker_install_scan.stdout_lines
-        | select('match', '^/dev/')
-        | map('regex_replace', '^(\S+).*$', '\1')
-        | list
-      }}
+    _scrutiny_docker_install_devices: >-
+      {%- set devices = scrutiny_docker_install_devices
+        | rejectattr('ignore', 'defined') | list -%}
+      {%- set explicit = scrutiny_docker_install_devices
+        | map(attribute='device') | list -%}
+      {%- set lsblk = _scrutiny_docker_install_lsblk.stdout | from_json -%}
+      {%- for d in lsblk.blockdevices
+        if d.type == 'disk' and d.tran and d['id-link'] -%}
+      {%- set device = '/dev/disk/by-id/' ~ d['id-link'] -%}
+      {%- set type = 'nvme' if d.tran == 'nvme' else 'sat' -%}
+      {%- if device not in explicit -%}
+      {%- set _ = devices.append({'device': device, 'type': type}) -%}
+      {%- endif -%}
+      {%- endfor -%}
+      {{ devices }}
 
 - name: "Create install directory"
   ansible.builtin.file:
@@ -42,6 +49,13 @@
     mode: "0644"
   when:
     - "scrutiny_docker_install_notify_urls | length > 0"
+  notify: "Restart scrutiny"
+
+- name: "Deploy collector.yaml"
+  ansible.builtin.template:
+    src: "collector.yaml.j2"
+    dest: "{{ scrutiny_docker_install_dir }}/config/collector.yaml"
+    mode: "0644"
   notify: "Restart scrutiny"
 
 - name: "Deploy docker-compose.yml"
