@@ -9,5 +9,5 @@
         system_smartmontools_devices:
           - device: "/dev/sda"
             options: "-a -m root"
-          - device: "/dev/nvme0"
-            options: "-a -d nvme -m root"
+          - device: "/dev/disk/by-id/usb-NoSmart"
+            options: "-d ignore"

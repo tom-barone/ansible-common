@@ -1,9 +1,12 @@
 # Managed by Ansible role: system_smartmontools
-{% set defaults = system_smartmontools_default_options | trim -%}
-{% if system_smartmontools_devices -%}
+{% set explicit = system_smartmontools_devices | map(attribute='device') | list %}
 {% for d in system_smartmontools_devices %}
-{{ d.device }} {{ d.options | default(defaults) }}
+{{ d.device }} {{ d.options }}
 {% endfor %}
-{% else %}
-DEVICESCAN {{ defaults }}
+{% for d in (_system_smartmontools_lsblk.stdout | from_json).blockdevices if d.type == 'disk' and d.tran and d['id-link'] %}
+{% set device = '/dev/disk/by-id/' ~ d['id-link'] %}
+{% set class = d.tran if d.tran in ['usb', 'nvme'] else 'hdd' if d.rota | bool else 'ssd' %}
+{% if device not in explicit %}
+{{ device }} {{ system_smartmontools_base_options }} {{ system_smartmontools_class_options[class] }}
 {% endif %}
+{% endfor %}
