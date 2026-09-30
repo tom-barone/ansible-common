@@ -11,6 +11,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# PyPI downloads time out now and then on the runners. uv defaults to a 30s
+# timeout and 3 retries.
+env:
+  UV_HTTP_TIMEOUT: "120"
+  UV_HTTP_RETRIES: "5"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
