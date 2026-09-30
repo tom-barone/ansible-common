@@ -1,7 +1,8 @@
 ---
 # The host's smartd still has the disk on its list from boot and logs an
 # open() failure every poll cycle once QEMU has claimed the device. Restart it
-# so it re-scans, but only if it exists and is running.
+# so the disk is dropped at startup (smartd skips any configured device it
+# cannot open), but only if it exists and is running.
 
 - name: "Gather service facts"
   ansible.builtin.service_facts: {}
