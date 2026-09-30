@@ -11,14 +11,23 @@
         src: "/etc/smartd.conf"
       register: "smartd_conf"
 
-    - name: "Assert smartd.conf has expected content from second converge pass"
+    # Explicit entries first (the usb-NoSmart one replaces its discovered
+    # line), then one line per discovered disk with base plus class options.
+    - name: "Assert smartd.conf matches the expected device lines"
       vars:
-        content: "{{ smartd_conf.content | b64decode }}"
+        base: "-a -n standby,q -s (S/../.././02|L/../../6/03) -m root"
+        expected:
+          - "# Managed by Ansible role: system_smartmontools"
+          - "/dev/sda -a -m root"
+          - "/dev/disk/by-id/usb-NoSmart -d ignore"
+          - "/dev/disk/by-id/wwn-0xhdd {{ base }} -o on -S on -W 4,45,55"
+          - "/dev/disk/by-id/wwn-0xssd {{ base }} -o on -S on -W 0,55,65"
+          - "/dev/disk/by-id/nvme-eui.1 {{ base }} -W 0,65,75"
+          - "/dev/disk/by-id/usb-Elements {{ base }} -d sat -W 4,45,55"
       ansible.builtin.assert:
         that:
-          - "'/dev/sda -a -m root' in content"
-          - "'/dev/nvme0 -a -d nvme -m root' in content"
-        msg: "smartd.conf missing expected device lines"
+          - "(smartd_conf.content | b64decode).splitlines() == expected"
+        msg: "Unexpected smartd.conf: {{ smartd_conf.content | b64decode }}"
 
     - name: "Get smartmontools service status"
       ansible.builtin.systemd:

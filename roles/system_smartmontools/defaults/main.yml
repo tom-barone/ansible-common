@@ -1,19 +1,30 @@
 ---
-# List of disks to monitor. Empty list -> DEVICESCAN (auto-discover all).
-# Each entry: { device: "/dev/sdX", options: "<smartd directives>" }
-system_smartmontools_devices: []
-
-# Default directives appended to every device line (and to DEVICESCAN).
+# Directives applied to every discovered disk, followed by the class options
+# below. Disks are discovered with lsblk and keyed by /dev/disk/by-id/<ID-LINK>.
 # -a              monitor all SMART attributes
-# -o on           enable automatic offline data collection
-# -S on           enable attribute autosave
 # -n standby,q    skip checks if disk is in standby (quiet)
 # -s (S/../.././02|L/../../6/03)
 #                 short self-test daily at 02:00, long self-test Sat 03:00
-# -W 4,40,45      warn on temp delta 4C, info >=40C, critical >=45C
 # -m root         email recipient (postfix_relay aliases root -> admin)
-system_smartmontools_default_options: >-
-  -a -o on -S on -n standby,q
+system_smartmontools_base_options: >-
+  -a -n standby,q
   -s (S/../.././02|L/../../6/03)
-  -W 4,40,45
   -m root
+
+# Appended after the base options. Class from lsblk: TRAN usb -> usb,
+# TRAN nvme -> nvme, rotational -> hdd, otherwise ssd.
+# -o on -S on     offline data collection and attribute autosave (ATA only)
+# -d sat          USB enclosures need SAT passthrough
+# -W d,i,c        warn on temp delta dC, info >=iC, critical >=cC
+system_smartmontools_class_options:
+  hdd: "-o on -S on -W 4,45,55"
+  ssd: "-o on -S on -W 0,55,65"
+  nvme: "-W 0,65,75"
+  usb: "-d sat -W 4,45,55"
+
+# Explicit entries win over discovery. Each entry is a complete smartd line:
+#   { device: "/dev/disk/by-id/<ID-LINK>", options: "<smartd directives>" }
+# Use the same /dev/disk/by-id/<ID-LINK> path as `lsblk -dn -o ID-LINK` to
+# replace a discovered disk's line, e.g. options "-d ignore" for a USB
+# enclosure that passes no SMART data.
+system_smartmontools_devices: []

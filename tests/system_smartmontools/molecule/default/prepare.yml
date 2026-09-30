@@ -5,3 +5,27 @@
     - name: "Make apt resilient to transient CDN failures"
       ansible.builtin.include_role:
         name: "system_apt_retries"
+
+    # The container sees the host's block devices, so fake lsblk with a fixed
+    # set: one disk per class (the usb ones with rota as a string, as older
+    # util-linux prints it), a zvol-like disk with no transport, a virtio disk
+    # with no by-id link, a loop device and an optical drive.
+    - name: "Install mock lsblk"
+      ansible.builtin.copy:
+        dest: "/usr/local/bin/lsblk"
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          cat <<'JSON'
+          {"blockdevices": [
+            {"type":"disk","rota":true,"tran":"sata","id-link":"wwn-0xhdd"},
+            {"type":"disk","rota":false,"tran":"sata","id-link":"wwn-0xssd"},
+            {"type":"disk","rota":false,"tran":"nvme","id-link":"nvme-eui.1"},
+            {"type":"disk","rota":"1","tran":"usb","id-link":"usb-Elements"},
+            {"type":"disk","rota":"1","tran":"usb","id-link":"usb-NoSmart"},
+            {"type":"disk","rota":false,"tran":null,"id-link":null},
+            {"type":"disk","rota":false,"tran":"virtio","id-link":null},
+            {"type":"loop","rota":false,"tran":null,"id-link":null},
+            {"type":"rom","rota":true,"tran":"sata","id-link":"ata-DVD"}
+          ]}
+          JSON
