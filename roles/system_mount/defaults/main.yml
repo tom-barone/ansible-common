@@ -7,4 +7,4 @@
 # Optional vars (no default):
 # system_mount_src: "/dev/sdb1"
 # system_mount_fstype: "ext4"
-# system_mount_opts: "defaults,noatime"
+# system_mount_opts: "defaults,noatime,nofail"

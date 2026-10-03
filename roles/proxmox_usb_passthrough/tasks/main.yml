@@ -39,7 +39,7 @@
       - "set"
       - "{{ proxmox_usb_passthrough_vm_id }}"
       - "--usb{{ proxmox_usb_passthrough_index }}"
-      - "host={{ proxmox_usb_passthrough_device }}"
+      - "host={{ proxmox_usb_passthrough_device }},usb3=1"
   when: >-
     'usb' ~ proxmox_usb_passthrough_index ~ ': host='
     ~ proxmox_usb_passthrough_device
