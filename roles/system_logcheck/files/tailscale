@@ -145,3 +145,5 @@
 .* .*tailscaled.*: control: Generating a new nodekey\.$
 .* .*tailscaled.*: open-conn-track: flow .* got RST by peer$
 .* .*tailscaled.*: nodeBackend: skipping WireGuard session reset \(TSMP key\): \[.*\] changed from "discokey:[0-9a-f]+" to "discokey:[0-9a-f]+"$
+.* .*tailscaled.*: netcheck: netcheck: UDP is blocked, trying HTTPS$
+.* .*tailscaled.*: netcheck: UDP is blocked, trying ICMP$
