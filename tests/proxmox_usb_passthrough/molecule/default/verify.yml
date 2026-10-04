@@ -33,3 +33,34 @@
           - "'usb-host,' in vm_command.stdout"
           - "'vendorid=0x0781,productid=0x5583' in vm_command.stdout"
         msg: "Unexpected QEMU command line: {{ vm_command.stdout }}"
+
+    # Given a stopped VM
+    # When the role passes the USB device through to it
+    # Then the VM is still stopped
+    - name: "Read status of the stopped VM"
+      ansible.builtin.command:
+        cmd: "qm status 100"
+      register: "vm_status"
+      changed_when: false
+
+    - name: "Assert the stopped VM was not started"
+      ansible.builtin.assert:
+        that:
+          - "'status: stopped' in vm_status.stdout"
+        msg: "Unexpected VM status: {{ vm_status.stdout }}"
+
+    # Given a running VM
+    # When the role passes the USB device through to it for the first time
+    # Then the VM is shut down and started again once
+    - name: "Read restart log of the running VM"
+      ansible.builtin.slurp:
+        src: "/tmp/qm-101.log"
+      register: "restart_log"
+
+    - name: "Assert the running VM was restarted once"
+      vars:
+        restarts: "{{ (restart_log.content | b64decode).splitlines() }}"
+      ansible.builtin.assert:
+        that:
+          - "restarts == ['shutdown', 'start']"
+        msg: "Unexpected restarts: {{ restarts }}"

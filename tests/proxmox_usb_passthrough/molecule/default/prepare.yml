@@ -7,16 +7,40 @@
     # device to an xhci controller like it would on a real host. The test
     # host has no nested virtualisation, so KVM is disabled or qm showcmd
     # refuses to build the QEMU command line.
-    - name: "Create a VM to pass the USB device through to"
+    - name: "Create VMs to pass the USB device through to"
       ansible.builtin.command:
         argv:
           - "qm"
           - "create"
-          - "100"
+          - "{{ item }}"
           - "--name"
-          - "test-vm"
+          - "test-vm-{{ item }}"
           - "--ostype"
           - "l26"
           - "--kvm"
           - "0"
-        creates: "/etc/pve/qemu-server/100.conf"
+        creates: "/etc/pve/qemu-server/{{ item }}.conf"
+      loop:
+        - 100
+        - 101
+
+    # Without nested virtualisation a VM can never really run. VM 101
+    # pretends to be running and logs restarts instead of doing them.
+    # Everything else passes through to the real qm.
+    - name: "Install mock qm wrapper"
+      ansible.builtin.copy:
+        dest: "/usr/local/bin/qm"
+        mode: "0755"
+        content: |
+          #!/bin/bash
+          case "$1 $2" in
+            "status 101")
+              echo "status: running"
+              ;;
+            "shutdown 101" | "start 101")
+              echo "$1" >> /tmp/qm-101.log
+              ;;
+            *)
+              exec /usr/sbin/qm "$@"
+              ;;
+          esac

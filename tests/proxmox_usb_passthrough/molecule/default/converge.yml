@@ -7,5 +7,8 @@
       ansible.builtin.include_role:
         name: "proxmox_usb_passthrough"
       vars:
-        proxmox_usb_passthrough_vm_id: 100
+        proxmox_usb_passthrough_vm_id: "{{ item }}"
         proxmox_usb_passthrough_device: "0781:5583"
+      loop:
+        - 100
+        - 101

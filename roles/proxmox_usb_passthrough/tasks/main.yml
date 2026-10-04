@@ -8,8 +8,9 @@
 # reboots and do not depend on device names like sdb. Two identical devices
 # cannot be told apart by ID, so use bus-port for those.
 #
-# Proxmox hot-plugs the device into a running VM with machine version 7.1
-# or later; otherwise it is attached at the next start.
+# A running VM is restarted when the device is first added, so the guest
+# gets it whether or not Proxmox could hot-plug it. A stopped VM gets the
+# device at its next start.
 #
 # Tests to confirm working:
 #   $ qm config <id>
@@ -44,5 +45,38 @@
     'usb' ~ proxmox_usb_passthrough_index ~ ': host='
     ~ proxmox_usb_passthrough_device
     not in proxmox_usb_passthrough_config.stdout
+  register: "proxmox_usb_passthrough_set"
   changed_when: true
   notify: "Refresh smartd device list"
+
+- name: "Read VM status"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "status"
+      - "{{ proxmox_usb_passthrough_vm_id }}"
+  register: "proxmox_usb_passthrough_status"
+  changed_when: false
+
+# qm reboot returns before the VM is started again, and the smartd handler
+# needs QEMU to hold the device, so shut down and start instead.
+- name: "Restart a running VM to attach the USB device"
+  when:
+    - "proxmox_usb_passthrough_set is changed"
+    - "'status: running' in proxmox_usb_passthrough_status.stdout"
+  block:
+    - name: "Shut down VM"
+      ansible.builtin.command:
+        argv:
+          - "qm"
+          - "shutdown"
+          - "{{ proxmox_usb_passthrough_vm_id }}"
+      changed_when: true
+
+    - name: "Start VM"
+      ansible.builtin.command:
+        argv:
+          - "qm"
+          - "start"
+          - "{{ proxmox_usb_passthrough_vm_id }}"
+      changed_when: true
