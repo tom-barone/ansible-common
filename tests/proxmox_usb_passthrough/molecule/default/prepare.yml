@@ -3,6 +3,16 @@
 - name: "Prepare"
   hosts: "all"
   tasks:
+    # SSH is up before Proxmox has finished its first boot, which creates
+    # the node's directories in /etc/pve and refreshes the apt cache.
+    - name: "Wait for Proxmox to finish its first boot"
+      ansible.builtin.systemd:
+        name: "multi-user.target"
+      register: "multi_user_target"
+      until: "multi_user_target.status.ActiveState == 'active'"
+      retries: 60
+      delay: 2
+
     # A Linux guest gets a modern machine type, so Proxmox attaches the USB
     # device to an xhci controller like it would on a real host. The test
     # host has no nested virtualisation, so KVM is disabled or qm showcmd
