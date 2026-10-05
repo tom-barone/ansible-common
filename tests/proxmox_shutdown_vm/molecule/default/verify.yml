@@ -1,0 +1,34 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given a running VM
+    # When the role is applied twice, by converge and by idempotence
+    # Then the VM is shut down once
+    - name: "Read shutdown log of the running VM"
+      ansible.builtin.slurp:
+        src: "/tmp/qm-101.log"
+      register: "shutdown_log"
+
+    - name: "Assert the running VM was shut down once"
+      vars:
+        shutdowns: "{{ (shutdown_log.content | b64decode).splitlines() }}"
+      ansible.builtin.assert:
+        that:
+          - "shutdowns == ['shutdown']"
+        msg: "Unexpected shutdowns: {{ shutdowns }}"
+
+    # Given a stopped VM
+    # When the role is applied to it
+    # Then the VM is not shut down
+    - name: "Look for a shutdown log of the stopped VM"
+      ansible.builtin.stat:
+        path: "/tmp/qm-100.log"
+      register: "stopped_log"
+
+    - name: "Assert the stopped VM was not shut down"
+      ansible.builtin.assert:
+        that:
+          - "not stopped_log.stat.exists"
+        msg: "The stopped VM was shut down"

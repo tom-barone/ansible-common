@@ -1,0 +1,32 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to shut down a Proxmox VM if it is running.
+#
+# Asks the guest to shut down cleanly and returns once the VM has stopped.
+#
+# Tests to confirm working:
+#   $ qm status <id>
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "proxmox_shutdown_vm_id is defined"
+    msg: "Missing a required variable"
+
+- name: "Read VM status"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "status"
+      - "{{ proxmox_shutdown_vm_id }}"
+  register: "proxmox_shutdown_vm_status"
+  changed_when: false
+
+- name: "Shut down VM"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "shutdown"
+      - "{{ proxmox_shutdown_vm_id }}"
+  when: "'status: running' in proxmox_shutdown_vm_status.stdout"
+  changed_when: true

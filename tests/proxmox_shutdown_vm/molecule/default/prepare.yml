@@ -1,0 +1,49 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Create VMs to shut down"
+      ansible.builtin.command:
+        argv:
+          - "qm"
+          - "create"
+          - "{{ item }}"
+          - "--name"
+          - "test-vm-{{ item }}"
+        creates: "/etc/pve/qemu-server/{{ item }}.conf"
+      loop:
+        - 100
+        - 101
+
+    # Without nested virtualisation a VM can never really run. A VM counts
+    # as running while /tmp/qm-running-<id> exists. Shutdowns are logged
+    # instead of done. Everything else passes through to the real qm.
+    - name: "Mark VM 101 as running"
+      ansible.builtin.file:
+        path: "/tmp/qm-running-101"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Install mock qm wrapper"
+      ansible.builtin.copy:
+        dest: "/usr/local/bin/qm"
+        mode: "0755"
+        content: |
+          #!/bin/bash
+          case "$1" in
+            shutdown)
+              rm "/tmp/qm-running-$2"
+              echo "$1" >> "/tmp/qm-$2.log"
+              ;;
+            status)
+              if [ -f "/tmp/qm-running-$2" ]; then
+                echo "status: running"
+              else
+                exec /usr/sbin/qm "$@"
+              fi
+              ;;
+            *)
+              exec /usr/sbin/qm "$@"
+              ;;
+          esac
