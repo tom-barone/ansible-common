@@ -2,9 +2,10 @@
 ---
 # Ansible role to wait until a started Proxmox VM is up.
 #
-# Polls the QEMU guest agent until it answers, then sets the fact
-# proxmox_wait_for_vm_ip to the guest's first non-loopback IPv4 address.
-# Every run overwrites the fact, so read it before waiting for another VM.
+# Polls the QEMU guest agent until it reports an IPv4 address, then sets
+# the fact proxmox_wait_for_vm_ip to the guest's first non-loopback IPv4
+# address. Every run overwrites the fact, so read it before waiting for
+# another VM.
 #
 # Tests to confirm working:
 #   $ qm guest cmd <id> network-get-interfaces
@@ -15,30 +16,38 @@
       - "proxmox_wait_for_vm_id is defined"
     msg: "Missing a required variable"
 
-- name: "Wait for the guest agent and get network interfaces"
-  ansible.builtin.command:
-    argv:
-      - "qm"
-      - "guest"
-      - "cmd"
-      - "{{ proxmox_wait_for_vm_id }}"
-      - "network-get-interfaces"
-  register: "proxmox_wait_for_vm_network"
-  until: "proxmox_wait_for_vm_network.rc == 0"
-  retries: "{{ proxmox_wait_for_vm_agent_max_retries }}"
-  delay: "{{ proxmox_wait_for_vm_agent_wait_seconds }}"
-  changed_when: false
-
-- name: "Parse IP address"
-  ansible.builtin.set_fact:
-    proxmox_wait_for_vm_ip: >-
+# The agent can answer before the guest has an address, and it leaves
+# ip-addresses out for an interface that has none.
+- name: "Wait for the VM and read its IP address"
+  vars:
+    ipv4_addresses: >-
       {{
         proxmox_wait_for_vm_network.stdout
         | from_json
         | selectattr('name', 'ne', 'lo')
+        | selectattr('ip-addresses', 'defined')
         | map(attribute='ip-addresses')
         | flatten
         | selectattr('ip-address-type', 'eq', 'ipv4')
         | map(attribute='ip-address')
-        | first
       }}
+  block:
+    - name: "Wait for the guest agent to report an IPv4 address"
+      ansible.builtin.command:
+        argv:
+          - "qm"
+          - "guest"
+          - "cmd"
+          - "{{ proxmox_wait_for_vm_id }}"
+          - "network-get-interfaces"
+      register: "proxmox_wait_for_vm_network"
+      until: >-
+        proxmox_wait_for_vm_network.rc == 0
+        and ipv4_addresses | length > 0
+      retries: "{{ proxmox_wait_for_vm_agent_max_retries }}"
+      delay: "{{ proxmox_wait_for_vm_agent_wait_seconds }}"
+      changed_when: false
+
+    - name: "Set IP address fact"
+      ansible.builtin.set_fact:
+        proxmox_wait_for_vm_ip: "{{ ipv4_addresses | first }}"

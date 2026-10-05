@@ -34,3 +34,18 @@
         that:
           - "proxmox_wait_for_vm_ip == '10.0.2.101'"
         msg: "Unexpected guest IP: {{ proxmox_wait_for_vm_ip }}"
+
+    # Given a VM that has no IPv4 address on the first poll
+    # When the role waits for it
+    # Then it polls again and the fact holds that guest's address
+    - name: "Wait for a VM that has no address yet"
+      ansible.builtin.include_role:
+        name: "proxmox_wait_for_vm"
+      vars:
+        proxmox_wait_for_vm_id: 102
+
+    - name: "Assert the role waited for the address"
+      ansible.builtin.assert:
+        that:
+          - "proxmox_wait_for_vm_ip == '10.0.2.102'"
+        msg: "Unexpected guest IP: {{ proxmox_wait_for_vm_ip }}"
