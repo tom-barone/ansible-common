@@ -1,0 +1,14 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    # SSH is up before Proxmox has finished its first boot, which creates
+    # the node's directories in /etc/pve and refreshes the apt cache.
+    - name: "Wait for Proxmox to finish its first boot"
+      ansible.builtin.systemd:
+        name: "multi-user.target"
+      register: "multi_user_target"
+      until: "multi_user_target.status.ActiveState == 'active'"
+      retries: 60
+      delay: 2
