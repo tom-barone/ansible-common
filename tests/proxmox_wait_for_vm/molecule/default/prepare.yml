@@ -1,0 +1,27 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    # Without nested virtualisation a VM can never really run, so the guest
+    # agent is faked. It reports the address 10.0.2.<id>, except on the first
+    # poll of VM 101, which fails like an agent that is not up yet.
+    # Everything else passes through to the real qm.
+    - name: "Install mock qm wrapper"
+      ansible.builtin.copy:
+        dest: "/usr/local/bin/qm"
+        mode: "0755"
+        content: |
+          #!/bin/bash
+          [ "$1" = "guest" ] || exec /usr/sbin/qm "$@"
+          echo "poll" >> "/tmp/qm-$3.log"
+          case "$3 $(wc -l < "/tmp/qm-$3.log")" in
+            "101 1")
+              exit 1
+              ;;
+            *)
+              cat <<JSON
+          [{"name":"lo","ip-addresses":[{"ip-address":"127.0.0.1","ip-address-type":"ipv4"}]},{"name":"eth0","ip-addresses":[{"ip-address":"fe80::1","ip-address-type":"ipv6"},{"ip-address":"10.0.2.$3","ip-address-type":"ipv4"}]}]
+          JSON
+              ;;
+          esac

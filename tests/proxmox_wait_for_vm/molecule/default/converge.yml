@@ -1,0 +1,36 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  vars:
+    proxmox_wait_for_vm_agent_wait_seconds: 1
+  tasks:
+    # Given a VM whose guest agent is up
+    # When the role waits for it
+    # Then the fact holds the guest's first non-loopback IPv4 address
+    - name: "Wait for a VM that is up"
+      ansible.builtin.include_role:
+        name: "proxmox_wait_for_vm"
+      vars:
+        proxmox_wait_for_vm_id: 100
+
+    - name: "Assert the guest IP was parsed"
+      ansible.builtin.assert:
+        that:
+          - "proxmox_wait_for_vm_ip == '10.0.2.100'"
+        msg: "Unexpected guest IP: {{ proxmox_wait_for_vm_ip }}"
+
+    # Given a VM whose guest agent fails the first poll
+    # When the role waits for it
+    # Then it polls again and the fact holds that guest's address
+    - name: "Wait for a VM whose guest agent is not up yet"
+      ansible.builtin.include_role:
+        name: "proxmox_wait_for_vm"
+      vars:
+        proxmox_wait_for_vm_id: 101
+
+    - name: "Assert the role waited for the guest agent"
+      ansible.builtin.assert:
+        that:
+          - "proxmox_wait_for_vm_ip == '10.0.2.101'"
+        msg: "Unexpected guest IP: {{ proxmox_wait_for_vm_ip }}"

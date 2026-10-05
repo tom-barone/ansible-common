@@ -1,0 +1,44 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to wait until a started Proxmox VM is up.
+#
+# Polls the QEMU guest agent until it answers, then sets the fact
+# proxmox_wait_for_vm_ip to the guest's first non-loopback IPv4 address.
+# Every run overwrites the fact, so read it before waiting for another VM.
+#
+# Tests to confirm working:
+#   $ qm guest cmd <id> network-get-interfaces
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "proxmox_wait_for_vm_id is defined"
+    msg: "Missing a required variable"
+
+- name: "Wait for the guest agent and get network interfaces"
+  ansible.builtin.command:
+    argv:
+      - "qm"
+      - "guest"
+      - "cmd"
+      - "{{ proxmox_wait_for_vm_id }}"
+      - "network-get-interfaces"
+  register: "proxmox_wait_for_vm_network"
+  until: "proxmox_wait_for_vm_network.rc == 0"
+  retries: "{{ proxmox_wait_for_vm_agent_max_retries }}"
+  delay: "{{ proxmox_wait_for_vm_agent_wait_seconds }}"
+  changed_when: false
+
+- name: "Parse IP address"
+  ansible.builtin.set_fact:
+    proxmox_wait_for_vm_ip: >-
+      {{
+        proxmox_wait_for_vm_network.stdout
+        | from_json
+        | selectattr('name', 'ne', 'lo')
+        | map(attribute='ip-addresses')
+        | flatten
+        | selectattr('ip-address-type', 'eq', 'ipv4')
+        | map(attribute='ip-address')
+        | first
+      }}

@@ -1,0 +1,8 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# proxmox_wait_for_vm_id: 100
+
+# The guest agent only answers once cloud-init has installed it on first boot
+proxmox_wait_for_vm_agent_wait_seconds: 5
+proxmox_wait_for_vm_agent_max_retries: 60
