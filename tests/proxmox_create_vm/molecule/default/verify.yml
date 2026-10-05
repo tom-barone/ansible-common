@@ -3,12 +3,12 @@
   hosts: "all"
   tasks:
     # Given the role cloned the template and configured the VM
-    # When we read the VM configuration with the real qm
+    # When we read the VM configuration
     # Then it has the expected name, resources, autostart and inherited
     # serial console
     - name: "Read VM configuration"
       ansible.builtin.command:
-        cmd: "/usr/sbin/qm config 100"
+        cmd: "qm config 100"
       register: "vm_config"
       changed_when: false
 
@@ -69,3 +69,18 @@
             lsmod.stdout_lines | select('match', '^vhost_vsock ') | length == 1
           - "'vhost_vsock' in content"
         msg: "vhost_vsock is not loaded persistently"
+
+    # Given the role only creates the VM
+    # When we read the VM status
+    # Then the VM is stopped
+    - name: "Read VM status"
+      ansible.builtin.command:
+        cmd: "qm status 100"
+      register: "vm_status"
+      changed_when: false
+
+    - name: "Assert the VM was not started"
+      ansible.builtin.assert:
+        that:
+          - "'status: stopped' in vm_status.stdout"
+        msg: "Unexpected VM status: {{ vm_status.stdout }}"
