@@ -40,7 +40,7 @@ services:
     container_name: "{{ immich_install_redis_container_name }}"
     restart: "unless-stopped"
     healthcheck:
-      test: "redis-cli ping || exit 1"
+      test: "redis-cli ping | grep -q PONG || exit 1"
 
   database:
     image: "{{ immich_install_postgres_image }}"
