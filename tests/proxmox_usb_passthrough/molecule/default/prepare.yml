@@ -24,21 +24,43 @@
         - 100
         - 101
 
-    # Without nested virtualisation a VM can never really run. VM 101
-    # pretends to be running and logs restarts instead of doing them.
-    # Everything else passes through to the real qm.
+    # Without nested virtualisation a VM can never really run. A VM counts
+    # as running while /tmp/qm-running-<id> exists. Starts, shutdowns and
+    # guest agent calls are logged instead of done. Everything else passes
+    # through to the real qm.
+    - name: "Mark VM 101 as running"
+      ansible.builtin.file:
+        path: "/tmp/qm-running-101"
+        state: "touch"
+        mode: "0644"
+
     - name: "Install mock qm wrapper"
       ansible.builtin.copy:
         dest: "/usr/local/bin/qm"
         mode: "0755"
         content: |
           #!/bin/bash
-          case "$1 $2" in
-            "status 101")
-              echo "status: running"
+          case "$1" in
+            start)
+              touch "/tmp/qm-running-$2"
+              echo "$1" >> "/tmp/qm-$2.log"
               ;;
-            "shutdown 101" | "start 101")
-              echo "$1" >> /tmp/qm-101.log
+            shutdown)
+              rm "/tmp/qm-running-$2"
+              echo "$1" >> "/tmp/qm-$2.log"
+              ;;
+            status)
+              if [ -f "/tmp/qm-running-$2" ]; then
+                echo "status: running"
+              else
+                exec /usr/sbin/qm "$@"
+              fi
+              ;;
+            guest)
+              echo "wait" >> "/tmp/qm-$3.log"
+              cat <<'JSON'
+          [{"name":"eth0","ip-addresses":[{"ip-address":"10.0.2.15","ip-address-type":"ipv4"}]}]
+          JSON
               ;;
             *)
               exec /usr/sbin/qm "$@"

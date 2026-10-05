@@ -51,7 +51,7 @@
 
     # Given a running VM
     # When the role passes the USB device through to it for the first time
-    # Then the VM is shut down and started again once
+    # Then the VM is shut down, started again and waited for once
     - name: "Read restart log of the running VM"
       ansible.builtin.slurp:
         src: "/tmp/qm-101.log"
@@ -62,5 +62,5 @@
         restarts: "{{ (restart_log.content | b64decode).splitlines() }}"
       ansible.builtin.assert:
         that:
-          - "restarts == ['shutdown', 'start']"
+          - "restarts == ['shutdown', 'start', 'wait']"
         msg: "Unexpected restarts: {{ restarts }}"

@@ -8,9 +8,9 @@
 # reboots and do not depend on device names like sdb. Two identical devices
 # cannot be told apart by ID, so use bus-port for those.
 #
-# A running VM is restarted when the device is first added, so the guest
-# gets it whether or not Proxmox could hot-plug it. A stopped VM gets the
-# device at its next start.
+# A running VM is restarted and waited for when the device is first added,
+# so the guest gets it whether or not Proxmox could hot-plug it. A stopped
+# VM gets the device at its next start.
 #
 # Tests to confirm working:
 #   $ qm config <id>
@@ -65,18 +65,20 @@
     - "proxmox_usb_passthrough_set is changed"
     - "'status: running' in proxmox_usb_passthrough_status.stdout"
   block:
-    - name: "Shut down VM"
-      ansible.builtin.command:
-        argv:
-          - "qm"
-          - "shutdown"
-          - "{{ proxmox_usb_passthrough_vm_id }}"
-      changed_when: true
+    - name: "Apply proxmox_shutdown_vm role"
+      ansible.builtin.include_role:
+        name: "proxmox_shutdown_vm"
+      vars:
+        proxmox_shutdown_vm_id: "{{ proxmox_usb_passthrough_vm_id }}"
 
-    - name: "Start VM"
-      ansible.builtin.command:
-        argv:
-          - "qm"
-          - "start"
-          - "{{ proxmox_usb_passthrough_vm_id }}"
-      changed_when: true
+    - name: "Apply proxmox_start_vm role"
+      ansible.builtin.include_role:
+        name: "proxmox_start_vm"
+      vars:
+        proxmox_start_vm_id: "{{ proxmox_usb_passthrough_vm_id }}"
+
+    - name: "Apply proxmox_wait_for_vm role"
+      ansible.builtin.include_role:
+        name: "proxmox_wait_for_vm"
+      vars:
+        proxmox_wait_for_vm_id: "{{ proxmox_usb_passthrough_vm_id }}"
