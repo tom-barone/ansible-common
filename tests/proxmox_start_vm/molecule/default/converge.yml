@@ -1,0 +1,13 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "proxmox_start_vm"
+      vars:
+        proxmox_start_vm_id: "{{ item }}"
+      loop:
+        - 100
+        - 101

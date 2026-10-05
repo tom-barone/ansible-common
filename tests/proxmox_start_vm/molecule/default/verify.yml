@@ -1,0 +1,34 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given a stopped VM
+    # When the role is applied twice, by converge and by idempotence
+    # Then the VM is started once
+    - name: "Read start log of the stopped VM"
+      ansible.builtin.slurp:
+        src: "/tmp/qm-100.log"
+      register: "start_log"
+
+    - name: "Assert the stopped VM was started once"
+      vars:
+        starts: "{{ (start_log.content | b64decode).splitlines() }}"
+      ansible.builtin.assert:
+        that:
+          - "starts == ['start']"
+        msg: "Unexpected starts: {{ starts }}"
+
+    # Given a running VM
+    # When the role is applied to it
+    # Then the VM is not started again
+    - name: "Look for a start log of the running VM"
+      ansible.builtin.stat:
+        path: "/tmp/qm-101.log"
+      register: "running_log"
+
+    - name: "Assert the running VM was not started"
+      ansible.builtin.assert:
+        that:
+          - "not running_log.stat.exists"
+        msg: "The running VM was started"
