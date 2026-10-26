@@ -1,0 +1,7 @@
+---
+# When false, the systemd sleep targets are also masked, so manual
+# suspend, lid-close suspend and hibernation are blocked too
+gnome_power_management_automatic_suspend: false
+# Seconds of inactivity before suspend (only takes effect when
+# automatic suspend is enabled)
+gnome_power_management_sleep_timeout: 900

@@ -1,0 +1,58 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    power_path: "/org/gnome/settings-daemon/plugins/power"
+  tasks:
+    - name: "Read AC sleep type from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read {{ power_path }}/sleep-inactive-ac-type
+      register: "ac_type"
+      changed_when: false
+
+    # Given the role was applied with automatic suspend enabled
+    # When we read the AC sleep type through the user dconf profile
+    # Then it is set to suspend
+    - name: "Assert AC sleep type is suspend"
+      ansible.builtin.assert:
+        that:
+          - "'suspend' in ac_type.stdout"
+        msg: "AC sleep type is {{ ac_type.stdout }}"
+
+    - name: "Read AC sleep timeout from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read {{ power_path }}/sleep-inactive-ac-timeout
+      register: "ac_timeout"
+      changed_when: false
+
+    # Given the role was applied with a 600 second sleep timeout
+    # When we read the AC sleep timeout through the user dconf profile
+    # Then it is 600
+    - name: "Assert AC sleep timeout is 600"
+      ansible.builtin.assert:
+        that:
+          - "ac_timeout.stdout == '600'"
+        msg: "AC sleep timeout is {{ ac_timeout.stdout }}"
+
+    - name: "Get sleep target status"
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+      loop:
+        - "sleep.target"
+        - "suspend.target"
+        - "hibernate.target"
+        - "hybrid-sleep.target"
+      register: "sleep_targets"
+
+    # Given the role was applied with automatic suspend enabled
+    # When we check the systemd sleep targets
+    # Then none of them are masked
+    - name: "Assert sleep targets are not masked"
+      ansible.builtin.assert:
+        that:
+          - "item.status.LoadState == 'loaded'"
+        msg: "{{ item.item }} is {{ item.status.LoadState }}"
+      loop: "{{ sleep_targets.results }}"
+      loop_control:
+        label: "{{ item.item }}"

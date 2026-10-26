@@ -1,0 +1,11 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "gnome_power_management"
+      vars:
+        gnome_power_management_automatic_suspend: true
+        gnome_power_management_sleep_timeout: 600
