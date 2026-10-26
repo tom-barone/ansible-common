@@ -1,0 +1,11 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to install the minimal GNOME desktop
+
+- name: "Install gnome-core"
+  ansible.builtin.apt:
+    name:
+      - "gnome-core"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600

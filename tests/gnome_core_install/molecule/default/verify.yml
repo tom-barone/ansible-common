@@ -1,0 +1,11 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given a Debian system without a desktop
+    # When the role is applied
+    # Then the gnome-core package is installed
+    - name: "Check gnome-core package is installed"
+      ansible.builtin.command: "dpkg -s gnome-core"
+      changed_when: false
