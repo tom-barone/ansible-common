@@ -1,0 +1,96 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to install the NVIDIA compute driver (CUDA, without the X
+# driver) with the open kernel modules, built by DKMS. Needs a Turing
+# (GTX 16xx, RTX 20xx) or newer GPU.
+#
+# The driver comes from NVIDIA's Debian repository, as Debian's own
+# nvidia-driver (550) is no longer maintained and fails to build on newer
+# kernels. The same repository carries the CUDA toolkit.
+#
+# nvidia-kernel-support blacklists nouveau, so there is nothing to do here.
+#
+# With Secure Boot on, the kernel refuses the module until the DKMS signing
+# key is enrolled, once, from the console:
+#   $ mokutil --import /var/lib/dkms/mok.pub
+#   then reboot and enroll the key in the MOK manager
+#
+# Tests to confirm working:
+#   $ nvidia-smi
+#   $ dkms status
+
+- name: "Detect architecture"
+  ansible.builtin.set_fact:
+    nvidia_drivers_install_arch: >-
+      {{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}
+    nvidia_drivers_install_repo: >-
+      https://developer.download.nvidia.com/compute/cuda/repos/debian13/{{
+      'sbsa' if ansible_facts['architecture'] == 'aarch64' else 'x86_64' }}/
+
+- name: "Install dependencies"
+  ansible.builtin.apt:
+    name:
+      - "python3-debian"
+      # The metapackage follows the kernel, so DKMS rebuilds the module on
+      # every kernel upgrade. Installed before the driver so its first
+      # build finds the headers.
+      - "linux-headers-{{ nvidia_drivers_install_arch }}"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+# Only for nvidia-installer-cleanup, which nvidia-kernel-open-dkms
+# pre-depends on. Signed-By is left out on purpose: apt refuses two entries
+# for the same suite with different keyrings, and hosts name the Debian
+# keyring differently (none, .gpg or .pgp). Without one, this entry uses
+# the keyring of the host's own trixie entry.
+- name: "Add Debian contrib repository"
+  ansible.builtin.deb822_repository:
+    name: "debian-contrib"
+    types: "deb"
+    uris: "http://deb.debian.org/debian"
+    suites: "trixie"
+    components: "contrib"
+    state: "present"
+
+- name: "Add NVIDIA GPG key"
+  ansible.builtin.get_url:
+    url: "{{ nvidia_drivers_install_repo }}8793F200.pub"
+    dest: "/etc/apt/keyrings/nvidia.asc"
+    mode: "0644"
+
+- name: "Add NVIDIA repository"
+  ansible.builtin.deb822_repository:
+    name: "nvidia"
+    types: "deb"
+    uris: "{{ nvidia_drivers_install_repo }}"
+    suites: "/"
+    signed_by: "/etc/apt/keyrings/nvidia.asc"
+    state: "present"
+
+- name: "Install NVIDIA compute driver"
+  ansible.builtin.apt:
+    name:
+      - "nvidia-driver-cuda"
+      - "nvidia-kernel-open-dkms"
+    state: "present"
+    update_cache: true
+  register: "nvidia_drivers_install_apt"
+
+# The module only loads, and nouveau only stays out, after a reboot.
+# Containers can't be rebooted.
+- name: "Reboot after first install"
+  ansible.builtin.reboot: {}
+  when:
+    - "nvidia_drivers_install_apt is changed"
+    - >-
+      ansible_facts['virtualization_type'] | default('')
+      not in ['docker', 'podman', 'lxc', 'container']
+
+# Containers can't load kernel modules
+- name: "Check the driver can see the GPU"
+  ansible.builtin.command: "nvidia-smi"
+  changed_when: false
+  when: >-
+    ansible_facts['virtualization_type'] | default('')
+    not in ['docker', 'podman', 'lxc', 'container']
