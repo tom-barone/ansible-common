@@ -77,3 +77,14 @@
         that:
           - "expected in content"
         msg: "polkit rule missing sudo group check"
+
+    - name: "Get authorized_keys file for user without SSH key"
+      ansible.builtin.stat:
+        path: "/home/testminimal/.ssh/authorized_keys"
+      register: "minimal_authorized_keys"
+
+    - name: "Assert authorized_keys file is absent without SSH key"
+      ansible.builtin.assert:
+        that:
+          - "not minimal_authorized_keys.stat.exists"
+        msg: "testminimal has an authorized_keys file"
