@@ -1,7 +1,8 @@
 # AI GENERATED - Tom Barone
 ---
 # Ansible role to install the minimal GNOME desktop on a headless host,
-# handing its network interfaces from ifupdown over to NetworkManager.
+# handing its network interfaces from ifupdown over to NetworkManager,
+# with systemd-resolved for DNS.
 
 - name: "Install gnome-core"
   ansible.builtin.apt:
@@ -10,6 +11,9 @@
       # Only a Recommends of gnome-core, but it runs the network after the
       # reboot
       - "network-manager"
+      # Lets NetworkManager and Tailscale both hand it their DNS servers,
+      # rather than each rewriting /etc/resolv.conf over the other
+      - "systemd-resolved"
     state: "present"
     update_cache: true
     cache_valid_time: 3600

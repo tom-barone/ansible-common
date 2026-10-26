@@ -17,6 +17,20 @@
       ansible.builtin.command: "dpkg -s network-manager"
       changed_when: false
 
+    - name: "Get systemd-resolved service status"
+      ansible.builtin.systemd:
+        name: "systemd-resolved"
+      register: "resolved_service"
+
+    # Given a Debian system without a desktop
+    # When the role is applied
+    # Then systemd-resolved starts at boot
+    - name: "Assert systemd-resolved service is enabled"
+      ansible.builtin.assert:
+        that:
+          - "resolved_service.status.UnitFileState == 'enabled'"
+        msg: "systemd-resolved service is not enabled"
+
     - name: "Read ifupdown interfaces config"
       ansible.builtin.slurp:
         src: "/etc/network/interfaces"
