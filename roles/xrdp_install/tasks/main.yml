@@ -21,6 +21,13 @@
     update_cache: true
     cache_valid_time: 3600
 
+# GNOME hides mounts under dot directories from the Files sidebar
+- name: "Hide redirected drives mount"
+  ansible.builtin.lineinfile:
+    path: "/etc/xrdp/sesman.ini"
+    regexp: "^FuseMountName="
+    line: "FuseMountName=.thinclient_drives"
+
 - name: "Enable and start xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
