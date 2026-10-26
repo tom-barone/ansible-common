@@ -1,4 +1,6 @@
 ---
 # Required vars:
 # user_create_admin_username: "admin"
+
+# Optional vars (no default):
 # user_create_admin_ssh_public_key: "ssh-ed25519 AAAA... admin"

@@ -3,7 +3,6 @@
   ansible.builtin.assert:
     that:
       - "user_create_admin_username is defined"
-      - "user_create_admin_ssh_public_key is defined"
     msg: "Missing a required variable"
 
 - name: "Create admin user"
@@ -23,6 +22,7 @@
   ansible.posix.authorized_key:
     user: "{{ user_create_admin_username }}"
     key: "{{ user_create_admin_ssh_public_key }}"
+  when: "user_create_admin_ssh_public_key is defined"
 
 - name: "Set up passwordless sudo for user"
   ansible.builtin.lineinfile:
