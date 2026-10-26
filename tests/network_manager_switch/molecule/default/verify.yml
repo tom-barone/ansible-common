@@ -1,0 +1,32 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read WiFi radio state"
+      ansible.builtin.command: "nmcli radio wifi"
+      register: "wifi_state"
+      changed_when: false
+
+    # Given the WiFi radio was on
+    # When the role is applied with WiFi switched off
+    # Then the WiFi radio is disabled
+    - name: "Assert WiFi radio is disabled"
+      ansible.builtin.assert:
+        that:
+          - "wifi_state.stdout == 'disabled'"
+        msg: "WiFi radio is {{ wifi_state.stdout }}"
+
+    - name: "Read WWAN radio state"
+      ansible.builtin.command: "nmcli radio wwan"
+      register: "wwan_state"
+      changed_when: false
+
+    # Given the WWAN radio was off
+    # When the role is applied with WWAN left at its default
+    # Then the WWAN radio is enabled
+    - name: "Assert WWAN radio is enabled"
+      ansible.builtin.assert:
+        that:
+          - "wwan_state.stdout == 'enabled'"
+        msg: "WWAN radio is {{ wwan_state.stdout }}"
