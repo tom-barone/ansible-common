@@ -94,3 +94,25 @@
         that:
           - "passwd_entry.stdout.split(':')[4] == 'testadmin'"
         msg: "testadmin does not have the username as its comment"
+
+    - name: "Get user shadow entry"
+      ansible.builtin.command: "getent shadow testadmin"
+      register: "shadow_entry"
+      changed_when: false
+
+    - name: "Assert user password is a sha512 hash"
+      ansible.builtin.assert:
+        that:
+          - "shadow_entry.stdout.split(':')[1].startswith('$6$')"
+        msg: "testadmin password is not a sha512 hash"
+
+    - name: "Get shadow entry for user without password"
+      ansible.builtin.command: "getent shadow testminimal"
+      register: "minimal_shadow_entry"
+      changed_when: false
+
+    - name: "Assert password is unset without password var"
+      ansible.builtin.assert:
+        that:
+          - "not minimal_shadow_entry.stdout.split(':')[1].startswith('$')"
+        msg: "testminimal has a password set"
