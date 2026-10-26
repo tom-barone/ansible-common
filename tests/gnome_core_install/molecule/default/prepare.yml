@@ -6,3 +6,25 @@
     - name: "Make apt resilient to transient CDN failures"
       ansible.builtin.include_role:
         name: "system_apt_retries"
+
+    - name: "Install ifupdown"
+      ansible.builtin.apt:
+        name:
+          - "ifupdown"
+        state: "present"
+        update_cache: true
+        cache_valid_time: 3600
+
+    # Matches what the Debian installer writes for a headless install
+    - name: "Configure eth0 with ifupdown"
+      ansible.builtin.copy:
+        dest: "/etc/network/interfaces"
+        mode: "0644"
+        content: |
+          source /etc/network/interfaces.d/*
+
+          auto lo
+          iface lo inet loopback
+
+          allow-hotplug eth0
+          iface eth0 inet dhcp

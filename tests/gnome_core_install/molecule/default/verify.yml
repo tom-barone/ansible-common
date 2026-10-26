@@ -9,3 +9,24 @@
     - name: "Check gnome-core package is installed"
       ansible.builtin.command: "dpkg -s gnome-core"
       changed_when: false
+
+    # Given a Debian system without a desktop
+    # When the role is applied
+    # Then the network-manager package is installed
+    - name: "Check network-manager package is installed"
+      ansible.builtin.command: "dpkg -s network-manager"
+      changed_when: false
+
+    - name: "Read ifupdown interfaces config"
+      ansible.builtin.slurp:
+        src: "/etc/network/interfaces"
+      register: "interfaces_config"
+
+    # Given eth0 is configured by ifupdown
+    # When the role is applied
+    # Then ifupdown no longer configures eth0
+    - name: "Assert ifupdown no longer configures eth0"
+      ansible.builtin.assert:
+        that:
+          - "'eth0' not in (interfaces_config.content | b64decode)"
+        msg: "eth0 is still configured by ifupdown"
