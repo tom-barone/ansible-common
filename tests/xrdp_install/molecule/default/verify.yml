@@ -1,0 +1,49 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given the role was applied
+    # When we query dpkg for xrdp
+    # Then the package is installed
+    - name: "Check xrdp package is installed"
+      ansible.builtin.command: "dpkg -s xrdp"
+      changed_when: false
+
+    # Given the role was applied
+    # When we query dpkg for xorgxrdp
+    # Then the session backend is installed
+    - name: "Check xorgxrdp package is installed"
+      ansible.builtin.command: "dpkg -s xorgxrdp"
+      changed_when: false
+
+    - name: "Get xrdp service status"
+      ansible.builtin.systemd:
+        name: "xrdp"
+      register: "xrdp_service"
+
+    # Given the role was applied
+    # When we check the xrdp service
+    # Then it is active
+    - name: "Assert xrdp service is active"
+      ansible.builtin.assert:
+        that:
+          - "xrdp_service.status.ActiveState == 'active'"
+        msg: "xrdp service is not running"
+
+    # Given the role was applied
+    # When we check the xrdp service
+    # Then it is enabled at boot
+    - name: "Assert xrdp service is enabled"
+      ansible.builtin.assert:
+        that:
+          - "xrdp_service.status.UnitFileState == 'enabled'"
+        msg: "xrdp service is not enabled"
+
+    # Given xrdp is running
+    # When we check port 3389
+    # Then it is listening
+    - name: "Check port 3389 is listening"
+      ansible.builtin.wait_for:
+        port: 3389
+        timeout: 5
