@@ -1,0 +1,10 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "network_manager_switch"
+      vars:
+        network_manager_switch_wifi: false

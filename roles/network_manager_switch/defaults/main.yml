@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+---
+# Radio switches, true is on. NetworkManager keeps them across reboots.
+network_manager_switch_wifi: true
+network_manager_switch_wwan: true

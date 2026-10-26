@@ -1,0 +1,53 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to switch the NetworkManager WiFi and WWAN radios on or off.
+#
+# Tests to confirm working:
+#   $ nmcli radio
+
+- name: "Validate variable types"
+  ansible.builtin.assert:
+    that:
+      - "network_manager_switch_wifi is boolean"
+      - "network_manager_switch_wwan is boolean"
+    msg: "wifi and wwan must be booleans"
+
+- name: "Install NetworkManager"
+  ansible.builtin.apt:
+    name: "network-manager"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Enable and start NetworkManager"
+  ansible.builtin.systemd:
+    name: "NetworkManager"
+    enabled: true
+    state: "started"
+
+- name: "Read radio switch states"
+  ansible.builtin.command:
+    argv:
+      - "nmcli"
+      - "radio"
+      - "{{ item.name }}"
+  loop:
+    - name: "wifi"
+      enabled: "{{ network_manager_switch_wifi }}"
+    - name: "wwan"
+      enabled: "{{ network_manager_switch_wwan }}"
+  register: "network_manager_switch_states"
+  changed_when: false
+
+- name: "Set radio switches"
+  ansible.builtin.command:
+    argv:
+      - "nmcli"
+      - "radio"
+      - "{{ item.item.name }}"
+      - "{{ 'on' if item.item.enabled else 'off' }}"
+  loop: "{{ network_manager_switch_states.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when: "item.stdout != ('enabled' if item.item.enabled else 'disabled')"
+  changed_when: true

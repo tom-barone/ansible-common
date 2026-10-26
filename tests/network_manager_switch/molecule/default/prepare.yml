@@ -1,0 +1,24 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    - name: "Install NetworkManager"
+      ansible.builtin.apt:
+        name: "network-manager"
+        state: "present"
+        update_cache: true
+
+    - name: "Start NetworkManager"
+      ansible.builtin.systemd:
+        name: "NetworkManager"
+        state: "started"
+
+    # So the role has a switch to turn back on
+    - name: "Switch WWAN off"
+      ansible.builtin.command: "nmcli radio wwan off"
+      changed_when: true

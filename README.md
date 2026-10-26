@@ -14,6 +14,7 @@ A non-comprehensive list of the more interesting roles:
 | `immich_install` | Install the [Immich](https://immich.app/) photo and video manager via Docker. |
 | `immich_restic_backup` | Automated Immich backups (database dump and original media) to an S3 compatible backend with [Restic](https://restic.net/), including scheduled `restic check` verification and bootstrap restore. |
 | `monitoring_stack_install` | Install [Prometheus](https://prometheus.io/), [Loki](https://grafana.com/oss/loki/), [Grafana](https://grafana.com/), [Alloy](https://grafana.com/docs/alloy/latest/), [Node Exporter](https://github.com/prometheus/node_exporter), and [cAdvisor](https://github.com/google/cadvisor) via Docker with emailed alerts for disk and RAM usage. |
+| `network_manager_switch` | Turn NetworkManager's WiFi and WWAN radio switches on or off. |
 | `nvidia_drivers_install` | Install the NVIDIA compute driver (CUDA) with open kernel modules from NVIDIA's Debian repository, built by DKMS. |
 | `openclaw_install` | Install the [OpenClaw](https://github.com/openclaw/openclaw) AI gateway as a hardened, non-root systemd service with scoped sudo. |
 | `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |
