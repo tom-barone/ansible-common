@@ -1,0 +1,28 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Gather service facts"
+  ansible.builtin.service_facts: {}
+
+# GNOME's remote desktop daemon also binds port 3389
+- name: "Stop GNOME remote desktop"
+  ansible.builtin.systemd:
+    name: "gnome-remote-desktop"
+    enabled: false
+    state: "stopped"
+  when: "'gnome-remote-desktop.service' in ansible_facts.services"
+
+- name: "Install xrdp"
+  ansible.builtin.apt:
+    name:
+      # Only a Recommends of xrdp, but it is the default session backend
+      - "xorgxrdp"
+      - "xrdp"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Enable and start xrdp"
+  ansible.builtin.systemd:
+    name: "xrdp"
+    enabled: true
+    state: "started"
