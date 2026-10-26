@@ -9,3 +9,14 @@
     state: "present"
     update_cache: true
     cache_valid_time: 3600
+  register: "gnome_core_install_apt"
+
+# A fresh desktop install only starts gdm and its session services
+# cleanly after a reboot. Containers can't be rebooted.
+- name: "Reboot after first install"
+  ansible.builtin.reboot: {}
+  when:
+    - "gnome_core_install_apt is changed"
+    - >-
+      ansible_facts['virtualization_type'] | default('')
+      not in ['docker', 'podman', 'lxc', 'container']
