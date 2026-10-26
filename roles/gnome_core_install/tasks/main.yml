@@ -1,22 +1,40 @@
 # AI GENERATED - Tom Barone
 ---
-# Ansible role to install the minimal GNOME desktop
+# Ansible role to install the minimal GNOME desktop on a headless host,
+# handing its network interfaces from ifupdown over to NetworkManager.
 
 - name: "Install gnome-core"
   ansible.builtin.apt:
     name:
       - "gnome-core"
+      # Only a Recommends of gnome-core, but it runs the network after the
+      # reboot
+      - "network-manager"
     state: "present"
     update_cache: true
     cache_valid_time: 3600
   register: "gnome_core_install_apt"
 
+# NetworkManager leaves alone any interface listed here, so keep only
+# loopback, as a Debian desktop install does
+- name: "Hand network interfaces over to NetworkManager"
+  ansible.builtin.copy:
+    dest: "/etc/network/interfaces"
+    mode: "0644"
+    content: |
+      auto lo
+      iface lo inet loopback
+  register: "gnome_core_install_interfaces"
+
 # A fresh desktop install only starts gdm and its session services
-# cleanly after a reboot. Containers can't be rebooted.
+# cleanly after a reboot, and NetworkManager only takes over the
+# interfaces from ifupdown on the next boot. Containers can't be rebooted.
 - name: "Reboot after first install"
   ansible.builtin.reboot: {}
   when:
-    - "gnome_core_install_apt is changed"
+    - >-
+      gnome_core_install_apt is changed
+      or gnome_core_install_interfaces is changed
     - >-
       ansible_facts['virtualization_type'] | default('')
       not in ['docker', 'podman', 'lxc', 'container']
