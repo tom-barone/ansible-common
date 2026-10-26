@@ -1,0 +1,44 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given a Debian system without an NVIDIA driver
+    # When the role is applied
+    # Then the NVIDIA compute driver is installed
+    - name: "Check nvidia-driver-cuda package is installed"
+      ansible.builtin.command: "dpkg -s nvidia-driver-cuda"
+      changed_when: false
+
+    # Given a Debian system without an NVIDIA driver
+    # When the role is applied
+    # Then the open kernel module is installed from NVIDIA's repository,
+    # as Debian has no package by this name
+    - name: "Check nvidia-kernel-open-dkms package is installed"
+      ansible.builtin.command: "dpkg -s nvidia-kernel-open-dkms"
+      changed_when: false
+
+    # Given a Debian system without kernel headers
+    # When the role is applied
+    # Then the headers for the Debian kernel are installed
+    - name: "Check kernel headers metapackage is installed"
+      vars:
+        arch: >-
+          {{ 'arm64' if ansible_facts['architecture'] == 'aarch64'
+          else 'amd64' }}
+      ansible.builtin.command: "dpkg -s linux-headers-{{ arch }}"
+      changed_when: false
+
+    - name: "Get DKMS status of the NVIDIA module"
+      ansible.builtin.command: "dkms status nvidia"
+      register: "dkms_status"
+      changed_when: false
+
+    # Given the Debian kernel headers are installed
+    # When the role is applied
+    # Then DKMS builds and installs the NVIDIA module for that kernel
+    - name: "Assert DKMS installed the NVIDIA module"
+      ansible.builtin.assert:
+        that:
+          - "'installed' in dkms_status.stdout"
+        msg: "DKMS did not build the NVIDIA module: {{ dkms_status.stdout }}"
