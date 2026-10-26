@@ -21,6 +21,7 @@ A non-comprehensive list of the more interesting roles:
 | `postgres_pgbackrest_restore_verify` | Scheduled [pgBackRest](https://pgbackrest.org/) restore test into a throwaway PostgreSQL container with verification queries. |
 | `postgres_restic_backup` | Automated PostgreSQL backups to any [Restic](https://restic.net/) supported backend, including scheduled `restic check` verification. |
 | `qemu_vm_create` | Create and launch a QEMU virtual machine with cloud-init and COW disk overlay. |
+| `samba_share` | Share a directory over SMB with read-write and read-only Samba credentials, advertised to macOS (mDNS) and Windows (WS-Discovery) clients. |
 | `system_fail2ban` | Install and configure Fail2ban with jail rules for SSH brute-force protection. |
 | `system_harden_ssh` | Harden SSH setting up authorized keys, and configuring sshd security parameters. |
 | `system_logcheck` | Install [logcheck](https://packages.debian.org/logcheck) with ignore rules for common services. |

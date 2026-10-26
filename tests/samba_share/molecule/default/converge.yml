@@ -1,0 +1,32 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "samba_share"
+      vars:
+        samba_share_name: "media"
+        samba_share_path: "/srv/media"
+        samba_share_users:
+          - username: "alice"
+            password: "alicepassword"
+            scope: "read_write"
+          - username: "bob"
+            password: "bobpassword"
+            scope: "read_write"
+          - username: "carol"
+            password: "carolpassword"
+            scope: "read_only"
+
+    - name: "Apply role under test for a second share"
+      ansible.builtin.include_role:
+        name: "samba_share"
+      vars:
+        samba_share_name: "private"
+        samba_share_path: "/srv/private"
+        samba_share_users:
+          - username: "alice"
+            password: "alicepassword"
+            scope: "read_write"
