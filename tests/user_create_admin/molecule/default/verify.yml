@@ -88,3 +88,9 @@
         that:
           - "not minimal_authorized_keys.stat.exists"
         msg: "testminimal has an authorized_keys file"
+
+    - name: "Assert user comment defaults to the username"
+      ansible.builtin.assert:
+        that:
+          - "passwd_entry.stdout.split(':')[4] == 'testadmin'"
+        msg: "testadmin does not have the username as its comment"

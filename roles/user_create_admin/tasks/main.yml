@@ -9,7 +9,8 @@
   ansible.builtin.user:
     name: "{{ user_create_admin_username }}"
     state: "present"
-    shell: "/bin/bash"
+    comment: "{{ user_create_admin_comment }}"
+    shell: "{{ user_create_admin_shell }}"
     create_home: true
 
 - name: "Add admin to sudo group"
