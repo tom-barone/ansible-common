@@ -4,6 +4,8 @@
 
 # Optional vars (no default):
 # user_create_admin_ssh_public_key: "ssh-ed25519 AAAA... admin"
+# user_create_admin_password: "hunter2"
+#   hashed with sha512 on the controller, which requires passlib
 
 user_create_admin_comment: "{{ user_create_admin_username }}"
 user_create_admin_shell: "/bin/bash"

@@ -12,6 +12,11 @@
     comment: "{{ user_create_admin_comment }}"
     shell: "{{ user_create_admin_shell }}"
     create_home: true
+    # Salt seeded by host so the hash, and the task, stay idempotent
+    password: >-
+      {{ user_create_admin_password | password_hash('sha512',
+         65534 | random(seed=inventory_hostname) | string)
+         if user_create_admin_password is defined else omit }}
 
 - name: "Add admin to sudo group"
   ansible.builtin.user:
