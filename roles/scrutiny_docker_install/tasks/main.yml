@@ -65,6 +65,12 @@
     mode: "0644"
   notify: "Restart scrutiny"
 
+# Recreate before the start task so a fresh install boots the container once.
+# Recreating it during its first boot can interrupt the InfluxDB setup and
+# leave the API down for good.
+- name: "Flush handlers so any pending restart fires before scrutiny starts"
+  ansible.builtin.meta: "flush_handlers"
+
 - name: "Start scrutiny"
   ansible.builtin.command:
     cmd: "docker compose up -d"
@@ -73,9 +79,6 @@
   changed_when: >
     'Started' in scrutiny_docker_install_up.stderr or
     'Created' in scrutiny_docker_install_up.stderr
-
-- name: "Flush handlers so any pending restart fires before API tasks"
-  ansible.builtin.meta: "flush_handlers"
 
 - name: "Wait for Scrutiny API to be ready"
   ansible.builtin.uri:
