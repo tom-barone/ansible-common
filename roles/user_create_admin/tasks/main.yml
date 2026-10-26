@@ -30,3 +30,21 @@
     line: "{{ user_create_admin_username }} ALL=(ALL) NOPASSWD:ALL"
     create: true
     mode: "0440"
+
+# Only exists once polkitd is installed, which then sets it to root:polkitd
+- name: "Create polkit rules directory"
+  ansible.builtin.file:
+    path: "/etc/polkit-1/rules.d"
+    state: "directory"
+    mode: "0750"
+
+- name: "Set up passwordless polkit for sudo group"
+  ansible.builtin.copy:
+    content: |
+      polkit.addRule(function(action, subject) {
+          if (subject.isInGroup("sudo")) {
+              return polkit.Result.YES;
+          }
+      });
+    dest: "/etc/polkit-1/rules.d/10-nopasswd.rules"
+    mode: "0644"

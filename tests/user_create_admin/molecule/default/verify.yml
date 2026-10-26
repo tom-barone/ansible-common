@@ -63,3 +63,17 @@
         that:
           - "sudoers_stat.stat.mode == '0440'"
         msg: "sudoers file does not have 0440 permissions"
+
+    - name: "Read polkit rule file"
+      ansible.builtin.slurp:
+        src: "/etc/polkit-1/rules.d/10-nopasswd.rules"
+      register: "polkit_rule"
+
+    - name: "Assert polkit rule allows the sudo group"
+      vars:
+        content: "{{ polkit_rule.content | b64decode }}"
+        expected: 'subject.isInGroup("sudo")'
+      ansible.builtin.assert:
+        that:
+          - "expected in content"
+        msg: "polkit rule missing sudo group check"
