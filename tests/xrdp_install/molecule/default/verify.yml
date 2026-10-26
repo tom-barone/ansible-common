@@ -40,6 +40,22 @@
           - "xrdp_service.status.UnitFileState == 'enabled'"
         msg: "xrdp service is not enabled"
 
+    - name: "Read sesman.ini"
+      ansible.builtin.slurp:
+        src: "/etc/xrdp/sesman.ini"
+      register: "sesman_ini"
+
+    # Given the role was applied
+    # When we read sesman.ini
+    # Then redirected drives mount under a hidden directory
+    - name: "Assert FuseMountName is hidden"
+      vars:
+        content: "{{ sesman_ini.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'FuseMountName=.thinclient_drives' in content"
+        msg: "FuseMountName is not set to .thinclient_drives"
+
     # Given xrdp is running
     # When we check port 3389
     # Then it is listening
