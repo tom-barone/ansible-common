@@ -1,0 +1,28 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    - name: "Install SMB and mDNS clients for verification"
+      ansible.builtin.apt:
+        name:
+          - "avahi-utils"
+          - "smbclient"
+        state: "present"
+        update_cache: true
+        cache_valid_time: 3600
+
+    # Stands in for a freshly formatted disk with a root:root 0755 root
+    - name: "Mount a filesystem to share"
+      ansible.builtin.include_role:
+        name: "system_mount"
+      vars:
+        system_mount_path: "/srv/media"
+        system_mount_state: "mounted"
+        system_mount_src: "tmpfs"
+        system_mount_fstype: "tmpfs"
+        system_mount_opts: "size=64m,mode=0755"

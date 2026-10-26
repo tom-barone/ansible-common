@@ -1,0 +1,14 @@
+---
+# AI GENERATED - Tom Barone
+# Required vars:
+# samba_share_name: "media"
+# samba_share_path: "/srv/media"
+# samba_share_users:
+#   Samba only credentials, each backed by a locked system account with a
+#   nologin shell. Don't reuse the name of an existing login user.
+#   - username: "family"
+#     password: "hunter2"
+#     scope: "read_write"
+#   - username: "guest"
+#     password: "hunter3"
+#     scope: "read_only"

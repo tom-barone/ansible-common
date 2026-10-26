@@ -1,0 +1,99 @@
+---
+# AI GENERATED - Tom Barone
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "samba_share_name is defined"
+      - "samba_share_path is defined"
+      - "samba_share_users is defined"
+      - "samba_share_users | map(attribute='scope')
+        | difference(['read_only', 'read_write']) | length == 0"
+    msg: "Missing a required variable or a scope is not read_only/read_write"
+
+- name: "Install Samba and discovery services"
+  ansible.builtin.apt:
+    name:
+      - "samba"
+      # Advertises the shares to macOS Finder over mDNS
+      - "avahi-daemon"
+      # Advertises the shares to the Windows Network view
+      - "wsdd2"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+    # samba recommends samba-ad-dc, which a file server doesn't need
+    install_recommends: false
+
+# Samba needs a Unix account per user, but nobody can log in with these
+- name: "Create a system account for each Samba user"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    system: true
+    shell: "/usr/sbin/nologin"
+    create_home: false
+  loop: "{{ samba_share_users | map(attribute='username') }}"
+
+# A fresh mount, e.g. from system_mount, has a root:root 0755 root. This
+# only touches the mounted filesystem, so if the disk is missing at boot
+# the bare mount point stays unwritable.
+- name: "Create the share directory"
+  ansible.builtin.file:
+    path: "{{ samba_share_path }}"
+    state: "directory"
+    owner: "root"
+    group: "users"
+    mode: "0775"
+
+- name: "Configure Samba"
+  ansible.builtin.template:
+    src: "smb.conf.j2"
+    dest: "/etc/samba/smb.conf"
+    mode: "0644"
+    validate: "testparm --suppress-prompt %s"
+  notify: "Restart Samba"
+
+- name: "Configure the share"
+  ansible.builtin.blockinfile:
+    path: "/etc/samba/shares.conf"
+    marker: "# {mark} {{ samba_share_name }}"
+    block: |
+      [{{ samba_share_name }}]
+      path = {{ samba_share_path }}
+      valid users = {{ samba_share_users | map(attribute='username')
+        | join(' ') }}
+      write list = {{ samba_share_users
+        | selectattr('scope', '==', 'read_write')
+        | map(attribute='username') | join(' ') }}
+      read only = yes
+      # Every file gets this group so writers can edit each other's files
+      force group = users
+      create mask = 0664
+      directory mask = 0775
+    create: true
+    mode: "0644"
+    validate: "testparm --suppress-prompt %s"
+  notify: "Restart Samba"
+
+# smbpasswd -a adds the user or updates the password, so this converges
+- name: "Set Samba passwords"
+  ansible.builtin.shell:
+    cmd: >-
+      set -o pipefail &&
+      printf '%s\n%s\n' "$SMB_PASSWORD" "$SMB_PASSWORD"
+      | smbpasswd -s -a "{{ item.username }}"
+    executable: "/bin/bash"
+  environment:
+    SMB_PASSWORD: "{{ item.password }}"
+  changed_when: false
+  no_log: true
+  loop: "{{ samba_share_users }}"
+
+- name: "Enable and start Samba and discovery services"
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+    state: "started"
+  loop:
+    - "smbd"
+    - "avahi-daemon"
+    - "wsdd2"
