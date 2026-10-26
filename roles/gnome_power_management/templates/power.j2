@@ -1,0 +1,5 @@
+[org/gnome/settings-daemon/plugins/power]
+sleep-inactive-ac-type='{{ "suspend" if gnome_power_management_automatic_suspend else "nothing" }}'
+sleep-inactive-ac-timeout={{ gnome_power_management_sleep_timeout }}
+sleep-inactive-battery-type='{{ "suspend" if gnome_power_management_automatic_suspend else "nothing" }}'
+sleep-inactive-battery-timeout={{ gnome_power_management_sleep_timeout }}

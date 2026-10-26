@@ -1,0 +1,72 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    power_path: "/org/gnome/settings-daemon/plugins/power"
+  tasks:
+    - name: "Read AC sleep type from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read {{ power_path }}/sleep-inactive-ac-type
+      register: "ac_type"
+      changed_when: false
+
+    # Given the role was applied with defaults
+    # When we read the AC sleep type through the user dconf profile
+    # Then it is set to nothing
+    - name: "Assert AC sleep type is nothing"
+      ansible.builtin.assert:
+        that:
+          - "'nothing' in ac_type.stdout"
+        msg: "AC sleep type is {{ ac_type.stdout }}"
+
+    - name: "Read battery sleep type from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read {{ power_path }}/sleep-inactive-battery-type
+      register: "battery_type"
+      changed_when: false
+
+    # Given the role was applied with defaults
+    # When we read the battery sleep type through the user dconf profile
+    # Then it is set to nothing
+    - name: "Assert battery sleep type is nothing"
+      ansible.builtin.assert:
+        that:
+          - "'nothing' in battery_type.stdout"
+        msg: "Battery sleep type is {{ battery_type.stdout }}"
+
+    - name: "Stat the compiled GDM dconf database"
+      ansible.builtin.stat:
+        path: "/etc/dconf/db/gdm"
+      register: "gdm_db"
+
+    # Given the role was applied with defaults
+    # When we check the GDM dconf database
+    # Then it has been compiled
+    - name: "Assert GDM dconf database exists"
+      ansible.builtin.assert:
+        that:
+          - "gdm_db.stat.exists"
+        msg: "/etc/dconf/db/gdm was not compiled"
+
+    - name: "Get sleep target status"
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+      loop:
+        - "sleep.target"
+        - "suspend.target"
+        - "hibernate.target"
+        - "hybrid-sleep.target"
+      register: "sleep_targets"
+
+    # Given the role was applied with defaults
+    # When we check the systemd sleep targets
+    # Then they are all masked
+    - name: "Assert sleep targets are masked"
+      ansible.builtin.assert:
+        that:
+          - "item.status.LoadState == 'masked'"
+        msg: "{{ item.item }} is not masked"
+      loop: "{{ sleep_targets.results }}"
+      loop_control:
+        label: "{{ item.item }}"

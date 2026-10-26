@@ -1,0 +1,53 @@
+---
+- name: "Validate variable types"
+  ansible.builtin.assert:
+    that:
+      - "gnome_power_management_automatic_suspend is boolean"
+      - "gnome_power_management_sleep_timeout is integer"
+    msg: "automatic_suspend must be a boolean and sleep_timeout an integer"
+
+- name: "Install dconf CLI"
+  ansible.builtin.apt:
+    name: "dconf-cli"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Create dconf directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "/etc/dconf/profile"
+    - "/etc/dconf/db/local.d"
+    - "/etc/dconf/db/gdm.d"
+
+- name: "Ensure dconf user profile includes the local database"
+  ansible.builtin.copy:
+    content: |
+      user-db:user
+      system-db:local
+    dest: "/etc/dconf/profile/user"
+    mode: "0644"
+  notify: "Update dconf"
+
+- name: "Configure power settings for user sessions and GDM"
+  ansible.builtin.template:
+    src: "power.j2"
+    dest: "{{ item }}/00-power"
+    mode: "0644"
+  loop:
+    - "/etc/dconf/db/local.d"
+    - "/etc/dconf/db/gdm.d"
+  notify: "Update dconf"
+
+- name: "Mask systemd sleep targets"
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    masked: "{{ not gnome_power_management_automatic_suspend }}"
+  loop:
+    - "sleep.target"
+    - "suspend.target"
+    - "hibernate.target"
+    - "hybrid-sleep.target"

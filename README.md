@@ -10,6 +10,7 @@ A non-comprehensive list of the more interesting roles:
 | --- | --- |
 | `dokku_install` | Install [Dokku](https://dokku.com/) PaaS platform with admin SSH key and global domain configuration. |
 | `github_actions_self_hosted_runner_install` | Deploy a GitHub Actions self-hosted runner with local cache server. |
+| `gnome_power_management` | Configure GNOME automatic suspend for user sessions and the GDM login screen, masking the systemd sleep targets when it is disabled. |
 | `immich_install` | Install the [Immich](https://immich.app/) photo and video manager via Docker. |
 | `immich_restic_backup` | Automated Immich backups (database dump and original media) to an S3 compatible backend with [Restic](https://restic.net/), including scheduled `restic check` verification and bootstrap restore. |
 | `monitoring_stack_install` | Install [Prometheus](https://prometheus.io/), [Loki](https://grafana.com/oss/loki/), [Grafana](https://grafana.com/), [Alloy](https://grafana.com/docs/alloy/latest/), [Node Exporter](https://github.com/prometheus/node_exporter), and [cAdvisor](https://github.com/google/cadvisor) via Docker with emailed alerts for disk and RAM usage. |
