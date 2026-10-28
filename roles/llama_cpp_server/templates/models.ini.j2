@@ -1,0 +1,14 @@
+{# AI GENERATED - Tom Barone #}
+version = 1
+
+; Hide cache entries that a model below already points at
+[*]
+dedup-cache-models = true
+{% for name, settings in llama_cpp_server_models.items() %}
+
+[{{ name }}]
+{# llama.cpp only parses lower case true/false #}
+{% for key, value in settings.items() %}
+{{ key }} = {{ value | lower if value is boolean else value }}
+{% endfor %}
+{% endfor %}

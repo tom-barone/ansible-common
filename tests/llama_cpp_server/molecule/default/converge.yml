@@ -7,11 +7,19 @@
       ansible.builtin.include_role:
         name: "llama_cpp_server"
       vars:
-        # 1.2 MB model, the same one llama.cpp's own server tests use
-        llama_cpp_server_model: "ggml-org/test-model-stories260K:F32"
+        # Two presets on the same 1.2 MB model, the one llama.cpp's own
+        # server tests use
+        llama_cpp_server_models:
+          stories:
+            hf-repo: "ggml-org/test-model-stories260K:F32"
+            ctx-size: 256
+            no-mmproj: true
+          stories-big:
+            hf-repo: "ggml-org/test-model-stories260K:F32"
+            ctx-size: 512
         # No GPU in CI
         llama_cpp_server_backend: "cpu"
         # Stands in for a mounted HDD
         llama_cpp_server_cache_dir: "/srv/models"
         llama_cpp_server_args:
-          - "--ctx-size 256"
+          - "--models-max 1"
