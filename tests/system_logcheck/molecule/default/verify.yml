@@ -47,6 +47,12 @@
         "I am a logcheck test that should be filtered out"
       changed_when: false
 
+    - name: "Add a kernel error log entry that a custom rule should filter"
+      ansible.builtin.command: >
+        logger -p kern.error
+        "I am a custom logcheck rule test that should be filtered out"
+      changed_when: false
+
     - name: "Run logcheck and check for test log entry"
       ansible.builtin.command: >
         su -s /bin/bash -c "/usr/sbin/logcheck -o -t" logcheck
@@ -70,3 +76,14 @@
             'I am a logcheck test that should be filtered out'
             not in logcheck_output.stdout
         msg: "Logcheck did not process the test log entry as expected"
+
+    # Given a custom rule is passed in converge
+    # When logcheck runs over a matching log entry
+    # Then the entry should be filtered out
+    - name: "Assert custom rule filters its log entry"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'I am a custom logcheck rule test that should be filtered out'
+            not in logcheck_output.stdout
+        msg: "Custom logcheck rule did not filter its log entry"
