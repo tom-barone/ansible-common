@@ -1,0 +1,1 @@
+Oct 26 19:47:55 server smartd[3562225]: Device: /dev/disk/by-id/wwn-0x5000c500e891edd8 [SAT], CHECK POWER STATUS spins up disk (0x81 -> 0xff)
