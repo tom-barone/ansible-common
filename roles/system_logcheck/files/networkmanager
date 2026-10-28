@@ -1,1 +1,3 @@
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] dhcp4 \(.*\): state changed new lease, address=[0-9.]+$
+.* .*NetworkManager.*: <info> +\[[0-9.]+\] manager: \(.*\): new (Veth|Tun) device \(/org/freedesktop/NetworkManager/Devices/[0-9]+\)$
+.* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(.*\): carrier: link connected$
