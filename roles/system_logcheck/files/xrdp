@@ -37,3 +37,12 @@
 .* .*xrdp-chansrv.*: \[INFO \]  +[A-Za-z]+ +[A-Z0-9_]+$
 .* .*xrdp-chansrv.*: \[INFO \] sound_process_training: round trip time [0-9]+$
 .* .*xrdp-chansrv.*: \[INFO \] Detected remote (smartcard|printer) '.*'( \(not supported\))?$
+.* .*xrdp.*: \[ERROR\] (xrdp_sec_recv: xrdp_mcs_recv|xrdp_rdp_recv: xrdp_sec_recv|libxrdp_process_data: xrdp_rdp_recv|xrdp_process_data_in: xrdp_process_loop) failed$
+.* .*xrdp.*: \[ERROR\] SSL_shutdown: Failure in SSL library \(protocol error\?\)$
+.* .*xrdp.*: \[ERROR\] SSL: error:0A000126:SSL routines::unexpected eof while reading$
+.* .*xrdp-sesman.*: rdpClientConRecv: g_sck_recv failed\(returned 0\)$
+.* .*xrdp-sesman.*: rdpClientConRecvMsg: error$
+.* .*xrdp-sesman.*: rdpClientConCheck: rdpClientConGotData failed$
+.* .*xrdp-sesman.*: rdpClientConDisconnect:$
+.* .*xrdp-sesman.*: rdpRemoveClientConFromDev: .*$
+.* .*xrdp.*: rfxcodec_encode_create: got [a-z0-9.]+$

@@ -94,3 +94,17 @@ Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       cbSize          0
 Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] sound_process_training: round trip time 6
 Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] Detected remote smartcard 'SCARD'
 Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] Detected remote printer 'PRN1' (not supported)
+Oct 28 22:00:15 server xrdp[73486]: [ERROR] xrdp_sec_recv: xrdp_mcs_recv failed
+Oct 28 22:00:15 server xrdp[73486]: [ERROR] xrdp_rdp_recv: xrdp_sec_recv failed
+Oct 28 22:00:15 server xrdp[73486]: [ERROR] libxrdp_process_data: xrdp_rdp_recv failed
+Oct 28 22:00:15 server xrdp[73486]: [ERROR] xrdp_process_data_in: xrdp_process_loop failed
+Oct 28 22:00:15 server xrdp[73486]: [ERROR] SSL_shutdown: Failure in SSL library (protocol error?)
+Oct 28 22:00:15 server xrdp[73486]: [ERROR] SSL: error:0A000126:SSL routines::unexpected eof while reading
+Oct 28 22:00:15 server xrdp-sesman[2483]: rdpClientConRecv: g_sck_recv failed(returned 0)
+Oct 28 22:00:15 server xrdp-sesman[2483]: rdpClientConRecvMsg: error
+Oct 28 22:00:15 server xrdp-sesman[2483]: rdpClientConCheck: rdpClientConGotData failed
+Oct 28 22:00:15 server xrdp-sesman[2483]: rdpClientConDisconnect:
+Oct 28 22:00:15 server xrdp-sesman[2483]: rdpRemoveClientConFromDev: removing clientCon 0x559f13164d10
+Oct 28 22:00:15 server xrdp[73486]: rfxcodec_encode_create: got sse2
+Oct 28 22:00:15 server xrdp[73486]: rfxcodec_encode_create: got sse4.1
+Oct 28 22:00:15 server xrdp[73486]: rfxcodec_encode_create: got popcnt
