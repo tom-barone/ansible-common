@@ -129,3 +129,8 @@ Sep 13 03:00:54 server systemd-journald[328]: Journal stopped
 Sep 13 03:00:54 server systemd-journald[328]: Received SIGTERM from PID 1 (systemd).
 Sep 13 06:29:51 server systemd-networkd[3913048]: eth0: Configuring with /run/systemd/network/10-netplan-eth0.network.
 Sep 13 06:29:51 server systemd-networkd[3913048]: eth0: DHCPv4 address 192.168.50.85/24, gateway 192.168.50.1 acquired from 192.168.50.1
+Oct 28 09:57:56 server systemd[49293]: Closed gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+Oct 28 09:57:56 server systemd[49293]: Closed gnome-keyring-daemon.socket - GNOME Keyring daemon.
+Oct 28 09:57:56 server systemd[49293]: Closed pipewire-pulse.socket - PipeWire PulseAudio.
+Oct 28 09:57:56 server systemd[49293]: Closed pipewire.socket - PipeWire Multimedia System Sockets.
+Oct 28 09:57:56 server systemd[49293]: Closed speech-dispatcher.socket - Speech Dispatcher Socket.
