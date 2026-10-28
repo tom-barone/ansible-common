@@ -4,3 +4,14 @@ Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.4871] device (ve
 Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.4880] device (docker0): carrier: link connected
 Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.5600] manager: (veth8caf5c6): new Veth device (/org/freedesktop/NetworkManager/Devices/10)
 Oct 28 18:09:01 server NetworkManager[832]: <info>  [1793173141.8859] manager: (tailscale0): new Tun device (/org/freedesktop/NetworkManager/Devices/11)
+Oct 28 18:08:59 server NetworkManager[832]: <info>  [1793173139.6369] device (tailscale0): state change: activated -> unmanaged (reason 'unmanaged-external-down', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6076] device (tailscale0): state change: unmanaged -> unavailable (reason 'connection-assumed', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6097] device (tailscale0): state change: unavailable -> disconnected (reason 'connection-assumed', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6101] device (tailscale0): Activation: starting connection 'tailscale0' (08aa7174-f5e2-4bfc-9c55-c97eb2e4ba2a)
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6111] device (tailscale0): state change: disconnected -> prepare (reason 'none', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6121] device (tailscale0): state change: prepare -> config (reason 'none', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6131] device (tailscale0): state change: config -> ip-config (reason 'none', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6145] device (tailscale0): state change: ip-config -> ip-check (reason 'none', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6224] device (tailscale0): state change: ip-check -> secondaries (reason 'none', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6226] device (tailscale0): state change: secondaries -> activated (reason 'none', managed-type: 'external')
+Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6230] device (tailscale0): Activation: successful, device activated.
