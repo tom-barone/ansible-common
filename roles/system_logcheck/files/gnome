@@ -1,0 +1,12 @@
+.* .*gdm-wayland-session.*: dbus-daemon\[[0-9]+\]: \[session .*\] Activating service name='org\.freedesktop\.secrets' requested by .*$
+.* .*gdm-wayland-session.*: dbus-daemon\[[0-9]+\]: \[session .*\] Failed to activate service 'org\.freedesktop\.secrets': timed out .*$
+.* .*gdm-wayland-session.*: GNOME_KEYRING_CONTROL=/run/user/[0-9]+/keyring$
+.* .*(gdm-wayland-session|gnome-keyring-daemon).*: discover_other_daemon: [0-9]+$
+.* .*gnome-keyring-d.*: The Secret Service was already initialized$
+.* .*gnome-shell.*: Enabling experimental feature '.*'$
+.* .*gnome-software.*: Only [0-9]+ apps for .* list, hiding$
+.* .*gnome-software.*: failed to get featured apps: no apps to show$
+.* .*gsd-media-keys.*: Failed to grab accelerator for keybinding settings:.*$
+.* .*gsd-usb-protect.*: Failed to fetch USBGuard rules list: .*org\.usbguard1 was not provided by any \.service files$
+.* .*gvfsd-wsdd.*: Failed to spawn the wsdd daemon: Failed to execute child process .*wsdd.* \(No such file or directory\)$
+.* .*gvfsd-network.*: Couldn't create directory monitor on wsdd:///\. Error: Automount failed: Failed to spawn the underlying wsdd daemon\.$
