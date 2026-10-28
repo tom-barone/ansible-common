@@ -108,3 +108,7 @@ Oct 28 22:00:15 server xrdp-sesman[2483]: rdpRemoveClientConFromDev: removing cl
 Oct 28 22:00:15 server xrdp[73486]: rfxcodec_encode_create: got sse2
 Oct 28 22:00:15 server xrdp[73486]: rfxcodec_encode_create: got sse4.1
 Oct 28 22:00:15 server xrdp[73486]: rfxcodec_encode_create: got popcnt
+Oct 28 21:48:51 server xrdp-sesman[2483]: rdpkeybBell:
+Oct 28 21:49:04 server xrdp-chansrv[2497]: [ERROR] clipboard_event_selection_request: unknown target text/plain;charset=utf-8
+Oct 28 21:48:12 server org.gnome.NautilusPreviewer[73737]: libEGL warning: failed to open /dev/dri/renderD129: Permission denied
+Oct 28 21:48:12 server org.gnome.NautilusPreviewer[73737]: libEGL warning: failed to open /dev/dri/card0: Permission denied

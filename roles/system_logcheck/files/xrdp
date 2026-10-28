@@ -46,3 +46,6 @@
 .* .*xrdp-sesman.*: rdpClientConDisconnect:$
 .* .*xrdp-sesman.*: rdpRemoveClientConFromDev: .*$
 .* .*xrdp.*: rfxcodec_encode_create: got [a-z0-9.]+$
+.* .*xrdp-sesman.*: rdpkeybBell:$
+.* .*xrdp-chansrv.*: \[ERROR\] clipboard_event_selection_request: unknown target .*$
+.* .*: libEGL warning: failed to open /dev/dri/(card|renderD)[0-9]+: Permission denied$
