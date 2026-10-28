@@ -2,3 +2,95 @@ Oct 28 18:09:06 server xrdp-sesman[2483]: rdpkeybChangeKeyboardControl:
 Oct 28 18:09:06 server xrdp-sesman[2483]: rdpkeybChangeKeyboardControl: autoRepeat off
 Oct 28 18:09:06 server xrdp-sesman[2483]: rdpkeybChangeKeyboardControl: autoRepeat on
 Oct 28 18:09:07 server xrdp-sesman[2483]: rdpInDeferredRepeatCallback:
+Oct 28 21:47:39 server xrdp[1447]: [INFO ] Socket 14: connection accepted from [::ffff:100.116.20.108]:57888
+Oct 28 21:47:39 server xrdp[73486]: [INFO ] Using default X.509 certificate: /etc/xrdp/cert.pem
+Oct 28 21:47:39 server xrdp[73486]: [INFO ] Using default X.509 key file: /etc/xrdp/key.pem
+Oct 28 21:47:39 server xrdp[73486]: [INFO ] Security protocol: configured [SSL|RDP], requested [SSL|HYBRID|HYBRID_EX|RDP], selected [SSL]
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] Connected client computer name: TB-MacBook-Pro
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] client supports gfx protocol
+Oct 28 21:47:40 server xrdp[73486]: [WARN ] Received [MS-RDPBCGR] TS_UD_HEADER type 0xc006 is unknown (ignored)
+Oct 28 21:47:40 server xrdp[73486]: [WARN ] Received [MS-RDPBCGR] TS_UD_HEADER type 0xc00a is unknown (ignored)
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_load_keyboard_layout: Keyboard information sent by the RDP client, keyboard_type:[0x04], keyboard_subtype:[0x00], keylayout:[0x00000C09]
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_load_keyboard_layout: model [] variant [] layout [us] options []
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] TLS connection established from [::ffff:100.116.20.108]:57888 TLSv1.3 with cipher TLS_AES_256_GCM_SHA384
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] Client supports single-screen resizes by xrdp
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_caps_process_pointer: client supports new(color) cursor
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_process_offscreen_bmpcache: support level 0 cache size 0 MB cache entries 0
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_caps_process_codecs: NSCodec(CA8D1BB9-000F-154F-589F-AE2D1A87E2D6), codec id [1], properties len [3]
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] Client Capability: LARGE_POINTER_FLAG_96x96 supported
+Oct 28 21:47:40 server xrdp[73486]: [WARN ] Cannot find keymap file /etc/xrdp/km-00000c09.ini
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] Loading keymap file /etc/xrdp/km-00000409.ini
+Oct 28 21:47:40 server xrdp[73486]: [WARN ] local keymap file for 0x00000c09 found and doesn't match built in keymap, using local keymap file
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] Login screen monitor height is 949 pixels over 195 mm (123 DPI)
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_egfx_create: error 0 channel_id 1
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_mm_egfx_caps_advertise:
+Oct 28 21:47:40 server xrdp[73486]: [INFO ]   version 0x00080004 flags 0x00000002 (index: 0)
+Oct 28 21:47:40 server xrdp[73486]: [INFO ]   version 0x000b0101 flags 0x00000082 (index: 7)
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] unknown version 0x000b0101
+Oct 28 21:47:40 server xrdp[73486]: [INFO ]   replying version 0x000a0701 flags 0x00000082
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_mm_egfx_caps_advertise: xrdp_egfx_send_capsconfirm error 0 best_index 6
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_egfx_reset_graphics:
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_egfx_reset_graphics: width 1512 height 949 monitorcount 1
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_mm_egfx_caps_advertise: xrdp_egfx_send_reset_graphics error 0 monitorCount 0
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_mm_egfx_create_surfaces: map surface_id 0 left 0 top 0 width 1512 height 949
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_encoder_create: starting gfx rfx pro codec session
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_mm_egfx_invalidate_wm_screen:
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_mm_egfx_caps_advertise: egfx created.
+Oct 28 21:47:40 server xrdp[73486]: [WARN ] Ignoring obsolete SCP port value '3350'
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_wm_log_msg: sesman connect ok
+Oct 28 21:47:40 server xrdp-sesman[938]: [INFO ] Socket 13: connection accepted from AF_UNIX
+Oct 28 21:47:40 server xrdp[73486]: [INFO ] xrdp_wm_log_msg: Performing login request for tbone
+Oct 28 21:47:40 server xrdp-sesman[938]: [INFO ] Received system login request from xrdp for user: tbone IP: ::ffff:100.116.20.108
+Oct 28 21:47:40 server xrdp-sesexec[73488]: [INFO ] starting xrdp-sesexec with pid 73488
+Oct 28 21:47:41 server xrdp-sesexec[73488]: [INFO ] TerminalServerUsers group tsusers doesn't exist. Access granted for tbone
+Oct 28 21:47:41 server xrdp-sesexec[73488]: [INFO ] Access permitted for user: tbone
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] xrdp_wm_log_msg: login was successful - creating session
+Oct 28 21:47:41 server xrdp-sesman[938]: [INFO ] Received sys login status for tbone : logged in
+Oct 28 21:47:41 server xrdp-sesman[938]: [INFO ] Received request from xrdp to create a session for user tbone
+Oct 28 21:47:41 server xrdp-sesman[938]: [INFO ] ++ reconnected session: username tbone, display :10.0, session_pid 2426, ip ::ffff:100.116.20.108
+Oct 28 21:47:41 server xrdp-sesexec[73492]: [INFO ] Starting session reconnection script on display 10: /etc/xrdp/reconnectwm.sh
+Oct 28 21:47:41 server xrdp-sesexec[73488]: [INFO ] xrdp-sesexec pid 73488 is now logging out
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] xrdp_wm_log_msg: session is available on display 10 for user tbone
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] xrdp_wm_log_msg: Connecting to session
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] loaded module 'libxup.so' ok, interface size 10416, version 4
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] lib_mod_connect: connecting via UNIX socket
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] lib_mod_log_peer: xrdp_pid=73486 connected to Xorg_pid=2483 Xorg_uid=1001 Xorg_gid=1001 client=[::ffff:100.116.20.108]:57888
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConGotConnection:
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConGotConnection: g_sck_accept ok new_sck 19
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConGetConnection: idle_disconnect_timeout set to non-positive value, idle timer turned off
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpAddClientConToDev: adding first clientCon 0x559f13164d10
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] xrdp_wm_log_msg: Connecting to chansrv
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConProcessMsgVersion: version 0 0 0 1
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConProcessMsgClientInput: invalidate x 0 y 0 cx 1512 cy 949
+Oct 28 21:47:41 server xrdp-sesman[2483]: KbdSync: toggling num lock
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] Socket 14: connection accepted from AF_UNIX
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConProcessMsgClientInfo:
+Oct 28 21:47:41 server xrdp-sesman[2483]:   got client info bytes 7192
+Oct 28 21:47:41 server xrdp-sesman[2483]:   jpeg support 0
+Oct 28 21:47:41 server xrdp-sesman[2483]:   offscreen support 0
+Oct 28 21:47:41 server xrdp-sesman[2483]:   offscreen size 0
+Oct 28 21:47:41 server xrdp-sesman[2483]:   offscreen entries 0
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConProcessMsgClientInfo: got RFX capture
+Oct 28 21:47:41 server xrdp-sesman[2483]:   cap_width 1536 cap_height 960
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpClientConAllocateSharedMemory: shmemfd 28 shmemptr 0x7fb073143000 bytes 5898240
+Oct 28 21:47:41 server xrdp-sesman[2483]:   client can not do multimon
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpRRSetRdpOutputs: numCrtcs 1 numOutputs 1 monitorCount 0
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpRRSetRdpOutputs: update output 0 left 0 top 0 width 1512 height 949
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpRRConnectOutput:
+Oct 28 21:47:41 server xrdp-sesman[2483]:   client can not do offscreen to offscreen blits
+Oct 28 21:47:41 server xrdp-sesman[2483]:   client can do new(color) cursor
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpLoadLayout: keylayout 0x00000c09 variant  display 10
+Oct 28 21:47:41 server xrdp-sesman[2483]: rdpCapture2: resize the crc list was 0 now 360
+Oct 28 21:47:41 server xrdp[73486]: [INFO ] Received memory_allocation_complete command. width: 1536, height: 960
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] sound_process_output_format:
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       wFormatNo       0
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       wFormatTag      WAVE_FORMAT_PCM
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       nChannels       2
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       nSamplesPerSec  44100
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       nAvgBytesPerSec 176400
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       nBlockAlign     4
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       wBitsPerSample  16
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ]       cbSize          0
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] sound_process_training: round trip time 6
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] Detected remote smartcard 'SCARD'
+Oct 28 21:47:41 server xrdp-chansrv[2497]: [INFO ] Detected remote printer 'PRN1' (not supported)
