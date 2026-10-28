@@ -1,0 +1,3 @@
+.* .*avahi-daemon.*: Joining mDNS multicast group on interface .* with address .*\.$
+.* .*avahi-daemon.*: New relevant interface .* for mDNS\.$
+.* .*avahi-daemon.*: Registering new address record for .* on .*\.$

@@ -1,0 +1,3 @@
+Oct 28 18:08:42 server avahi-daemon[758]: Joining mDNS multicast group on interface docker0.IPv6 with address fe80::5cf2:c6ff:fe39:b801.
+Oct 28 18:08:42 server avahi-daemon[758]: New relevant interface docker0.IPv6 for mDNS.
+Oct 28 18:08:42 server avahi-daemon[758]: Registering new address record for fe80::5cf2:c6ff:fe39:b801 on docker0.*.
