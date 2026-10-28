@@ -26,3 +26,10 @@ system_logcheck_enable_journal: true
 #
 # So we'll disable it by default.
 system_logcheck_enable_syslog: false
+
+# Extra logcheck ignore rules (egrep regexes) for this host, written to
+# /etc/logcheck/ignore.d.server/custom. Use single quotes so backslashes
+# are kept, e.g.
+# system_logcheck_custom_rules:
+#   - '.* .*myapp.*: Heartbeat ok$'
+system_logcheck_custom_rules: []

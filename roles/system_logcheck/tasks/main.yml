@@ -40,6 +40,12 @@
     mode: "0644"
   loop: "{{ query('fileglob', 'files/*') }}"
 
+- name: "Add custom logcheck ignore rules"
+  ansible.builtin.template:
+    src: "templates/custom.j2"
+    dest: "/etc/logcheck/ignore.d.server/custom"
+    mode: "0644"
+
 - name: "Configure journal logfiles"
   ansible.builtin.template:
     src: "templates/journal.logfiles.j2"
