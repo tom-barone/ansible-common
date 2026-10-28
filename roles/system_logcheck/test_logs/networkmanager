@@ -1,1 +1,6 @@
 Oct 27 06:35:03 server NetworkManager[832]: <info>  [1793045103.8781] dhcp4 (enp0s31f6): state changed new lease, address=192.168.50.244
+Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.4798] manager: (veth73e083f): new Veth device (/org/freedesktop/NetworkManager/Devices/9)
+Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.4871] device (veth73e083f): carrier: link connected
+Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.4880] device (docker0): carrier: link connected
+Oct 28 18:08:40 server NetworkManager[832]: <info>  [1793173120.5600] manager: (veth8caf5c6): new Veth device (/org/freedesktop/NetworkManager/Devices/10)
+Oct 28 18:09:01 server NetworkManager[832]: <info>  [1793173141.8859] manager: (tailscale0): new Tun device (/org/freedesktop/NetworkManager/Devices/11)
