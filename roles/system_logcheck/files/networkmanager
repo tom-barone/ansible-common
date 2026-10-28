@@ -1,3 +1,6 @@
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] dhcp4 \(.*\): state changed new lease, address=[0-9.]+$
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] manager: \(.*\): new (Veth|Tun) device \(/org/freedesktop/NetworkManager/Devices/[0-9]+\)$
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(.*\): carrier: link connected$
+.* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(tailscale0\): state change: .* \(reason '.*', managed-type: 'external'\)$
+.* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(tailscale0\): Activation: starting connection 'tailscale0' \(.*\)$
+.* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(tailscale0\): Activation: successful, device activated\.$
