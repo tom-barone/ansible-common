@@ -1,0 +1,7 @@
+Oct 28 09:57:32 server wireplumber[49320]: wp-internal-comp-loader: Loading profile 'main'
+Oct 28 09:57:33 server wireplumber[49320]: [39:22:45.540779911] [49320]  INFO Camera camera_manager.cpp:327 libcamera v0.4.0
+Oct 28 09:57:33 server wireplumber[49320]: [39:22:45.541136187] [49367] ERROR DmaBufAllocator dma_buf_allocator.cpp:119 Could not open any dma-buf provider
+Oct 28 09:57:56 server wireplumber[49320]: m-dbus-connection: <WpDBusConnection:0x557f7c81c870> DBus connection closed: Underlying GIOStream returned 0 bytes on an async read
+Oct 28 09:57:56 server wireplumber[49320]: m-dbus-connection: <WpDBusConnection:0x557f7c81c870> Trying to reconnect after core sync
+Oct 28 09:57:56 server wireplumber[49320]: wireplumber: stopped by signal: Terminated
+Oct 28 09:57:56 server wireplumber[49320]: wireplumber: disconnected from pipewire
