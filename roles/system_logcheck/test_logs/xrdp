@@ -1,0 +1,4 @@
+Oct 28 18:09:06 server xrdp-sesman[2483]: rdpkeybChangeKeyboardControl:
+Oct 28 18:09:06 server xrdp-sesman[2483]: rdpkeybChangeKeyboardControl: autoRepeat off
+Oct 28 18:09:06 server xrdp-sesman[2483]: rdpkeybChangeKeyboardControl: autoRepeat on
+Oct 28 18:09:07 server xrdp-sesman[2483]: rdpInDeferredRepeatCallback:
