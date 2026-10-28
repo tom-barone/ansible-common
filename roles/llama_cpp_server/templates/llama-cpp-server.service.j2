@@ -11,7 +11,7 @@ User=llama-cpp-server
 Group=llama-cpp-server
 Environment="LLAMA_CACHE={{ llama_cpp_server_cache_dir }}"
 ExecStart={{ llama_cpp_server_dir }}/llama-server \
-    --hf-repo {{ llama_cpp_server_model }} \
+    --models-preset /etc/llama-cpp-server/models.ini \
     --host {{ llama_cpp_server_host }} \
     --port {{ llama_cpp_server_port }}{% for arg in llama_cpp_server_args %} \
     {{ arg }}{% endfor %}

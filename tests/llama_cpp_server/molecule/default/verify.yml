@@ -37,22 +37,65 @@
           - "models.matched > 0"
         msg: "No model found in /srv/models"
 
-    # Given the service is running
-    # When the health endpoint is requested
-    # Then it returns 200, meaning the model is loaded
-    - name: "Check the model is loaded"
-      ansible.builtin.uri:
-        url: "{{ url }}/health"
+    - name: "Read the model presets"
+      ansible.builtin.slurp:
+        src: "/etc/llama-cpp-server/models.ini"
+      register: "presets"
 
-    - name: "Get server properties"
+    # Given the stories preset sets no-mmproj to the YAML boolean true
+    # When the presets are rendered
+    # Then the value is lower case, as llama.cpp reads "True" as false
+    - name: "Assert booleans are rendered in lower case"
+      ansible.builtin.assert:
+        that:
+          - "'no-mmproj = true' in presets.content | b64decode"
+        msg: "{{ presets.content | b64decode }}"
+
+    - name: "List served models"
       ansible.builtin.uri:
-        url: "{{ url }}/props"
+        url: "{{ url }}/v1/models"
+      register: "served"
+
+    # Given two presets that point at the same cached model
+    # When the router lists its models
+    # Then it lists the presets by name, without the cache entry
+    - name: "Assert the router serves the presets by name"
+      vars:
+        ids: "{{ served.json.data | map(attribute='id') | sort }}"
+      ansible.builtin.assert:
+        that:
+          - "ids == ['stories', 'stories-big']"
+        msg: "Expected stories and stories-big, got {{ ids }}"
+
+    - name: "Request a completion from stories"
+      ansible.builtin.uri:
+        url: "{{ url }}/completion"
+        method: "POST"
+        body_format: "json"
+        body:
+          model: "stories"
+          prompt: "Once upon a time"
+          n_predict: 8
+      register: "completion"
+
+    # Given the stories model is not loaded
+    # When a completion names it
+    # Then the router loads it and the model generates text
+    - name: "Assert the model generates text"
+      ansible.builtin.assert:
+        that:
+          - "completion.json.content | length > 0"
+        msg: "The completion returned no content"
+
+    - name: "Get stories properties"
+      ansible.builtin.uri:
+        url: "{{ url }}/props?model=stories"
       register: "props"
 
-    # Given llama_cpp_server_args contains "--ctx-size 256"
-    # When the server properties are requested
-    # Then the context size is 256, so the flag reached llama-server
-    - name: "Assert extra args are passed to llama-server"
+    # Given the stories preset sets ctx-size to 256
+    # When its properties are requested
+    # Then the context size is 256, so the preset reached the model
+    - name: "Assert preset settings are passed to the model"
       ansible.builtin.assert:
         that:
           - "props.json.default_generation_settings.n_ctx == 256"
@@ -60,21 +103,29 @@
           Expected n_ctx 256, got
           {{ props.json.default_generation_settings.n_ctx }}
 
-    - name: "Request a completion"
+    - name: "Request a completion from stories-big"
       ansible.builtin.uri:
         url: "{{ url }}/completion"
         method: "POST"
         body_format: "json"
         body:
+          model: "stories-big"
           prompt: "Once upon a time"
           n_predict: 8
-      register: "completion"
 
-    # Given the model is loaded
-    # When a completion is requested
-    # Then the model generates text
-    - name: "Assert the model generates text"
+    - name: "Get model status"
+      ansible.builtin.uri:
+        url: "{{ url }}/models"
+      register: "status"
+
+    # Given llama_cpp_server_args contains "--models-max 1"
+    # When a second model is loaded
+    # Then the router unloads the first, so the flag reached it
+    - name: "Assert extra args are passed to the router"
+      vars:
+        stories: >-
+          {{ status.json.data | selectattr('id', 'eq', 'stories') | first }}
       ansible.builtin.assert:
         that:
-          - "completion.json.content | length > 0"
-        msg: "The completion returned no content"
+          - "stories.status.value == 'unloaded'"
+        msg: "Expected stories to be unloaded, got {{ stories.status }}"

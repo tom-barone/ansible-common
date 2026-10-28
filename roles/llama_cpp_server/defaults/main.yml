@@ -1,8 +1,18 @@
 # AI GENERATED - Tom Barone
 ---
 # Required vars:
-# Hugging Face repo and optional quant, passed to --hf-repo
-# llama_cpp_server_model: "unsloth/Qwen3.8-27B-GGUF:IQ4_XS"
+# Models to serve, by name. Each entry is a llama.cpp model preset: keys
+# are llama-server flags without the dashes, and hf-repo is required. The
+# role downloads every hf-repo before the service starts. See
+# https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#model-presets
+# llama_cpp_server_models:
+#   qwen3.8-27b:
+#     hf-repo: "unsloth/Qwen3.8-27B-GGUF:IQ3_S"
+#     ctx-size: 65536
+#     no-mmproj: true
+#   qwen3.5-9b:
+#     hf-repo: "unsloth/Qwen3.5-9B-GGUF:Q8_0"
+#     ctx-size: 131072
 
 # Build tag from https://github.com/ggml-org/llama.cpp/releases
 llama_cpp_server_version: "b11669"
@@ -20,11 +30,9 @@ llama_cpp_server_cache_dir: "/var/lib/llama-cpp-server"
 llama_cpp_server_host: "127.0.0.1"
 llama_cpp_server_port: 9931
 
-# Extra llama-server flags, passed through as is. See
-# https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md
+# Extra router flags, passed through as is. Every model inherits them, and
+# they override the per-model settings above.
 # llama_cpp_server_args:
-#   - "--ctx-size 32768"
-#   - "--jinja"
+#   - "--models-max 1"  # one model in VRAM, the least recently used unloads
 #   - "--device CUDA0"  # pick a GPU, see llama-server --list-devices
-#   - "--tensor-split 3,1"  # split across GPUs
 llama_cpp_server_args: []

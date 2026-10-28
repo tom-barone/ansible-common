@@ -1,32 +1,42 @@
 # AI GENERATED - Tom Barone
 ---
-# Ansible role to serve a Hugging Face GGUF model with the llama.cpp
-# server, as a systemd service.
+# Ansible role to serve Hugging Face GGUF models with the llama.cpp
+# server in router mode, as a systemd service.
 #
 # The prebuilt release comes from GitHub. The CUDA build needs the NVIDIA
 # driver (see nvidia_drivers_install), and its CUDA runtime ships in a
 # separate tarball. Both are extracted into one directory, as the binaries
 # find their libraries through RPATH=$ORIGIN.
 #
-# The model is downloaded into the llama.cpp cache before the service
+# The models are downloaded into the llama.cpp cache before the service
 # starts, so a wrong repo or quant fails here instead of in the service,
 # and later runs don't touch the network.
 #
+# The router loads a model on the first request that names it, or when a
+# client like pi asks it to with /llama.
+#
 # Tests to confirm working:
 #   $ systemctl status llama-cpp-server
-#   $ curl http://127.0.0.1:9931/health
+#   $ curl http://127.0.0.1:9931/v1/models
 #   $ journalctl -u llama-cpp-server
 
 - name: "Validate required variables"
   ansible.builtin.assert:
     that:
-      - "llama_cpp_server_model is defined"
+      - "llama_cpp_server_models is defined"
+      - "llama_cpp_server_models is mapping"
+      - "llama_cpp_server_models | length > 0"
+      - >-
+        llama_cpp_server_models.values()
+        | map(attribute='hf-repo', default='') | select('eq', '')
+        | list | length == 0
       - "llama_cpp_server_backend in ['cuda', 'cpu']"
       - "llama_cpp_server_args is sequence"
       - "llama_cpp_server_args is not string"
     msg: >-
-      llama_cpp_server_model must be defined, llama_cpp_server_backend must
-      be "cuda" or "cpu", and llama_cpp_server_args must be a list
+      llama_cpp_server_models must map model names to llama.cpp presets,
+      each with an hf-repo, llama_cpp_server_backend must be "cuda" or
+      "cpu", and llama_cpp_server_args must be a list
 
 - name: "Build download URLs"
   vars:
@@ -101,35 +111,52 @@
       llama_cpp_server_cuda_version.split('.') | first }}
   when: "llama_cpp_server_backend == 'cuda'"
 
-- name: "Check if the model is cached"
+- name: "Check which models are cached"
   ansible.builtin.command:
     argv:
       - "{{ llama_cpp_server_dir }}/llama"
       - "download"
       - "--offline"
       - "--hf-repo"
-      - "{{ llama_cpp_server_model }}"
+      - "{{ item }}"
   environment:
     LLAMA_CACHE: "{{ llama_cpp_server_cache_dir }}"
   become: true
   become_user: "llama-cpp-server"
+  loop: >-
+    {{ llama_cpp_server_models.values() | map(attribute='hf-repo') | list }}
   register: "llama_cpp_server_cached"
   changed_when: false
   failed_when: false
 
-- name: "Download model"
+- name: "Download models"
   ansible.builtin.command:
     argv:
       - "{{ llama_cpp_server_dir }}/llama"
       - "download"
       - "--hf-repo"
-      - "{{ llama_cpp_server_model }}"
+      - "{{ item }}"
   environment:
     LLAMA_CACHE: "{{ llama_cpp_server_cache_dir }}"
   become: true
   become_user: "llama-cpp-server"
+  loop: >-
+    {{ llama_cpp_server_cached.results | rejectattr('rc', 'eq', 0)
+    | map(attribute='item') | list }}
   changed_when: true
-  when: "llama_cpp_server_cached.rc != 0"
+
+- name: "Create config directory"
+  ansible.builtin.file:
+    path: "/etc/llama-cpp-server"
+    state: "directory"
+    mode: "0755"
+
+- name: "Deploy model presets"
+  ansible.builtin.template:
+    src: "models.ini.j2"
+    dest: "/etc/llama-cpp-server/models.ini"
+    mode: "0644"
+  notify: "Restart llama-cpp-server"
 
 - name: "Deploy systemd service"
   ansible.builtin.template:
@@ -149,8 +176,8 @@
     enabled: true
     daemon_reload: true
 
-# /health returns 503 until the model is loaded
-- name: "Wait for the model to load"
+# The router answers /health as soon as it listens, models load later
+- name: "Wait for the router to start"
   ansible.builtin.uri:
     url: >-
       http://{{ llama_cpp_server_host }}:{{ llama_cpp_server_port }}/health
