@@ -5,3 +5,5 @@
 .* .*dbus-daemon.*: .*Activating .*systemd.*org\.freedesktop\..*$
 .* .*dbus-daemon.*: .*Successfully activated service.*org\.freedesktop\..*$
 .* .*polkitd.*: Error opening rules directory: .*$
+.* .*polkitd.*: Registered Authentication Agent for unix-process:.*$
+.* .*polkitd.*: Unregistered Authentication Agent for unix-process:.*$
