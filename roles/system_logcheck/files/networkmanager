@@ -4,3 +4,4 @@
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(tailscale0\): state change: .* \(reason '.*', managed-type: 'external'\)$
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(tailscale0\): Activation: starting connection 'tailscale0' \(.*\)$
 .* .*NetworkManager.*: <info> +\[[0-9.]+\] device \(tailscale0\): Activation: successful, device activated\.$
+.* .*NetworkManager.*: <info> +\[[0-9.]+\] agent-manager: agent\[.*/org\.gnome\.Shell\.NetworkAgent/[0-9]+\]: agent registered$

@@ -15,3 +15,4 @@ Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6145] device (ta
 Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6224] device (tailscale0): state change: ip-check -> secondaries (reason 'none', managed-type: 'external')
 Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6226] device (tailscale0): state change: secondaries -> activated (reason 'none', managed-type: 'external')
 Oct 28 18:09:04 server NetworkManager[832]: <info>  [1793173144.6230] device (tailscale0): Activation: successful, device activated.
+Oct 28 21:48:03 server NetworkManager[832]: <info>  [1793186283.7571] agent-manager: agent[7561bf7445a574b8,:1.102/org.gnome.Shell.NetworkAgent/1001]: agent registered
