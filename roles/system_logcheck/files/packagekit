@@ -3,4 +3,4 @@
 .* .*PackageKit.*: daemon quit$
 .* .*PackageKit.*: uid [0-9]+ is trying to obtain .* auth \(only_trusted:[0-9]+\)$
 .* .*PackageKit.*: uid [0-9]+ failed to obtain auth$
-.* .*PackageKit.*: get-updates transaction .* from uid [0-9]+ finished with success after [0-9]+ms$
+.* .*PackageKit.*: (get-updates|get-details|resolve) transaction .* from uid [0-9]+ finished with success after [0-9]+ms$

@@ -5,3 +5,5 @@
 Oct 27 08:39:53 server PackageKit[20129]: uid 1001 is trying to obtain org.freedesktop.packagekit.system-sources-refresh auth (only_trusted:0)
 Oct 27 08:39:53 server PackageKit[20129]: uid 1001 failed to obtain auth
 Oct 27 08:39:53 server PackageKit[20129]: get-updates transaction /118_aeeabccb from uid 1001 finished with success after 382ms
+Oct 28 18:11:04 server PackageKit[60442]: resolve transaction /135_caacebce from uid 1001 finished with success after 227ms
+Oct 28 18:11:07 server PackageKit[60442]: get-details transaction /143_aabaaede from uid 1001 finished with success after 202ms
