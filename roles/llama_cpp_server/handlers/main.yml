@@ -1,0 +1,7 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Restart llama-cpp-server"
+  ansible.builtin.systemd:
+    name: "llama-cpp-server"
+    state: "restarted"
+    daemon_reload: true

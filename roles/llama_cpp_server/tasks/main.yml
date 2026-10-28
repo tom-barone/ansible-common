@@ -1,0 +1,160 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to serve a Hugging Face GGUF model with the llama.cpp
+# server, as a systemd service.
+#
+# The prebuilt release comes from GitHub. The CUDA build needs the NVIDIA
+# driver (see nvidia_drivers_install), and its CUDA runtime ships in a
+# separate tarball. Both are extracted into one directory, as the binaries
+# find their libraries through RPATH=$ORIGIN.
+#
+# The model is downloaded into the llama.cpp cache before the service
+# starts, so a wrong repo or quant fails here instead of in the service,
+# and later runs don't touch the network.
+#
+# Tests to confirm working:
+#   $ systemctl status llama-cpp-server
+#   $ curl http://127.0.0.1:9931/health
+#   $ journalctl -u llama-cpp-server
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "llama_cpp_server_model is defined"
+      - "llama_cpp_server_backend in ['cuda', 'cpu']"
+      - "llama_cpp_server_args is sequence"
+      - "llama_cpp_server_args is not string"
+    msg: >-
+      llama_cpp_server_model must be defined, llama_cpp_server_backend must
+      be "cuda" or "cpu", and llama_cpp_server_args must be a list
+
+- name: "Build download URLs"
+  vars:
+    llama_cpp_server_base: >-
+      https://github.com/ggml-org/llama.cpp/releases/download/{{
+      llama_cpp_server_version }}
+    # e.g. b11669-bin-ubuntu-cuda-13.4-x64.tar.gz
+    llama_cpp_server_asset: >-
+      {{ llama_cpp_server_version }}-bin-ubuntu-{{
+      'cuda-' ~ llama_cpp_server_cuda_version ~ '-'
+      if llama_cpp_server_backend == 'cuda' else '' }}{{
+      'arm64' if ansible_facts['architecture'] == 'aarch64' else 'x64'
+      }}.tar.gz
+  ansible.builtin.set_fact:
+    llama_cpp_server_dir: >-
+      /opt/llama-cpp-server/{{ llama_cpp_server_version }}
+    llama_cpp_server_url: >-
+      {{ llama_cpp_server_base }}/llama-{{ llama_cpp_server_asset }}
+    llama_cpp_server_cudart_url: >-
+      {{ llama_cpp_server_base }}/cudart-llama-{{ llama_cpp_server_asset }}
+
+- name: "Install runtime dependencies"
+  ansible.builtin.apt:
+    name:
+      - "ca-certificates"
+      # OpenMP, used by the CPU backend
+      - "libgomp1"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Create service user"
+  ansible.builtin.user:
+    name: "llama-cpp-server"
+    system: true
+    home: "/var/lib/llama-cpp-server"
+    create_home: true
+    shell: "/usr/sbin/nologin"
+
+- name: "Create install directory"
+  ansible.builtin.file:
+    path: "{{ llama_cpp_server_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Create model cache directory"
+  ansible.builtin.file:
+    path: "{{ llama_cpp_server_cache_dir }}"
+    state: "directory"
+    owner: "llama-cpp-server"
+    group: "llama-cpp-server"
+    mode: "0755"
+
+- name: "Install llama.cpp"
+  ansible.builtin.unarchive:
+    src: "{{ llama_cpp_server_url }}"
+    dest: "{{ llama_cpp_server_dir }}"
+    remote_src: true
+    extra_opts:
+      - "--strip-components=1"
+    creates: "{{ llama_cpp_server_dir }}/llama-server"
+
+- name: "Install CUDA runtime"
+  ansible.builtin.unarchive:
+    src: "{{ llama_cpp_server_cudart_url }}"
+    dest: "{{ llama_cpp_server_dir }}"
+    remote_src: true
+    extra_opts:
+      - "--strip-components=1"
+    creates: >-
+      {{ llama_cpp_server_dir }}/libcudart.so.{{
+      llama_cpp_server_cuda_version.split('.') | first }}
+  when: "llama_cpp_server_backend == 'cuda'"
+
+- name: "Check if the model is cached"
+  ansible.builtin.command:
+    argv:
+      - "{{ llama_cpp_server_dir }}/llama"
+      - "download"
+      - "--offline"
+      - "--hf-repo"
+      - "{{ llama_cpp_server_model }}"
+  environment:
+    LLAMA_CACHE: "{{ llama_cpp_server_cache_dir }}"
+  become: true
+  become_user: "llama-cpp-server"
+  register: "llama_cpp_server_cached"
+  changed_when: false
+  failed_when: false
+
+- name: "Download model"
+  ansible.builtin.command:
+    argv:
+      - "{{ llama_cpp_server_dir }}/llama"
+      - "download"
+      - "--hf-repo"
+      - "{{ llama_cpp_server_model }}"
+  environment:
+    LLAMA_CACHE: "{{ llama_cpp_server_cache_dir }}"
+  become: true
+  become_user: "llama-cpp-server"
+  changed_when: true
+  when: "llama_cpp_server_cached.rc != 0"
+
+- name: "Deploy systemd service"
+  ansible.builtin.template:
+    src: "llama-cpp-server.service.j2"
+    dest: "/etc/systemd/system/llama-cpp-server.service"
+    mode: "0644"
+  notify: "Restart llama-cpp-server"
+
+# Restart now, so the health check below sees the new config
+- name: "Flush handlers"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "Start and enable llama-cpp-server"
+  ansible.builtin.systemd:
+    name: "llama-cpp-server"
+    state: "started"
+    enabled: true
+    daemon_reload: true
+
+# /health returns 503 until the model is loaded
+- name: "Wait for the model to load"
+  ansible.builtin.uri:
+    url: >-
+      http://{{ llama_cpp_server_host }}:{{ llama_cpp_server_port }}/health
+  register: "llama_cpp_server_health"
+  until: "llama_cpp_server_health.status == 200"
+  retries: 60
+  delay: 5

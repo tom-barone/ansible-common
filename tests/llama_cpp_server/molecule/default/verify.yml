@@ -1,0 +1,80 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    url: "http://127.0.0.1:9931"
+  tasks:
+    - name: "Get llama-cpp-server service status"
+      ansible.builtin.systemd:
+        name: "llama-cpp-server"
+      register: "service"
+
+    # Given the role is applied
+    # When systemd is queried
+    # Then the service is enabled and running
+    - name: "Assert service is enabled and running"
+      ansible.builtin.assert:
+        that:
+          - "service.status.UnitFileState == 'enabled'"
+          - "service.status.ActiveState == 'active'"
+        msg: "llama-cpp-server is not enabled and running"
+
+    - name: "Find downloaded models"
+      ansible.builtin.find:
+        paths: "/srv/models"
+        patterns: "*.gguf"
+        recurse: true
+        file_type: "any"
+      register: "models"
+
+    # Given llama_cpp_server_cache_dir is "/srv/models"
+    # When the role is applied
+    # Then the model is downloaded there
+    - name: "Assert the model is in the cache directory"
+      ansible.builtin.assert:
+        that:
+          - "models.matched > 0"
+        msg: "No model found in /srv/models"
+
+    # Given the service is running
+    # When the health endpoint is requested
+    # Then it returns 200, meaning the model is loaded
+    - name: "Check the model is loaded"
+      ansible.builtin.uri:
+        url: "{{ url }}/health"
+
+    - name: "Get server properties"
+      ansible.builtin.uri:
+        url: "{{ url }}/props"
+      register: "props"
+
+    # Given llama_cpp_server_args contains "--ctx-size 256"
+    # When the server properties are requested
+    # Then the context size is 256, so the flag reached llama-server
+    - name: "Assert extra args are passed to llama-server"
+      ansible.builtin.assert:
+        that:
+          - "props.json.default_generation_settings.n_ctx == 256"
+        msg: >-
+          Expected n_ctx 256, got
+          {{ props.json.default_generation_settings.n_ctx }}
+
+    - name: "Request a completion"
+      ansible.builtin.uri:
+        url: "{{ url }}/completion"
+        method: "POST"
+        body_format: "json"
+        body:
+          prompt: "Once upon a time"
+          n_predict: 8
+      register: "completion"
+
+    # Given the model is loaded
+    # When a completion is requested
+    # Then the model generates text
+    - name: "Assert the model generates text"
+      ansible.builtin.assert:
+        that:
+          - "completion.json.content | length > 0"
+        msg: "The completion returned no content"
