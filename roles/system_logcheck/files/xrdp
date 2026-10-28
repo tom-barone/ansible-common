@@ -1,2 +1,39 @@
 .* .*xrdp-sesman.*: rdpkeybChangeKeyboardControl:( autoRepeat (on|off))?$
 .* .*xrdp-sesman.*: rdpInDeferredRepeatCallback:$
+.* .*xrdp.*: \[INFO \] Socket [0-9]+: connection accepted from .*$
+.* .*xrdp.*: \[INFO \] Using default X\.509 (certificate|key file): .*$
+.* .*xrdp.*: \[INFO \] Security protocol: configured .*$
+.* .*xrdp.*: \[INFO \] Connected client computer name: .*$
+.* .*xrdp.*: \[INFO \] TLS connection established from .*$
+.* .*xrdp.*: \[INFO \] [Cc]lient (supports|Capability:) .*$
+.* .*xrdp.*: \[WARN \] Received \[MS-RDPBCGR\] TS_UD_HEADER type 0x[0-9a-f]+ is unknown \(ignored\)$
+.* .*xrdp.*: \[INFO \] (xrdp_load_keyboard_layout|xrdp_caps_process_[a-z]+|xrdp_process_offscreen_bmpcache|xrdp_encoder_create|lib_mod_connect|lib_mod_log_peer): .*$
+.* .*xrdp.*: \[WARN \] Cannot find keymap file /etc/xrdp/km-[0-9a-f]+\.ini$
+.* .*xrdp.*: \[INFO \] Loading keymap file /etc/xrdp/km-[0-9a-f]+\.ini$
+.* .*xrdp.*: \[WARN \] local keymap file for 0x[0-9a-f]+ found and doesn't match built in keymap, using local keymap file$
+.* .*xrdp.*: \[INFO \] Login screen monitor height is .*$
+.* .*xrdp.*: \[INFO \] xrdp_(mm_)?egfx_[a-z_]+:.*$
+.* .*xrdp.*: \[INFO \]   (replying )?version 0x[0-9a-f]+ flags 0x[0-9a-f]+.*$
+.* .*xrdp.*: \[INFO \] unknown version 0x[0-9a-f]+$
+.* .*xrdp.*: \[WARN \] Ignoring obsolete SCP port value '[0-9]+'$
+.* .*xrdp.*: \[INFO \] xrdp_wm_log_msg: (sesman connect ok|Performing login request for .*|login was successful - creating session|session is available on display [0-9]+ for user .*|Connecting to (session|chansrv))$
+.* .*xrdp.*: \[INFO \] loaded module '.*' ok, .*$
+.* .*xrdp.*: \[INFO \] Received memory_allocation_complete command\. .*$
+.* .*xrdp-sesman.*: \[INFO \] Received system login request from xrdp for user: .*$
+.* .*xrdp-sesman.*: \[INFO \] Received sys login status for .* : logged in$
+.* .*xrdp-sesman.*: \[INFO \] Received request from xrdp to create a session for user .*$
+.* .*xrdp-sesman.*: \[INFO \] \+\+ reconnected session: .*$
+.* .*xrdp-sesexec.*: \[INFO \] starting xrdp-sesexec with pid [0-9]+$
+.* .*xrdp-sesexec.*: \[INFO \] TerminalServerUsers group .* doesn't exist\. Access granted for .*$
+.* .*xrdp-sesexec.*: \[INFO \] Access permitted for user: .*$
+.* .*xrdp-sesexec.*: \[INFO \] Starting session reconnection script on display [0-9]+: .*$
+.* .*xrdp-sesexec.*: \[INFO \] xrdp-sesexec pid [0-9]+ is now logging out$
+.* .*xrdp-sesman.*: rdpClientCon(GotConnection|GetConnection|ProcessMsg[A-Za-z]+|AllocateSharedMemory):.*$
+.* .*xrdp-sesman.*: rdpAddClientConToDev: .*$
+.* .*xrdp-sesman.*: (rdpRRSetRdpOutputs|rdpRRConnectOutput|rdpLoadLayout|rdpCapture2):.*$
+.* .*xrdp-sesman\[[0-9]+\]:   [a-z].*$
+.* .*xrdp-sesman.*: KbdSync: toggling [a-z]+ lock$
+.* .*xrdp-chansrv.*: \[INFO \] sound_process_output_format:$
+.* .*xrdp-chansrv.*: \[INFO \]  +[A-Za-z]+ +[A-Z0-9_]+$
+.* .*xrdp-chansrv.*: \[INFO \] sound_process_training: round trip time [0-9]+$
+.* .*xrdp-chansrv.*: \[INFO \] Detected remote (smartcard|printer) '.*'( \(not supported\))?$
