@@ -12,3 +12,9 @@
 .* .*gvfsd-network.*: Couldn't create directory monitor on wsdd:///\. Error: Automount failed: Failed to spawn the underlying wsdd daemon\.$
 .* .*gnome-shell.*: Failed to store clipboard: Format .* not supported$
 .* .*: gkr-pam: (unable to locate daemon control file|stashed password to try later in open session)$
+.* .*dbus-daemon.*: \[session .*\] Activating (via systemd: )?service name='org\.gnome\.[A-Za-z.]+' .*$
+.* .*dbus-daemon.*: \[session .*\] Successfully activated service 'org\.gnome\.[A-Za-z.]+'$
+.* .*gnome-shell.*: Received error from D-Bus search provider .*: Gio\.IOErrorEnum: Cannot invoke method; proxy is for the well-known name .* without an owner, .*$
+.* .*nautilus.*: Connecting to org\.freedesktop\.Tracker3\.Miner\.Files$
+.* .*gnome-character.*: JS LOG: Characters Application (started|exiting)$
+.* .*gnome-calendar.*: Running Calendar as a service$

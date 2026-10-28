@@ -22,3 +22,15 @@ Oct 28 21:47:41 server xrdp-sesexec[73488]: gkr-pam: unable to locate daemon con
 Oct 28 21:47:41 server xrdp-sesexec[73488]: gkr-pam: stashed password to try later in open session
 Oct 28 21:48:03 server gdm-password][73511]: gkr-pam: unable to locate daemon control file
 Oct 28 21:48:03 server gdm-password][73511]: gkr-pam: stashed password to try later in open session
+Oct 28 21:48:11 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Activating service name='org.gnome.Settings.SearchProvider' requested by ':1.49' (uid=1001 pid=2730 comm="/usr/bin/gnome-shell")
+Oct 28 21:48:11 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Activating service name='org.gnome.clocks' requested by ':1.49' (uid=1001 pid=2730 comm="/usr/bin/gnome-shell")
+Oct 28 21:48:11 server gnome-shell[2730]: Received error from D-Bus search provider org.gnome.Terminal.desktop: Gio.IOErrorEnum: Cannot invoke method; proxy is for the well-known name org.gnome.Terminal without an owner, and proxy was constructed with the G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START flag
+Oct 28 21:48:11 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Successfully activated service 'org.gnome.Settings.SearchProvider'
+Oct 28 21:48:11 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Successfully activated service 'org.gnome.clocks'
+Oct 28 21:48:11 server nautilus[73537]: Connecting to org.freedesktop.Tracker3.Miner.Files
+Oct 28 21:48:11 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Activating via systemd: service name='org.gnome.Terminal' unit='gnome-terminal-server.service' requested by ':1.134' (uid=1001 pid=73674 comm="/usr/bin/gnome-terminal")
+Oct 28 21:48:11 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Activating service name='org.gnome.Settings.GlobalShortcutsProvider' requested by ':1.133' (uid=1001 pid=73643 comm="/usr/libexec/xdg-desktop-portal-gnome")
+Oct 28 21:48:12 server gnome-character[73543]: JS LOG: Characters Application started
+Oct 28 21:48:12 server dbus-daemon[2454]: [session uid=1001 pid=2454 pidfd=5] Activating service name='org.gnome.NautilusPreviewer' requested by ':1.127' (uid=1001 pid=73537 comm="/usr/bin/nautilus --gapplication-service")
+Oct 28 21:48:12 server gnome-calendar[73541]: Running Calendar as a service
+Oct 28 21:48:24 server gnome-character[73543]: JS LOG: Characters Application exiting
