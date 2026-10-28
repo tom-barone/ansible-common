@@ -2,3 +2,6 @@
 2025-02-19T06:16:45.760481+00:00 jqc-production PackageKit: daemon start
 2025-02-19T06:16:45.797789+00:00 jqc-production dbus-daemon[557]: [system] Successfully activated service 'org.freedesktop.PackageKit'
 2025-02-19T06:21:55.734637+00:00 jqc-production PackageKit: daemon quit
+Oct 27 08:39:53 server PackageKit[20129]: uid 1001 is trying to obtain org.freedesktop.packagekit.system-sources-refresh auth (only_trusted:0)
+Oct 27 08:39:53 server PackageKit[20129]: uid 1001 failed to obtain auth
+Oct 27 08:39:53 server PackageKit[20129]: get-updates transaction /118_aeeabccb from uid 1001 finished with success after 382ms
