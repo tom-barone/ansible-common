@@ -1,0 +1,4 @@
+.* .*fwupdmgr.*: Updating lvfs$
+.* .*fwupdmgr.*: Successfully downloaded new metadata:$
+.* .*fwupdmgr.*: .* [0-9]+ devices are updatable$
+.* .*fwupdmgr.*: .* 0 devices are supported in the enabled remotes \(an update has been published\)$

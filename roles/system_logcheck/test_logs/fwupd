@@ -1,0 +1,4 @@
+Oct 27 15:39:52 server fwupdmgr[28128]: Updating lvfs
+Oct 27 15:39:53 server fwupdmgr[28128]: Successfully downloaded new metadata:
+Oct 27 15:39:53 server fwupdmgr[28128]:  • 2 devices are updatable
+Oct 27 15:39:53 server fwupdmgr[28128]:  • 0 devices are supported in the enabled remotes (an update has been published)
