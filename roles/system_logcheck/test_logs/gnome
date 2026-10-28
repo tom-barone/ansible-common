@@ -18,3 +18,7 @@ Oct 28 18:11:04 server gnome-software[2862]: Only 0 apps for recent list, hiding
 Oct 28 18:11:04 server gnome-software[2862]: Only 0 apps for curated list, hiding
 Oct 28 18:11:07 server gnome-software[2862]: failed to get featured apps: no apps to show
 Oct 28 21:47:41 server gnome-shell[2730]: Failed to store clipboard: Format UTF8_STRING not supported
+Oct 28 21:47:41 server xrdp-sesexec[73488]: gkr-pam: unable to locate daemon control file
+Oct 28 21:47:41 server xrdp-sesexec[73488]: gkr-pam: stashed password to try later in open session
+Oct 28 21:48:03 server gdm-password][73511]: gkr-pam: unable to locate daemon control file
+Oct 28 21:48:03 server gdm-password][73511]: gkr-pam: stashed password to try later in open session

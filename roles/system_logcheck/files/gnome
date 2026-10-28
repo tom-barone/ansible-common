@@ -11,3 +11,4 @@
 .* .*gvfsd-wsdd.*: Failed to spawn the wsdd daemon: Failed to execute child process .*wsdd.* \(No such file or directory\)$
 .* .*gvfsd-network.*: Couldn't create directory monitor on wsdd:///\. Error: Automount failed: Failed to spawn the underlying wsdd daemon\.$
 .* .*gnome-shell.*: Failed to store clipboard: Format .* not supported$
+.* .*: gkr-pam: (unable to locate daemon control file|stashed password to try later in open session)$
