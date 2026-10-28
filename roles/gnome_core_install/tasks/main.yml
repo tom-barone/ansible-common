@@ -2,7 +2,8 @@
 ---
 # Ansible role to install the minimal GNOME desktop on a headless host,
 # handing its network interfaces from ifupdown over to NetworkManager,
-# with systemd-resolved for DNS.
+# with systemd-resolved for DNS. GNOME Software's update checks are
+# turned off, since unattended-upgrades handles updates.
 
 - name: "Install gnome-core"
   ansible.builtin.apt:
@@ -14,6 +15,8 @@
       # Lets NetworkManager and Tailscale both hand it their DNS servers,
       # rather than each rewriting /etc/resolv.conf over the other
       - "systemd-resolved"
+      # Provides `dconf update` to compile the system settings below
+      - "dconf-cli"
     state: "present"
     update_cache: true
     cache_valid_time: 3600
@@ -29,6 +32,37 @@
       auto lo
       iface lo inet loopback
   register: "gnome_core_install_interfaces"
+
+- name: "Create dconf directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "/etc/dconf/profile"
+    - "/etc/dconf/db/local.d"
+
+- name: "Ensure dconf user profile includes the local database"
+  ansible.builtin.copy:
+    content: |
+      user-db:user
+      system-db:local
+    dest: "/etc/dconf/profile/user"
+    mode: "0644"
+  notify: "Update dconf"
+
+# download-updates stops the daily PackageKit cache refresh, and
+# allow-updates stops the update checks, notifications and the
+# updates panel
+- name: "Disable GNOME Software update checks"
+  ansible.builtin.copy:
+    content: |
+      [org/gnome/software]
+      allow-updates=false
+      download-updates=false
+    dest: "/etc/dconf/db/local.d/00-gnome-software"
+    mode: "0644"
+  notify: "Update dconf"
 
 # A fresh desktop install only starts gdm and its session services
 # cleanly after a reboot, and NetworkManager only takes over the

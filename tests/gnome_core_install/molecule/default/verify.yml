@@ -44,3 +44,31 @@
         that:
           - "'eth0' not in (interfaces_config.content | b64decode)"
         msg: "eth0 is still configured by ifupdown"
+
+    - name: "Read GNOME Software allow-updates from the user dconf profile"
+      ansible.builtin.command: "dconf read /org/gnome/software/allow-updates"
+      register: "allow_updates"
+      changed_when: false
+
+    # Given a Debian system without a desktop
+    # When the role is applied
+    # Then GNOME Software does not check for updates
+    - name: "Assert GNOME Software allow-updates is false"
+      ansible.builtin.assert:
+        that:
+          - "allow_updates.stdout == 'false'"
+        msg: "allow-updates is {{ allow_updates.stdout }}"
+
+    - name: "Read GNOME Software download-updates from the user dconf profile"
+      ansible.builtin.command: "dconf read /org/gnome/software/download-updates"
+      register: "download_updates"
+      changed_when: false
+
+    # Given a Debian system without a desktop
+    # When the role is applied
+    # Then GNOME Software does not refresh the package cache
+    - name: "Assert GNOME Software download-updates is false"
+      ansible.builtin.assert:
+        that:
+          - "download_updates.stdout == 'false'"
+        msg: "download-updates is {{ download_updates.stdout }}"
