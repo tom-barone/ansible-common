@@ -1,0 +1,30 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# Hugging Face repo and optional quant, passed to --hf-repo
+# llama_cpp_server_model: "unsloth/Qwen3.8-27B-GGUF:IQ4_XS"
+
+# Build tag from https://github.com/ggml-org/llama.cpp/releases
+llama_cpp_server_version: "b11669"
+
+# "cuda" for NVIDIA GPUs (see nvidia_drivers_install) or "cpu"
+llama_cpp_server_backend: "cuda"
+
+# CUDA version in the release's CUDA asset names
+llama_cpp_server_cuda_version: "13.4"
+
+# Where models are downloaded to, e.g. a mounted HDD. The service waits
+# for the mount before it starts.
+llama_cpp_server_cache_dir: "/var/lib/llama-cpp-server"
+
+llama_cpp_server_host: "127.0.0.1"
+llama_cpp_server_port: 9931
+
+# Extra llama-server flags, passed through as is. See
+# https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md
+# llama_cpp_server_args:
+#   - "--ctx-size 32768"
+#   - "--jinja"
+#   - "--device CUDA0"  # pick a GPU, see llama-server --list-devices
+#   - "--tensor-split 3,1"  # split across GPUs
+llama_cpp_server_args: []

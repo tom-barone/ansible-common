@@ -1,0 +1,29 @@
+# AI GENERATED - Tom Barone
+[Unit]
+Description=llama.cpp server
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor={{ llama_cpp_server_cache_dir }}
+
+[Service]
+Type=simple
+User=llama-cpp-server
+Group=llama-cpp-server
+Environment="LLAMA_CACHE={{ llama_cpp_server_cache_dir }}"
+ExecStart={{ llama_cpp_server_dir }}/llama-server \
+    --hf-repo {{ llama_cpp_server_model }} \
+    --host {{ llama_cpp_server_host }} \
+    --port {{ llama_cpp_server_port }}{% for arg in llama_cpp_server_args %} \
+    {{ arg }}{% endfor %}
+
+Restart=on-failure
+
+# Security hardening. PrivateDevices is left out so the GPU stays visible.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ llama_cpp_server_cache_dir }}
+
+[Install]
+WantedBy=multi-user.target
