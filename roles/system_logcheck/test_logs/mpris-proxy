@@ -1,0 +1,4 @@
+Oct 28 09:57:56 server mpris-proxy[49328]: org.bluez appeared
+Oct 28 09:57:56 server mpris-proxy[49328]: Bluetooth Adapter /org/bluez/hci0 found
+Oct 28 09:57:56 server mpris-proxy[49328]: Bluetooth Adapter /org/bluez/hci0 removed
+Oct 28 09:57:56 server mpris-proxy[49328]: org.bluez disappeared
