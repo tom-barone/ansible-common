@@ -28,6 +28,24 @@
     regexp: "^FuseMountName="
     line: "FuseMountName=.thinclient_drives"
 
+- name: "Create xdg-desktop-portal config directory"
+  ansible.builtin.file:
+    path: "/etc/xdg-desktop-portal"
+    state: "directory"
+    mode: "0755"
+
+# xdg-desktop-portal-gnome never starts in an xrdp session, so each
+# portal waits out a 25 second D-Bus timeout before falling back to GTK,
+# stalling the first app window that queries the portal
+- name: "Skip the GNOME portal backend"
+  ansible.builtin.copy:
+    content: |
+      [preferred]
+      default=gtk;
+      org.freedesktop.impl.portal.Secret=gnome-keyring;
+    dest: "/etc/xdg-desktop-portal/gnome-portals.conf"
+    mode: "0644"
+
 - name: "Enable and start xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
