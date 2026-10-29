@@ -56,6 +56,22 @@
           - "'FuseMountName=.thinclient_drives' in content"
         msg: "FuseMountName is not set to .thinclient_drives"
 
+    - name: "Read gnome-portals.conf"
+      ansible.builtin.slurp:
+        src: "/etc/xdg-desktop-portal/gnome-portals.conf"
+      register: "gnome_portals_conf"
+
+    # Given the role was applied
+    # When we read gnome-portals.conf
+    # Then portals default to the GTK backend only
+    - name: "Assert portals default to GTK"
+      vars:
+        content: "{{ gnome_portals_conf.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'default=gtk;' in content"
+        msg: "gnome-portals.conf does not default to the GTK backend"
+
     # Given xrdp is running
     # When we check port 3389
     # Then it is listening
