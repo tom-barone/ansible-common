@@ -15,7 +15,9 @@
     # line), then one line per discovered disk with base plus class options.
     - name: "Assert smartd.conf matches the expected device lines"
       vars:
-        base: "-a -n standby,q -s (S/../.././02|L/../../6/03) -m root"
+        base: >-
+          -H -f -l error -l selftest -l selfteststs -C 197 -U 198
+          -n standby,q -s (S/../.././02|L/../../6/03) -m root
         expected:
           - "# Managed by Ansible role: system_smartmontools"
           - "/dev/sda -a -m root"
