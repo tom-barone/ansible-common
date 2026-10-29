@@ -20,12 +20,12 @@ system_smartmontools_base_options: >-
 # TRAN nvme -> nvme, rotational -> hdd, otherwise ssd.
 # -o on -S on     offline data collection and attribute autosave (ATA only)
 # -d sat          USB enclosures need SAT passthrough
-# -W d,i,c        warn on temp delta dC, info >=iC, critical >=cC
+# -W d,i,c        warn on temp delta dC (0 = off), info >=iC, critical >=cC
 system_smartmontools_class_options:
-  hdd: "-o on -S on -W 4,45,55"
+  hdd: "-o on -S on -W 0,45,55"
   ssd: "-o on -S on -W 0,55,65"
   nvme: "-W 0,65,75"
-  usb: "-d sat -W 4,45,55"
+  usb: "-d sat -W 0,45,55"
 
 # Explicit entries win over discovery. Each entry is a complete smartd line:
 #   { device: "/dev/disk/by-id/<ID-LINK>", options: "<smartd directives>" }
