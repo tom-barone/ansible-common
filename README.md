@@ -35,6 +35,7 @@ A non-comprehensive list of the more interesting roles:
 | `tailscale_subnet_router` | Configure Tailscale subnet routing with auto-discovery of local subnets. |
 | `traefik_install` | Install [Traefik](https://traefik.io/) reverse proxy with TLS passthrough and LetsEncrypt TLS terminated routes. |
 | `xrdp_install` | Install [xrdp](https://www.xrdp.org/) for RDP access to the desktop, replacing GNOME's remote desktop on port 3389. |
+| `zfs_pool` | Import a ZFS pool, or create it on blank disks, building the ZFS module with DKMS. |
 
 ## Development
 
