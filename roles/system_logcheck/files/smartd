@@ -1,1 +1,3 @@
 .* .*smartd.*: Device: /dev/.* \[SAT\], CHECK POWER STATUS spins up disk \(0x81 -> 0xff\)$
+.* .*smartd.*: Device: /dev/.* \[SAT\], starting scheduled Short Self-Test\.$
+.* .*smartd.*: Device: /dev/.* \[SAT\], previous self-test completed without error$
