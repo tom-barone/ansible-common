@@ -6,12 +6,27 @@
       - "zfs_pool_disks is defined"
     msg: "Missing a required variable"
 
-# ZFS packages live in the contrib component on Debian
-- name: "Enable the contrib APT component"
-  ansible.builtin.replace:
-    path: "/etc/apt/sources.list"
-    regexp: "^(deb(?!.*\\bcontrib\\b).*)$"
-    replace: "\\1 contrib"
+- name: "Install python3-debian for deb822_repository"
+  ansible.builtin.apt:
+    name:
+      - "python3-debian"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+# ZFS packages live in the contrib component on Debian. Signed-By is left
+# out on purpose: apt refuses two entries for the same suite with
+# different keyrings, and hosts name the Debian keyring differently
+# (none, .gpg or .pgp). Without one, this entry uses the keyring of the
+# host's own trixie entry.
+- name: "Add Debian contrib repository"
+  ansible.builtin.deb822_repository:
+    name: "debian-contrib"
+    types: "deb"
+    uris: "http://deb.debian.org/debian"
+    suites: "trixie"
+    components: "contrib"
+    state: "present"
 
 # The first install builds the DKMS module, takes a few minutes
 - name: "Install ZFS packages"
