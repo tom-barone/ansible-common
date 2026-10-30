@@ -24,6 +24,20 @@
       ansible.builtin.command: "mountpoint --quiet /media/tank"
       changed_when: false
 
+    - name: "Read the ACL type of the pool"
+      ansible.builtin.command: "zfs get -H -o value acltype tank"
+      register: "acltype"
+      changed_when: false
+
+    # Given the role created the pool
+    # When we read its ACL type
+    # Then POSIX ACLs are enabled
+    - name: "Assert POSIX ACLs are enabled"
+      ansible.builtin.assert:
+        that:
+          - "acltype.stdout == 'posix'"
+        msg: "acltype is {{ acltype.stdout }}"
+
     - name: "Create a pool on a disk that is already in one"
       block:
         - name: "Apply the role to a disk of the existing pool"

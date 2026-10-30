@@ -100,6 +100,16 @@
           - type: "{{ zfs_pool_type }}"
             disks: "{{ zfs_pool_disks }}"
 
+# ZFS on Linux has ACLs off by default, and system_shared_mount needs
+# them. Child datasets inherit the setting. xattr=sa, the default since
+# OpenZFS 2.2, keeps the ACLs in the inode.
+- name: "Enable POSIX ACLs on the pool"
+  community.general.zfs:
+    name: "{{ zfs_pool_name }}"
+    state: "present"
+    extra_zfs_properties:
+      acltype: "posix"
+
 - name: "Allow all users to write to the pool"
   ansible.builtin.file:
     path: "{{ zfs_pool_mountpoint }}"
