@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+# Mount filesystems under /media/<label> for every user, instead of
+# /media/$USER/<label> where only the user whose session mounted it can
+# get in. See udisks(8).
+ENV{ID_FS_USAGE}=="filesystem|other|crypto", ENV{UDISKS_FILESYSTEM_SHARED}="1"

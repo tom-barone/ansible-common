@@ -1,0 +1,19 @@
+// AI GENERATED - Tom Barone
+// xrdp sessions are remote, so polkit asks for an admin password before
+// udisks mounts, unmounts or ejects a drive, and GNOME can't automount
+// at login. Let sudo users do these without a prompt. Formatting and
+// partitioning still prompt.
+polkit.addRule(function (action, subject) {
+  var actions = [
+    "org.freedesktop.udisks2.filesystem-mount",
+    "org.freedesktop.udisks2.filesystem-mount-other-seat",
+    "org.freedesktop.udisks2.filesystem-unmount-others",
+    "org.freedesktop.udisks2.eject-media",
+    "org.freedesktop.udisks2.eject-media-other-seat",
+    "org.freedesktop.udisks2.power-off-drive",
+    "org.freedesktop.udisks2.power-off-drive-other-seat",
+  ];
+  if (actions.indexOf(action.id) >= 0 && subject.isInGroup("sudo")) {
+    return polkit.Result.YES;
+  }
+});
