@@ -95,13 +95,13 @@
 
     # Given a freshly mounted filesystem with a root:root 0755 root
     # When the role shares it
-    # Then the root is group writable by the forced group
-    - name: "Assert the share directory is root:users 0775"
+    # Then the root is group writable by the forced group, with setgid
+    - name: "Assert the share directory is root:users 2775"
       ansible.builtin.assert:
         that:
           - "share_dir.stat.pw_name == 'root'"
           - "share_dir.stat.gr_name == 'users'"
-          - "share_dir.stat.mode == '0775'"
+          - "share_dir.stat.mode == '2775'"
         msg: "share directory has wrong owner, group or mode"
 
     # Given alice has a read_write credential
@@ -141,6 +141,33 @@
           - "{{ media }}"
           - "--user=bob%bobpassword"
           - "--command=put /etc/os-release shared.txt"
+      changed_when: false
+
+    # Given alice uploaded a file over Samba
+    # When dave, a login user in the users group, appends to it
+    # Then the write succeeds
+    - name: "Append to the uploaded file as a login user"
+      ansible.builtin.shell: "echo dave >> /srv/media/shared.txt"
+      become: true
+      become_user: "dave"
+      changed_when: false
+
+    - name: "Create a file as a login user with a umask of 022"
+      ansible.builtin.shell: "umask 022 && echo dave > /srv/media/dave.txt"
+      become: true
+      become_user: "dave"
+      changed_when: false
+
+    # Given dave created a file locally with a umask of 022
+    # When bob, a read_write user, overwrites it over Samba
+    # Then the upload succeeds
+    - name: "Overwrite a login user's file as a read_write user"
+      ansible.builtin.command:
+        argv:
+          - "smbclient"
+          - "{{ media }}"
+          - "--user=bob%bobpassword"
+          - "--command=put /etc/hostname dave.txt"
       changed_when: false
 
     # Given carol has a read_only credential

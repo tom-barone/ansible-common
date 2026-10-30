@@ -34,15 +34,13 @@
   loop: "{{ samba_share_users | map(attribute='username') }}"
 
 # A fresh mount, e.g. from system_mount, has a root:root 0755 root. This
-# only touches the mounted filesystem, so if the disk is missing at boot
-# the bare mount point stays unwritable.
-- name: "Create the share directory"
-  ansible.builtin.file:
-    path: "{{ samba_share_path }}"
-    state: "directory"
-    owner: "root"
-    group: "users"
-    mode: "0775"
+# makes it writable by the users group forced below, and by login users
+# in that group.
+- name: "Apply system_shared_mount role"
+  ansible.builtin.include_role:
+    name: "system_shared_mount"
+  vars:
+    system_shared_mount_path: "{{ samba_share_path }}"
 
 - name: "Configure Samba"
   ansible.builtin.template:
