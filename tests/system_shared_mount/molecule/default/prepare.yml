@@ -1,0 +1,88 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    - name: "Install mkfs.ext4 to format the test disks"
+      ansible.builtin.apt:
+        name:
+          - "e2fsprogs"
+        state: "present"
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: "Create login users in the users group"
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: "users"
+        append: true
+      loop:
+        - "alice"
+        - "bob"
+
+    - name: "Create a login user outside the users group"
+      ansible.builtin.user:
+        name: "carol"
+
+    # Stand in for freshly formatted disks with a root:root 0755 root.
+    # Not tmpfs, as Docker Desktop's kernel has no ACLs on tmpfs.
+    - name: "Create disk images"
+      community.general.filesize:
+        path: "{{ item }}.img"
+        size: "64M"
+      loop:
+        - "/srv/shared"
+        - "/srv/fixed"
+
+    - name: "Format disk images"
+      community.general.filesystem:
+        dev: "{{ item }}.img"
+        fstype: "ext4"
+      loop:
+        - "/srv/shared"
+        - "/srv/fixed"
+
+    - name: "Mount filesystems to share"
+      ansible.builtin.include_role:
+        name: "system_mount"
+      vars:
+        system_mount_path: "{{ item }}"
+        system_mount_state: "mounted"
+        system_mount_src: "{{ item }}.img"
+        system_mount_fstype: "ext4"
+        system_mount_opts: "loop"
+      loop:
+        - "/srv/shared"
+        - "/srv/fixed"
+
+    - name: "Add a directory already on each disk"
+      ansible.builtin.file:
+        path: "{{ item }}/old"
+        state: "directory"
+        owner: "alice"
+        group: "alice"
+        mode: "0755"
+      loop:
+        - "/srv/shared"
+        - "/srv/fixed"
+
+    - name: "Add a file already on each disk"
+      ansible.builtin.copy:
+        content: "old\n"
+        dest: "{{ item }}/old/file"
+        owner: "alice"
+        group: "alice"
+        mode: "0644"
+      loop:
+        - "/srv/shared"
+        - "/srv/fixed"
+
+    - name: "Create a directory that isn't a mount point"
+      ansible.builtin.file:
+        path: "/srv/not-mounted"
+        state: "directory"
+        mode: "0755"

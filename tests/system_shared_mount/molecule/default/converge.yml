@@ -1,0 +1,17 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_shared_mount"
+      vars:
+        system_shared_mount_path: "/srv/shared"
+
+    - name: "Apply role under test, fixing every file"
+      ansible.builtin.include_role:
+        name: "system_shared_mount"
+      vars:
+        system_shared_mount_path: "/srv/fixed"
+        system_shared_mount_recursively_fix_permissions_for_all_files: true

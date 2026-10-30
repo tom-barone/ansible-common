@@ -1,0 +1,12 @@
+---
+# AI GENERATED - Tom Barone
+# Lets every login user and Samba user read and write a mounted disk
+# through the users group. Login users need to be in the users group,
+# e.g. with user_add_to_groups.
+# Required vars:
+# system_shared_mount_path: "/media/data"
+
+# Also fix the files already on the disk, and any copied on with their
+# mode kept (cp -a, rsync -a, Nautilus), which drops group write. Walks
+# the whole disk on every run.
+system_shared_mount_recursively_fix_permissions_for_all_files: false
