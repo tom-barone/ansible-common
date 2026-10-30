@@ -1,0 +1,202 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Stat the root of the mount"
+      ansible.builtin.stat:
+        path: "/srv/shared"
+      register: "shared_root"
+
+    # Given a freshly mounted filesystem with a root:root 0755 root
+    # When the role shares it
+    # Then the root is root:users with setgid and group write
+    - name: "Assert the root is root:users 2775"
+      ansible.builtin.assert:
+        that:
+          - "shared_root.stat.pw_name == 'root'"
+          - "shared_root.stat.gr_name == 'users'"
+          - "shared_root.stat.mode == '2775'"
+        msg: "root has wrong owner, group or mode"
+
+    - name: "Read the default ACL of the root"
+      ansible.builtin.command:
+        argv:
+          - "getfacl"
+          - "--default"
+          - "--omit-header"
+          - "/srv/shared"
+      register: "shared_root_acl"
+      changed_when: false
+
+    # Given the role shared the mount
+    # When we read the default ACL of its root
+    # Then the group gets rwx, which replaces the umask for new files
+    - name: "Assert the root has a group rwx default ACL"
+      ansible.builtin.assert:
+        that:
+          - "'group::rwx' in shared_root_acl.stdout_lines"
+        msg: "default ACL is {{ shared_root_acl.stdout }}"
+
+    - name: "Create a file as alice with a umask of 022"
+      ansible.builtin.shell: "umask 022 && echo alice > /srv/shared/alice.txt"
+      become: true
+      become_user: "alice"
+      changed_when: false
+
+    # Given alice created a file with a umask of 022
+    # When bob, another user in the users group, appends to it
+    # Then the write succeeds
+    - name: "Append to alice's file as bob"
+      ansible.builtin.shell: "echo bob >> /srv/shared/alice.txt"
+      become: true
+      become_user: "bob"
+      changed_when: false
+
+    - name: "Create a directory and a file in it as alice"
+      ansible.builtin.shell: >-
+        umask 022 && mkdir /srv/shared/new
+        && echo alice > /srv/shared/new/alice.txt
+      become: true
+      become_user: "alice"
+      changed_when: false
+
+    # Given alice created a file in a new directory with a umask of 022
+    # When bob appends to it
+    # Then the write succeeds, as the directory inherited the default ACL
+    - name: "Append to alice's file in the new directory as bob"
+      ansible.builtin.shell: "echo bob >> /srv/shared/new/alice.txt"
+      become: true
+      become_user: "bob"
+      changed_when: false
+
+    # Given carol is not in the users group
+    # When she reads alice's file
+    # Then the read succeeds
+    - name: "Read alice's file as carol"
+      ansible.builtin.command: "cat /srv/shared/alice.txt"
+      become: true
+      become_user: "carol"
+      changed_when: false
+
+    - name: "Append to alice's file as carol"
+      ansible.builtin.shell: "echo carol >> /srv/shared/alice.txt"
+      become: true
+      become_user: "carol"
+      register: "carol_write"
+      changed_when: false
+      failed_when: false
+
+    # Given carol is not in the users group
+    # When she appends to alice's file
+    # Then the write is denied
+    - name: "Assert a user outside the users group can't write"
+      ansible.builtin.assert:
+        that:
+          - "carol_write.rc != 0"
+        msg: "carol could write to alice's file"
+
+    - name: "Stat a file that was on the disk before it was shared"
+      ansible.builtin.stat:
+        path: "/srv/shared/old/file"
+      register: "shared_old_file"
+
+    # Given a file alice:alice 0644 was on the disk before it was shared
+    # When the role shares it without fixing every file
+    # Then the file is left alone
+    - name: "Assert existing files are left alone by default"
+      ansible.builtin.assert:
+        that:
+          - "shared_old_file.stat.gr_name == 'alice'"
+          - "shared_old_file.stat.mode == '0644'"
+        msg: "existing file was changed"
+
+    - name: "Stat a directory that was on the disk before it was shared"
+      ansible.builtin.stat:
+        path: "/srv/fixed/old"
+      register: "fixed_old_dir"
+
+    # Given an alice:alice 0755 directory was on the disk
+    # When the role shares it fixing every file
+    # Then the directory is group users with setgid and group write
+    - name: "Assert an existing directory is fixed to users 2775"
+      ansible.builtin.assert:
+        that:
+          - "fixed_old_dir.stat.gr_name == 'users'"
+          - "fixed_old_dir.stat.mode == '2775'"
+        msg: "existing directory has wrong group or mode"
+
+    - name: "Read the default ACL of an existing directory"
+      ansible.builtin.command:
+        argv:
+          - "getfacl"
+          - "--default"
+          - "--omit-header"
+          - "/srv/fixed/old"
+      register: "fixed_old_dir_acl"
+      changed_when: false
+
+    # Given a directory without a default ACL was on the disk
+    # When the role shares it fixing every file
+    # Then the directory gets the group rwx default ACL
+    - name: "Assert an existing directory gets the default ACL"
+      ansible.builtin.assert:
+        that:
+          - "'group::rwx' in fixed_old_dir_acl.stdout_lines"
+        msg: "default ACL is {{ fixed_old_dir_acl.stdout }}"
+
+    - name: "Stat a file that was on the disk before it was shared"
+      ansible.builtin.stat:
+        path: "/srv/fixed/old/file"
+      register: "fixed_old_file"
+
+    # Given an alice:alice 0644 file was on the disk
+    # When the role shares it fixing every file
+    # Then the file is group users and group writable
+    - name: "Assert an existing file is fixed to users 0664"
+      ansible.builtin.assert:
+        that:
+          - "fixed_old_file.stat.gr_name == 'users'"
+          - "fixed_old_file.stat.mode == '0664'"
+        msg: "existing file has wrong group or mode"
+
+    - name: "Share a directory that isn't a mount point"
+      block:
+        - name: "Apply the role to a plain directory"
+          ansible.builtin.include_role:
+            name: "system_shared_mount"
+          vars:
+            system_shared_mount_path: "/srv/not-mounted"
+
+        - name: "Record that the role succeeded"
+          ansible.builtin.set_fact:
+            not_mounted_refused: false
+      rescue:
+        - name: "Record that the role failed"
+          ansible.builtin.set_fact:
+            not_mounted_refused: true
+
+    # Given a directory that isn't a mount point, like a disk that
+    # failed to mount
+    # When the role is applied to it
+    # Then the role fails
+    - name: "Assert the role refuses a path that isn't mounted"
+      ansible.builtin.assert:
+        that:
+          - "not_mounted_refused"
+        msg: "the role shared a path that isn't mounted"
+
+    - name: "Stat the directory that isn't a mount point"
+      ansible.builtin.stat:
+        path: "/srv/not-mounted"
+      register: "not_mounted"
+
+    # Given the role refused a directory that isn't a mount point
+    # When we stat the directory
+    # Then it is still root:root 0755
+    - name: "Assert the unmounted directory is left alone"
+      ansible.builtin.assert:
+        that:
+          - "not_mounted.stat.gr_name == 'root'"
+          - "not_mounted.stat.mode == '0755'"
+        msg: "unmounted directory was changed"

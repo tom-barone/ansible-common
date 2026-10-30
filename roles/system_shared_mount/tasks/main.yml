@@ -1,0 +1,52 @@
+---
+# AI GENERATED - Tom Barone
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "system_shared_mount_path is defined"
+    msg: "Missing a required variable"
+
+- name: "Install ACL tools"
+  ansible.builtin.apt:
+    name:
+      - "acl"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+# If the disk failed to mount, this would make the empty mount point on
+# the root disk writable instead
+- name: "Refuse to share a path that isn't mounted"
+  ansible.builtin.command:
+    argv:
+      - "mountpoint"
+      - "--quiet"
+      - "{{ system_shared_mount_path }}"
+  changed_when: false
+  check_mode: false
+
+# setgid gives every new file and directory the users group
+- name: "Give the mount to the users group"
+  ansible.builtin.file:
+    path: "{{ system_shared_mount_path }}"
+    state: "directory"
+    owner: "root"
+    group: "users"
+    mode: "2775"
+
+# A default ACL replaces the umask, so files made over SSH or in GNOME,
+# with a umask of 022, stay group writable. New directories inherit it.
+- name: "Keep new files group writable"
+  ansible.posix.acl:
+    path: "{{ system_shared_mount_path }}"
+    etype: "group"
+    permissions: "rwx"
+    default: true
+    state: "present"
+
+- name: "Fix the group and mode of every file on the mount"
+  ansible.builtin.script:
+    cmd: "fix_permissions.sh {{ system_shared_mount_path | quote }}"
+  register: "system_shared_mount_fixed"
+  changed_when: "system_shared_mount_fixed.stdout | int > 0"
+  when: "system_shared_mount_recursively_fix_permissions_for_all_files"
