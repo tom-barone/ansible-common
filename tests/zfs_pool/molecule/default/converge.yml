@@ -1,0 +1,15 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "zfs_pool"
+      vars:
+        zfs_pool_name: "tank"
+        zfs_pool_disks:
+          - "/var/tmp/zfs-disk-0.img"
+          - "/var/tmp/zfs-disk-1.img"
+          - "/var/tmp/zfs-disk-2.img"
+          - "/var/tmp/zfs-disk-3.img"

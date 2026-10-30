@@ -1,0 +1,53 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read the pool health"
+      ansible.builtin.command: "zpool list -H -o health tank"
+      register: "health"
+      changed_when: false
+
+    # Given four blank disks
+    # When the role creates a raidz2 pool on them
+    # Then the pool is online
+    - name: "Assert the pool is online"
+      ansible.builtin.assert:
+        that:
+          - "health.stdout == 'ONLINE'"
+        msg: "pool health is {{ health.stdout }}"
+
+    # Given the role created the pool
+    # When we check its default mountpoint
+    # Then the pool is mounted there
+    - name: "Check the pool is mounted under /media"
+      ansible.builtin.command: "mountpoint --quiet /media/tank"
+      changed_when: false
+
+    - name: "Create a pool on a disk that is already in one"
+      block:
+        - name: "Apply the role to a disk of the existing pool"
+          ansible.builtin.include_role:
+            name: "zfs_pool"
+          vars:
+            zfs_pool_name: "other"
+            zfs_pool_type: "stripe"
+            zfs_pool_disks:
+              - "/var/tmp/zfs-disk-0.img"
+
+        - name: "Record that the role succeeded"
+          ansible.builtin.set_fact:
+            used_disk_refused: false
+      rescue:
+        - name: "Record that the role failed"
+          ansible.builtin.set_fact:
+            used_disk_refused: true
+
+    # Given a disk that already belongs to a pool
+    # When the role is asked to create another pool on it
+    # Then the role fails
+    - name: "Assert the role refuses a disk that isn't blank"
+      ansible.builtin.assert:
+        that:
+          - "used_disk_refused"
+        msg: "the role created a pool on a disk that wasn't blank"
