@@ -1,0 +1,28 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    # What gnome_core_install brings in, without the rest of GNOME
+    - name: "Install udisks and polkit"
+      ansible.builtin.apt:
+        name:
+          - "polkitd"
+          - "udisks2"
+        state: "present"
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: "Create a user in the sudo group"
+      ansible.builtin.user:
+        name: "alice"
+        groups: "sudo"
+        append: true
+
+    - name: "Create a user outside the sudo group"
+      ansible.builtin.user:
+        name: "bob"

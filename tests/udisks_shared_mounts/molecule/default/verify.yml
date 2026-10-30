@@ -1,0 +1,74 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    udisks: "org.freedesktop.udisks2"
+  tasks:
+    # Given the role installed a udev rule
+    # When udev checks its syntax
+    # Then it is valid
+    - name: "Check the udev rule is valid"
+      ansible.builtin.command: >-
+        udevadm verify /etc/udev/rules.d/99-udisks2-shared.rules
+      changed_when: false
+
+    # Given alice is in the sudo group
+    # When polkit checks whether she can mount a drive
+    # Then she is allowed without a password
+    - name: "Check a sudo user can mount without a password"
+      ansible.builtin.shell: >-
+        pkcheck --action-id {{ udisks }}.filesystem-mount --process $$
+      become: true
+      become_user: "alice"
+      changed_when: false
+
+    - name: "Check whether a user outside sudo can mount"
+      ansible.builtin.shell: >-
+        pkcheck --action-id {{ udisks }}.filesystem-mount --process $$
+      become: true
+      become_user: "bob"
+      register: "bob_mount"
+      changed_when: false
+      failed_when: false
+
+    # Given bob is not in the sudo group
+    # When polkit checks whether he can mount a drive
+    # Then he isn't allowed without authenticating
+    - name: "Assert a user outside sudo can't mount without a password"
+      ansible.builtin.assert:
+        that:
+          - "bob_mount.rc == 2"
+        msg: "pkcheck said: {{ bob_mount.stderr }}"
+
+    - name: "Check whether a sudo user can format a drive"
+      ansible.builtin.shell: >-
+        pkcheck --action-id {{ udisks }}.modify-device --process $$
+      become: true
+      become_user: "alice"
+      register: "alice_format"
+      changed_when: false
+      failed_when: false
+
+    # Given alice is in the sudo group
+    # When polkit checks whether she can format or partition a drive
+    # Then she still has to authenticate
+    - name: "Assert formatting still needs a password"
+      ansible.builtin.assert:
+        that:
+          - "alice_format.rc == 2"
+        msg: "pkcheck said: {{ alice_format.stderr }}"
+
+    - name: "Read the udisks mount options"
+      ansible.builtin.slurp:
+        src: "/etc/udisks2/mount_options.conf"
+      register: "mount_options"
+
+    # Given the role installed the udisks mount options
+    # When we read them
+    # Then FAT drives mount with masks that let every user write
+    - name: "Assert FAT drives are writable by every user"
+      ansible.builtin.assert:
+        that:
+          - "'dmask=0000,fmask=0111' in mount_options.content | b64decode"
+        msg: "FAT mount options don't open the drive to every user"
