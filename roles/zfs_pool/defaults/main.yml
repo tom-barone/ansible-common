@@ -1,0 +1,18 @@
+---
+# AI GENERATED - Tom Barone
+# Imports the pool if it exists, otherwise creates it from zfs_pool_disks
+# Required vars:
+# zfs_pool_name: "tank"
+# zfs_pool_disks:
+#   - "/dev/disk/by-id/ata-XXXX"
+#   - "/dev/disk/by-id/ata-YYYY"
+#   - "/dev/disk/by-id/ata-ZZZZ"
+
+# Type and mountpoint only apply when creating the pool
+# One of "stripe", "mirror", "raidz1", "raidz2", "raidz3"
+zfs_pool_type: "raidz2"
+# /media/ makes it show up in the file manager, /mnt/ does not
+zfs_pool_mountpoint: "/media/{{ zfs_pool_name }}"
+# Import a pool last used by another system, e.g. after an OS reinstall
+# without running zpool export first
+zfs_pool_force_import: false

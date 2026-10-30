@@ -1,0 +1,90 @@
+---
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "zfs_pool_name is defined"
+      - "zfs_pool_disks is defined"
+    msg: "Missing a required variable"
+
+# ZFS packages live in the contrib component on Debian
+- name: "Enable the contrib APT component"
+  ansible.builtin.replace:
+    path: "/etc/apt/sources.list"
+    regexp: "^(deb(?!.*\\bcontrib\\b).*)$"
+    replace: "\\1 contrib"
+
+# The first install builds the DKMS module, takes a few minutes
+- name: "Install ZFS packages"
+  ansible.builtin.apt:
+    name:
+      - "linux-headers-amd64"
+      - "zfs-dkms"
+      - "zfsutils-linux"
+    state: "present"
+    update_cache: true
+
+- name: "Load the ZFS kernel module"
+  community.general.modprobe:
+    name: "zfs"
+
+- name: "Check whether the pool is imported"
+  ansible.builtin.command: "zpool list {{ zfs_pool_name }}"
+  register: "zfs_pool_list"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+# Pools on attached disks that are not imported, e.g. after an OS reinstall
+- name: "List pools that can be imported"
+  ansible.builtin.command: "zpool import"
+  register: "zfs_pool_importable"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+# -d keeps the /dev/disk/by-id device names the pool was created with
+- name: "Import the existing pool"
+  ansible.builtin.command: >-
+    zpool import -d /dev/disk/by-id
+    {{ '-f' if zfs_pool_force_import | bool else '' }}
+    {{ zfs_pool_name }}
+  changed_when: true
+  when:
+    - "zfs_pool_list.rc != 0"
+    - >-
+      ('pool: ' ~ zfs_pool_name)
+      in (zfs_pool_importable.stdout_lines | map('trim'))
+
+- name: "Create the pool on blank disks"
+  when:
+    - "zfs_pool_list.rc != 0"
+    - >-
+      ('pool: ' ~ zfs_pool_name)
+      not in (zfs_pool_importable.stdout_lines | map('trim'))
+  block:
+    # Catches a wrong or stale entry in zfs_pool_disks, so only create on
+    # disks with no partition table or filesystem signatures
+    - name: "Refuse to create the pool on disks that are not blank"
+      ansible.builtin.command: "wipefs --noheadings {{ item }}"
+      loop: "{{ zfs_pool_disks }}"
+      register: "zfs_pool_wipefs"
+      changed_when: false
+      failed_when: >-
+        zfs_pool_wipefs.rc != 0
+        or zfs_pool_wipefs.stdout != ''
+      check_mode: false
+
+    # Only create, never reconcile the layout of an existing pool
+    - name: "Create the ZFS pool"
+      community.general.zpool:
+        name: "{{ zfs_pool_name }}"
+        mountpoint: "{{ zfs_pool_mountpoint }}"
+        vdevs:
+          - type: "{{ zfs_pool_type }}"
+            disks: "{{ zfs_pool_disks }}"
+
+- name: "Allow all users to write to the pool"
+  ansible.builtin.file:
+    path: "{{ zfs_pool_mountpoint }}"
+    state: "directory"
+    mode: "0777"
