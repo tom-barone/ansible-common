@@ -32,7 +32,9 @@
 - name: "Install ZFS packages"
   ansible.builtin.apt:
     name:
-      - "linux-headers-amd64"
+      - >-
+        linux-headers-{{ 'arm64'
+        if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}
       - "zfs-dkms"
       - "zfsutils-linux"
     state: "present"
