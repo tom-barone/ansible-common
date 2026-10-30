@@ -1,0 +1,25 @@
+---
+# AI GENERATED - Tom Barone
+# Shares the drives GNOME automounts with every user. Needs the udisks2
+# and polkit that gnome_core_install brings in.
+
+- name: "Mount drives under /media/ for every user"
+  ansible.builtin.copy:
+    src: "99-udisks2-shared.rules"
+    dest: "/etc/udev/rules.d/99-udisks2-shared.rules"
+    mode: "0644"
+  notify: "Reload udev rules"
+
+# udisks reads this on every mount, so it needs no restart
+- name: "Make FAT, exFAT and NTFS drives writable by every user"
+  ansible.builtin.copy:
+    src: "mount_options.conf"
+    dest: "/etc/udisks2/mount_options.conf"
+    mode: "0644"
+
+# polkitd reloads its rules when the directory changes
+- name: "Let sudo users mount and eject drives without a password"
+  ansible.builtin.copy:
+    src: "50-udisks2-sudo.rules"
+    dest: "/etc/polkit-1/rules.d/50-udisks2-sudo.rules"
+    mode: "0644"
