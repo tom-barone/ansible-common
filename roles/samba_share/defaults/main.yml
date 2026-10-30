@@ -3,6 +3,7 @@
 # Required vars:
 # samba_share_name: "media"
 # samba_share_path: "/srv/media"
+#   Must be a mount point, see system_shared_mount
 # samba_share_users:
 #   Samba only credentials, each backed by a locked system account with a
 #   nologin shell. Don't reuse the name of an existing login user.
