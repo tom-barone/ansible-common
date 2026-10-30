@@ -1,0 +1,28 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  handlers:
+    - name: "Boot the upgraded kernel"
+      ansible.builtin.reboot: {}
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    # The cached cloud image can be older than the archive's kernel
+    # headers, and DKMS only builds for kernels with headers installed
+    - name: "Upgrade the kernel"
+      ansible.builtin.apt:
+        upgrade: "dist"
+        update_cache: true
+      notify: "Boot the upgraded kernel"
+
+    # Stand in for blank disks. Files rather than loop devices, as ZFS
+    # tries to partition a whole loop device and can't find the partition.
+    - name: "Create sparse files as disks"
+      community.general.filesize:
+        path: "/var/tmp/zfs-disk-{{ item }}.img"
+        size: "256M"
+        sparse: true
+      loop: "{{ range(4) | list }}"
