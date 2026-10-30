@@ -109,9 +109,3 @@
     state: "present"
     extra_zfs_properties:
       acltype: "posix"
-
-- name: "Allow all users to write to the pool"
-  ansible.builtin.file:
-    path: "{{ zfs_pool_mountpoint }}"
-    state: "directory"
-    mode: "0777"
