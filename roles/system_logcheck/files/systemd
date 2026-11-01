@@ -92,4 +92,7 @@
 .* .*systemd.*: Closed gnome-keyring-daemon\.socket .*$
 .* .*systemd.*: Closed pipewire-pulse\.socket .*$
 .* .*systemd.*: Closed pipewire\.socket .*$
+.* .*systemd.*: filter-chain\.service: Bound to unit pipewire\.service, but unit isn't active\.$
+.* .*systemd.*: Dependency failed for (filter-chain|wireplumber)\.service - .*\.$
+.* .*systemd.*: filter-chain\.service: Job filter-chain\.service/start failed with result 'dependency'\.$
 .* .*systemd.*: Closed speech-dispatcher\.socket .*$

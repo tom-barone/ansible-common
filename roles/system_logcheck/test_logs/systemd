@@ -139,3 +139,7 @@ Nov 01 16:48:03 server systemd[19533]: pipewire.socket - PipeWire Multimedia Sys
 Nov 01 16:48:03 server systemd[19533]: pipewire.service - PipeWire Multimedia Service skipped, unmet condition check ConditionUser=!root
 Nov 01 16:48:03 server systemd[19533]: pipewire-pulse.service - PipeWire PulseAudio skipped, unmet condition check ConditionUser=!root
 Nov 01 16:48:03 server systemd[19533]: mpris-proxy.service - Bluetooth mpris proxy skipped, unmet condition check ConditionUser=!@system
+Nov 01 16:48:03 server systemd[19533]: filter-chain.service: Bound to unit pipewire.service, but unit isn't active.
+Nov 01 16:48:03 server systemd[19533]: Dependency failed for filter-chain.service - PipeWire filter chain daemon.
+Nov 01 16:48:03 server systemd[19533]: filter-chain.service: Job filter-chain.service/start failed with result 'dependency'.
+Nov 01 16:48:03 server systemd[19533]: Dependency failed for wireplumber.service - Multimedia Service Session Manager.
