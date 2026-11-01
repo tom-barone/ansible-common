@@ -74,7 +74,7 @@
 .* .*systemd\[1\]: .*\.service: Scheduled restart job, restart counter is at [0-9]+\.$
 .* .*systemd-ssh-generator.*: Failed to query local AF_VSOCK CID: Cannot assign requested address$
 .* .*\(sd-exec-.*: /usr/lib/systemd/system-generators/systemd-ssh-generator failed with exit status 1\.$
-.* .*systemd\[1\]: .* skipped, unmet condition check .*$
+.* .*systemd\[[0-9]+\]: .* skipped, unmet condition check .*$
 .* .*systemd\[1\]: .* skipped, no trigger condition checks were met\.$
 .* .*systemd-tmpfiles.*: Opening file ".*" failed, proceeding without lock: No such device or address$
 .* .*systemd\[1\]: Reexecution requested from client PID [0-9]+ .*$

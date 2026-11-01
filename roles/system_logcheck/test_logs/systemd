@@ -134,3 +134,8 @@ Oct 28 09:57:56 server systemd[49293]: Closed gnome-keyring-daemon.socket - GNOM
 Oct 28 09:57:56 server systemd[49293]: Closed pipewire-pulse.socket - PipeWire PulseAudio.
 Oct 28 09:57:56 server systemd[49293]: Closed pipewire.socket - PipeWire Multimedia System Sockets.
 Oct 28 09:57:56 server systemd[49293]: Closed speech-dispatcher.socket - Speech Dispatcher Socket.
+Nov 01 16:48:03 server systemd[19533]: pipewire-pulse.socket - PipeWire PulseAudio skipped, unmet condition check ConditionUser=!root
+Nov 01 16:48:03 server systemd[19533]: pipewire.socket - PipeWire Multimedia System Sockets skipped, unmet condition check ConditionUser=!root
+Nov 01 16:48:03 server systemd[19533]: pipewire.service - PipeWire Multimedia Service skipped, unmet condition check ConditionUser=!root
+Nov 01 16:48:03 server systemd[19533]: pipewire-pulse.service - PipeWire PulseAudio skipped, unmet condition check ConditionUser=!root
+Nov 01 16:48:03 server systemd[19533]: mpris-proxy.service - Bluetooth mpris proxy skipped, unmet condition check ConditionUser=!@system
