@@ -10,6 +10,12 @@ Type=simple
 User=llama-cpp-server
 Group=llama-cpp-server
 Environment="LLAMA_CACHE={{ llama_cpp_server_cache_dir }}"
+{% if llama_cpp_server_backend == 'cuda' %}
+# Nothing creates /dev/nvidia-uvm at boot. CUDA would create it with the
+# setuid nvidia-modprobe, which NoNewPrivileges blocks, so create it here
+# as root (+). Without it, CUDA fails and llama.cpp falls back to the CPU.
+ExecStartPre=+/usr/bin/nvidia-modprobe -u -c=0
+{% endif %}
 ExecStart={{ llama_cpp_server_dir }}/llama-server \
     --models-preset /etc/llama-cpp-server/models.ini \
     --host {{ llama_cpp_server_host }} \
