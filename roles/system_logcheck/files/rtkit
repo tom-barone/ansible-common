@@ -1,1 +1,2 @@
 .* .*rtkit-daemon.*: Supervising [0-9]+ threads of [0-9]+ processes of [0-9]+ users\.$
+.* .*rtkit-daemon.*: Successfully made thread [0-9]+ of process [0-9]+ owned by '[0-9]+' (high priority at nice level -[0-9]+|RT at priority [0-9]+)\.$
