@@ -212,3 +212,9 @@
 .* .*kernel.*: device-mapper: ioctl: .*initialised.*$
 .* .*kernel.*: overlayfs: .* is in-use as .* of another mount.*$
 .* .*kernel.*: tsc: Marking TSC unstable due to clocksource watchdog$
+.* .*kernel.*: SGI XFS with .*$
+.* .*kernel.*: JFS: nTxBlock = [0-9]+, nTxLock = [0-9]+$
+.* .*kernel.*: QNX4 filesystem .* registered\.$
+.* .*kernel.*: raid6: .*$
+.* .*kernel.*: xor: .*$
+.* .*kernel.*: Btrfs loaded, .*$
