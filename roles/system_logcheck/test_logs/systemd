@@ -143,3 +143,4 @@ Nov 01 16:48:03 server systemd[19533]: filter-chain.service: Bound to unit pipew
 Nov 01 16:48:03 server systemd[19533]: Dependency failed for filter-chain.service - PipeWire filter chain daemon.
 Nov 01 16:48:03 server systemd[19533]: filter-chain.service: Job filter-chain.service/start failed with result 'dependency'.
 Nov 01 16:48:03 server systemd[19533]: Dependency failed for wireplumber.service - Multimedia Service Session Manager.
+Nov 03 00:46:04 server systemd[1]: Closed cups.socket - CUPS Scheduler.
