@@ -50,3 +50,4 @@
 .* .*pmxcfs.*: \[main\] notice: teardown filesystem$
 .* .*pmxcfs.*: \[main\] notice: exit proxmox configuration filesystem \(0\)$
 .* .*pmxcfs.*: \[main\] notice: resolved node name .* for default node IP address$
+.* .*pveupdate.*: Renewed cluster CA certificate, .*$
