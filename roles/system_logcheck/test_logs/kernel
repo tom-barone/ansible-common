@@ -388,3 +388,14 @@ Apr 06 10:32:42 jqc-pr-83 kernel: device-mapper: ioctl: 4.48.0-ioctl (2023-03-01
 Apr 06 12:10:58 jqc-pr-84 kernel: overlayfs: upperdir is in-use as upperdir/workdir of another mount, accessing files from both mounts will result in undefined behavior.
 Apr 10 11:13:14 jqc-pr-175 kernel: overlayfs: workdir is in-use as upperdir/workdir of another mount, accessing files from both mounts will result in undefined behavior.
 Sep 11 09:17:58 server kernel: tsc: Marking TSC unstable due to clocksource watchdog
+Nov 03 06:59:44 server kernel: SGI XFS with ACLs, security attributes, realtime, quota, no debug enabled
+Nov 03 06:59:45 server kernel: JFS: nTxBlock = 8192, nTxLock = 65536
+Nov 03 06:59:45 server kernel: QNX4 filesystem 0.2.3 registered.
+Nov 03 06:59:45 server kernel: raid6: avx2x4   gen() 57472 MB/s
+Nov 03 06:59:45 server kernel: raid6: avx2x2   gen() 67452 MB/s
+Nov 03 06:59:45 server kernel: raid6: avx2x1   gen() 64977 MB/s
+Nov 03 06:59:45 server kernel: raid6: using algorithm avx2x2 gen() 67452 MB/s
+Nov 03 06:59:45 server kernel: raid6: .... xor() 51769 MB/s, rmw enabled
+Nov 03 06:59:45 server kernel: raid6: using avx2x2 recovery algorithm
+Nov 03 06:59:45 server kernel: xor: automatically using best checksumming function   avx
+Nov 03 06:59:45 server kernel: Btrfs loaded, zoned=yes, fsverity=yes
