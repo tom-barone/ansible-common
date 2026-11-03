@@ -80,3 +80,6 @@ Sep 15 03:00:28 server pve-firewall[3149833]: send HUP to 1574
 Sep 15 03:00:28 server pve-firewall[1574]: received signal HUP
 Sep 15 03:00:28 server pve-firewall[1574]: server shutdown (restart)
 Sep 15 03:00:29 server pve-firewall[1574]: restarting server
+Nov 03 03:00:07 server pmxcfs[1005]: [main] notice: teardown filesystem
+Nov 03 03:00:08 server pmxcfs[1005]: [main] notice: exit proxmox configuration filesystem (0)
+Nov 03 03:00:08 server pmxcfs[319984]: [main] notice: resolved node name 'server' to '192.168.50.91' for default node IP address
