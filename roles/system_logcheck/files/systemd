@@ -96,3 +96,4 @@
 .* .*systemd.*: Dependency failed for (filter-chain|wireplumber)\.service - .*\.$
 .* .*systemd.*: filter-chain\.service: Job filter-chain\.service/start failed with result 'dependency'\.$
 .* .*systemd.*: Closed speech-dispatcher\.socket .*$
+.* .*systemd.*: Closed cups\.socket .*$
