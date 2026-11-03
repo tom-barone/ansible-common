@@ -1,0 +1,16 @@
+Nov 03 06:59:45 server os-prober[106013]: debug: running /usr/lib/os-probes/mounted/05efi on mounted /dev/nvme0n1p1
+Nov 03 06:59:45 server 05efi[106015]: debug: /dev/nvme0n1p1 is a FAT32 partition
+Nov 03 06:59:45 server 05efi[106023]: debug: /dev/nvme0n1p1 partition scheme is gpt
+Nov 03 06:59:45 server 05efi[106024]: debug: /dev/nvme0n1p1 partition type is c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+Nov 03 06:59:45 server 05efi[106028]: debug: running subtest /usr/lib/os-probes/mounted/efi/10elilo
+Nov 03 06:59:45 server 05efi[106031]: debug: running subtest /usr/lib/os-probes/mounted/efi/20microsoft
+Nov 03 06:59:45 server 10freedos[106038]: debug: /dev/nvme0n1p1 is a FAT32 partition
+Nov 03 06:59:45 server 10qnx[106043]: debug: /dev/nvme0n1p1 is not a QNX4 partition: exiting
+Nov 03 06:59:45 server macosx-prober[106046]: debug: /dev/nvme0n1p1 is not an HFS+ partition: exiting
+Nov 03 06:59:45 server 20microsoft[106049]: debug: Skipping legacy bootloaders on UEFI system
+Nov 03 06:59:45 server 30utility[106052]: debug: /dev/nvme0n1p1 is a FAT32 partition
+Nov 03 06:59:45 server 83haiku[106065]: debug: /dev/nvme0n1p1 is not a BeFS partition: exiting
+Nov 03 06:59:45 server os-prober[106088]: debug: /dev/nvme0n1p3: is active swap
+Nov 03 06:59:45 server 05efi[106107]: debug: /dev/sda1 is ext4 partition: exiting
+Nov 03 06:59:45 server 10freedos[106110]: debug: /dev/sda1 is not a FAT partition: exiting
+Nov 03 06:59:45 server 30utility[106122]: debug: /dev/sda1 is not a FAT partition: exiting

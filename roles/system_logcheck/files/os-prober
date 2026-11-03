@@ -1,0 +1,2 @@
+.* .*(os|macosx)-prober.*: debug: .*$
+.* .*(05efi|10freedos|10qnx|20microsoft|30utility|83haiku).*: debug: .*$
