@@ -1,3 +1,5 @@
 Oct 26 19:47:55 server smartd[3562225]: Device: /dev/disk/by-id/wwn-0x5000c500e891edd8 [SAT], CHECK POWER STATUS spins up disk (0x81 -> 0xff)
 Oct 30 02:29:20 server smartd[214068]: Device: /dev/disk/by-id/wwn-0x5000c500e891edd8 [SAT], starting scheduled Short Self-Test.
 Oct 30 02:59:15 server smartd[214068]: Device: /dev/disk/by-id/wwn-0x5ace42e070430146 [SAT], previous self-test completed without error
+Nov 07 03:11:14 server smartd[257091]: Device: /dev/disk/by-id/wwn-0x5ace42e070430146 [SAT], starting scheduled Long Self-Test.
+Nov 07 03:41:14 server smartd[257091]: Device: /dev/disk/by-id/wwn-0x5ace42e070430146 [SAT], self-test in progress, 20% remaining
