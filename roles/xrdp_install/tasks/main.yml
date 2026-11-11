@@ -34,15 +34,25 @@
     state: "directory"
     mode: "0755"
 
-# xdg-desktop-portal-gnome never starts in an xrdp session, so each
-# portal waits out a 25 second D-Bus timeout before falling back to GTK,
-# stalling the first app window that queries the portal
+# xdg-desktop-portal-gnome never starts in an xrdp session. default=gtk
+# alone is not enough: for interfaces gtk lacks, the frontend falls back
+# to gnome.portal's UseIn=gnome and waits 25 s per interface on a backend
+# that never arrives. "none" switches those interfaces off.
 - name: "Skip the GNOME portal backend"
   ansible.builtin.copy:
     content: |
       [preferred]
       default=gtk;
       org.freedesktop.impl.portal.Secret=gnome-keyring;
+      org.freedesktop.impl.portal.Background=none;
+      org.freedesktop.impl.portal.Clipboard=none;
+      org.freedesktop.impl.portal.GlobalShortcuts=none;
+      org.freedesktop.impl.portal.InputCapture=none;
+      org.freedesktop.impl.portal.RemoteDesktop=none;
+      org.freedesktop.impl.portal.ScreenCast=none;
+      org.freedesktop.impl.portal.Screenshot=none;
+      org.freedesktop.impl.portal.Usb=none;
+      org.freedesktop.impl.portal.Wallpaper=none;
     dest: "/etc/xdg-desktop-portal/gnome-portals.conf"
     mode: "0644"
 
