@@ -1,0 +1,14 @@
+# AI GENERATED - Tom Barone
+# Managed by Ansible role: owntracks_install
+
+# The Recorder stores everything, and sends commands to the devices
+user recorder
+topic read owntracks/#
+topic write owntracks/+/+/cmd
+
+# Everyone publishes only under their own user name, and reads the
+# locations, events and cards of everyone else
+pattern readwrite owntracks/%u/#
+pattern read owntracks/+/+
+pattern read owntracks/+/+/event
+pattern read owntracks/+/+/info

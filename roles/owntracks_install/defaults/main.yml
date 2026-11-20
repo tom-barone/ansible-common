@@ -1,0 +1,21 @@
+# AI GENERATED - Tom Barone
+---
+# Passwords must not contain a colon.
+#
+# Required vars:
+# MQTT password of the Recorder's own account on the broker
+# owntracks_install_recorder_password: "secret"
+
+# MQTT accounts for the phone apps, as username: password. A user may
+# publish under owntracks/<username>/ and read everyone's locations.
+# owntracks_install_users:
+#   jane: "secret"
+#   john: "secret"
+owntracks_install_users: {}
+
+# Plain MQTT, for a reverse proxy that terminates TLS
+owntracks_install_mqtt_port: 1883
+
+# The Recorder's HTTP server: /pub for apps in HTTP mode, the API and the
+# map pages. It has no login of its own, so the reverse proxy must add one.
+owntracks_install_http_port: 8083

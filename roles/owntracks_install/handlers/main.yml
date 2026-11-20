@@ -1,0 +1,31 @@
+# AI GENERATED - Tom Barone
+---
+# Handlers run in the order listed here, so the hashed password file is
+# in place before Mosquitto restarts
+- name: "Copy MQTT passwords"
+  ansible.builtin.copy:
+    src: "/etc/mosquitto/owntracks.passwd.plain"
+    dest: "/etc/mosquitto/owntracks.passwd"
+    remote_src: true
+    owner: "mosquitto"
+    group: "mosquitto"
+    mode: "0600"
+  listen: "Hash MQTT passwords"
+
+- name: "Hash MQTT passwords"
+  ansible.builtin.command:
+    argv:
+      - "mosquitto_passwd"
+      - "-U"
+      - "/etc/mosquitto/owntracks.passwd"
+  changed_when: true
+
+- name: "Restart mosquitto"
+  ansible.builtin.systemd:
+    name: "mosquitto"
+    state: "restarted"
+
+- name: "Restart ot-recorder"
+  ansible.builtin.systemd:
+    name: "ot-recorder"
+    state: "restarted"
