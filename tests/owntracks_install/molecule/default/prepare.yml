@@ -1,0 +1,15 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    # mosquitto_pub and mosquitto_sub, which the verify playbook uses
+    - name: "Install MQTT clients"
+      ansible.builtin.apt:
+        name: "mosquitto-clients"
+        state: "present"
+        update_cache: true
