@@ -51,3 +51,7 @@
 .* .*pmxcfs.*: \[main\] notice: exit proxmox configuration filesystem \(0\)$
 .* .*pmxcfs.*: \[main\] notice: resolved node name .* for default node IP address$
 .* .*pveupdate.*: Renewed cluster CA certificate, .*$
+.* .*systemd.*: pve-cluster\.service: State 'stop-sigterm' timed out\. Killing\.$
+.* .*systemd.*: pve-cluster\.service: Killing process [0-9]+ \(pmxcfs\) with signal SIGKILL\.$
+.* .*systemd.*: pve-cluster\.service: Main process exited, code=killed, status=9/KILL$
+.* .*systemd.*: pve-cluster\.service: Failed with result 'timeout'\.$

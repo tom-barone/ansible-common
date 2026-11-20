@@ -84,3 +84,7 @@ Nov 03 03:00:07 server pmxcfs[1005]: [main] notice: teardown filesystem
 Nov 03 03:00:08 server pmxcfs[1005]: [main] notice: exit proxmox configuration filesystem (0)
 Nov 03 03:00:08 server pmxcfs[319984]: [main] notice: resolved node name 'server' to '192.168.50.91' for default node IP address
 Nov 03 03:00:20 server pveupdate[417571]: Renewed cluster CA certificate, as the previous one lacks the keyUsage extension that strict TLS clients require. Clients that trust the previous one must import the renewed /etc/pve/pve-root-ca.pem before Sat Jul 12 11:05:53 2036
+Nov 20 03:00:39 server systemd[1]: pve-cluster.service: State 'stop-sigterm' timed out. Killing.
+Nov 20 03:00:39 server systemd[1]: pve-cluster.service: Killing process 1460227 (pmxcfs) with signal SIGKILL.
+Nov 20 03:00:39 server systemd[1]: pve-cluster.service: Main process exited, code=killed, status=9/KILL
+Nov 20 03:00:39 server systemd[1]: pve-cluster.service: Failed with result 'timeout'.
