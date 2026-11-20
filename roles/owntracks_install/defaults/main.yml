@@ -15,7 +15,3 @@ owntracks_install_users: {}
 
 # Plain MQTT, for a reverse proxy that terminates TLS
 owntracks_install_mqtt_port: 1883
-
-# The Recorder's HTTP server: /pub for apps in HTTP mode, the API and the
-# map pages. It has no login of its own, so the reverse proxy must add one.
-owntracks_install_http_port: 8083
