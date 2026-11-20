@@ -55,3 +55,4 @@
 .* .*systemd.*: pve-cluster\.service: Killing process [0-9]+ \(pmxcfs\) with signal SIGKILL\.$
 .* .*systemd.*: pve-cluster\.service: Main process exited, code=killed, status=9/KILL$
 .* .*systemd.*: pve-cluster\.service: Failed with result 'timeout'\.$
+.* .*pve-firewall.*: firewall update time \([0-9.]+ seconds\)$
