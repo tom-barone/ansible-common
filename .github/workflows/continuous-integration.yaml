@@ -52,8 +52,10 @@ jobs:
 
   tests-run:
     needs: [test-discover]
-    # ubuntu-latest is now ubuntu-26.04, where gpg fails to decrypt
-    # secrets.sops.env with the imported key ("Bad secret key")
+    # ubuntu-latest is now ubuntu-26.04, where gpg rejects the imported key as
+    # a "Bad secret key" and cannot decrypt secrets.sops.env. Its libgcrypt
+    # 1.12.0 fails to validate Curve25519 keys: https://dev.gnupg.org/T8094
+    # Unpin once the image ships a libgcrypt with that fix
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
