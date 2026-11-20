@@ -1,0 +1,5 @@
+{# AI GENERATED - Tom Barone #}
+recorder:{{ owntracks_install_recorder_password }}
+{% for user, password in owntracks_install_users | dictsort %}
+{{ user }}:{{ password }}
+{% endfor %}

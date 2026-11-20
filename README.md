@@ -18,6 +18,7 @@ A non-comprehensive list of the more interesting roles:
 | `network_manager_switch` | Turn NetworkManager's WiFi and WWAN radio switches on or off. |
 | `nvidia_drivers_install` | Install the NVIDIA compute driver (CUDA) with open kernel modules from NVIDIA's Debian repository, built by DKMS. |
 | `openclaw_install` | Install the [OpenClaw](https://github.com/openclaw/openclaw) AI gateway as a hardened, non-root systemd service with scoped sudo. |
+| `owntracks_install` | Install the [OwnTracks](https://owntracks.org/booklet/) backend for the phone apps: the Mosquitto MQTT broker and the Recorder, on plain ports behind a reverse proxy. |
 | `postfix_relay` | Configure Postfix as a mail relay with SASL authentication and SMTP settings. |
 | `postgres_install_docker` | Deploy PostgreSQL via Docker. |
 | `postgres_pgbackrest_install` | Deploy PostgreSQL via Docker with [pgBackRest](https://pgbackrest.org/) WAL archiving, scheduled full/differential backups and weekly repository verification against one or more configurable repositories (S3 compatible etc.), including bootstrap restore. |

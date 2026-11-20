@@ -1,0 +1,128 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to install the OwnTracks backend for the phone apps, as
+# described in https://owntracks.org/booklet/: the Mosquitto MQTT broker
+# and the Recorder, which stores what the apps publish.
+#
+# Both listen on plain ports, TLS is left to a reverse proxy. The proxy
+# must also put a login in front of the Recorder's HTTP port, as the
+# Recorder has none, and pass the user name in the X-Limit-U header for
+# apps in HTTP mode.
+#
+# Tests to confirm working:
+#   $ systemctl status mosquitto ot-recorder
+#   $ curl http://127.0.0.1:8083/api/0/last
+#   $ ocat --list
+#   $ journalctl -u ot-recorder
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "owntracks_install_recorder_password is defined"
+      - "owntracks_install_recorder_password | length > 0"
+      - "'recorder' not in owntracks_install_users"
+      # mosquitto_passwd cuts a password off at the first colon
+      - >-
+        ([owntracks_install_recorder_password]
+        + owntracks_install_users.values() | list)
+        | select('search', ':') | list | length == 0
+    msg: >-
+      owntracks_install_recorder_password must be defined,
+      owntracks_install_users must not contain the user "recorder", and no
+      password may contain a colon
+
+- name: "Install dependencies"
+  ansible.builtin.apt:
+    name:
+      - "ca-certificates"
+      - "mosquitto"
+      - "python3-debian"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Add OwnTracks GPG key"
+  ansible.builtin.get_url:
+    url: >-
+      https://raw.githubusercontent.com/owntracks/recorder/master/etc/repo-v2.owntracks.org.gpg.key
+    dest: "/etc/apt/keyrings/owntracks.asc"
+    mode: "0644"
+
+- name: "Add OwnTracks repository"
+  ansible.builtin.deb822_repository:
+    name: "owntracks"
+    types: "deb"
+    uris: "http://repo.owntracks.org/debian"
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: "main"
+    signed_by: "/etc/apt/keyrings/owntracks.asc"
+    state: "present"
+
+- name: "Install the Recorder"
+  ansible.builtin.apt:
+    name: "ot-recorder"
+    state: "present"
+    update_cache: true
+
+- name: "Deploy Mosquitto ACL"
+  ansible.builtin.copy:
+    src: "owntracks.acl"
+    dest: "/etc/mosquitto/owntracks.acl"
+    owner: "mosquitto"
+    group: "mosquitto"
+    mode: "0600"
+  notify: "Restart mosquitto"
+
+# mosquitto_passwd salts its hashes, so hashing on every run would never
+# be idempotent. The handler hashes a copy when the passwords change.
+- name: "Deploy MQTT passwords"
+  ansible.builtin.template:
+    src: "owntracks.passwd.plain.j2"
+    dest: "/etc/mosquitto/owntracks.passwd.plain"
+    mode: "0600"
+  notify:
+    - "Hash MQTT passwords"
+    - "Restart mosquitto"
+
+- name: "Deploy Mosquitto config"
+  ansible.builtin.template:
+    src: "owntracks.conf.j2"
+    dest: "/etc/mosquitto/conf.d/owntracks.conf"
+    mode: "0644"
+  notify: "Restart mosquitto"
+
+- name: "Deploy Recorder config"
+  ansible.builtin.template:
+    src: "ot-recorder.j2"
+    dest: "/etc/default/ot-recorder"
+    owner: "owntracks"
+    group: "owntracks"
+    mode: "0640"
+  notify: "Restart ot-recorder"
+
+# Restart now, so the checks below see the new config
+- name: "Flush handlers"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "Start and enable the services"
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: "started"
+    enabled: true
+  loop:
+    - "mosquitto"
+    - "ot-recorder"
+
+- name: "Wait for Mosquitto to listen"
+  ansible.builtin.wait_for:
+    port: "{{ owntracks_install_mqtt_port }}"
+    timeout: 30
+
+# The Recorder's unit sleeps for a few seconds before it starts
+- name: "Wait for the Recorder to be ready"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ owntracks_install_http_port }}/api/0/version"
+  register: "owntracks_install_version"
+  until: "owntracks_install_version.status == 200"
+  retries: 30
+  delay: 2
