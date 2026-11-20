@@ -16,6 +16,8 @@ concurrency:
 env:
   UV_HTTP_TIMEOUT: "120"
   UV_HTTP_RETRIES: "5"
+  # Pull requests from forks get no secrets
+  HAS_SECRETS: ${{ secrets.SOPS_GITHUB_ACTIONS_GPG_PRIVATE_KEY != '' }}
 
 jobs:
   lint:
@@ -64,6 +66,7 @@ jobs:
         uses: docker/setup-qemu-action@v4
 
       - name: Import GPG key
+        if: "env.HAS_SECRETS == 'true'"
         run: echo "${{ secrets.SOPS_GITHUB_ACTIONS_GPG_PRIVATE_KEY }}" | gpg --batch --import
 
       - uses: "jdx/mise-action@v4"
@@ -102,7 +105,9 @@ jobs:
       - name: "Install dependencies"
         run: "just install"
 
+      # The tailscale tests join a tailnet with credentials from secrets.sops.env
       - name: "Run test: ${{ matrix.test }}"
+        if: "env.HAS_SECRETS == 'true' || !startsWith(matrix.test, 'tailscale_')"
         run: "just test --no-capture --name ${{ matrix.test }}"
 
   pass-gate:
