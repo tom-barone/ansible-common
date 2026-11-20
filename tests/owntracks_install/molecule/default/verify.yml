@@ -205,26 +205,17 @@
           - "(john_sub.stdout | from_json).tst == location.tst"
         msg: "john did not receive jane's location: {{ john_sub.stderr }}"
 
-    - name: "Post sue's location over HTTP"
+    - name: "Request the Recorder's API on the network address"
       ansible.builtin.uri:
-        url: "http://127.0.0.1:8083/pub"
-        method: "POST"
-        headers:
-          X-Limit-U: "sue"
-          X-Limit-D: "phone"
-        body_format: "json"
-        body: "{{ location }}"
+        url: "http://{{ ansible_facts['default_ipv4']['address'] }}:8083"
+      register: "network_api"
+      failed_when: false
 
-    - name: "Get sue's last location from the Recorder"
-      ansible.builtin.uri:
-        url: "{{ api }}/last?user=sue&device=phone"
-      register: "sue_phone"
-
-    # Given the reverse proxy passes the user name in X-Limit-U
-    # When an app in HTTP mode posts a location to /pub
-    # Then the Recorder stores it for that user
-    - name: "Assert the Recorder stores HTTP locations"
+    # Given the Recorder's API has no login
+    # When it is requested on the host's network address
+    # Then the connection is refused, as it only listens on 127.0.0.1
+    - name: "Assert the Recorder's API is closed to the network"
       ansible.builtin.assert:
         that:
-          - "sue_phone.json[0].tst == location.tst"
-        msg: "Expected tst {{ location.tst }}, got {{ sue_phone.json }}"
+          - "'Connection refused' in network_api.msg"
+        msg: "Expected a refused connection, got {{ network_api.msg }}"
