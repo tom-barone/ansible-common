@@ -1,0 +1,230 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    api: "http://127.0.0.1:8083/api/0"
+    location:
+      _type: "location"
+      lat: 48.85
+      lon: 2.35
+      tst: 1700000001
+  tasks:
+    - name: "Get mosquitto service status"
+      ansible.builtin.systemd:
+        name: "mosquitto"
+      register: "mosquitto"
+
+    # Given the role is applied
+    # When systemd is queried
+    # Then the broker is enabled and running
+    - name: "Assert mosquitto is enabled and running"
+      ansible.builtin.assert:
+        that:
+          - "mosquitto.status.UnitFileState == 'enabled'"
+          - "mosquitto.status.ActiveState == 'active'"
+        msg: "mosquitto is not enabled and running"
+
+    - name: "Get ot-recorder service status"
+      ansible.builtin.systemd:
+        name: "ot-recorder"
+      register: "recorder"
+
+    # Given the role is applied
+    # When systemd is queried
+    # Then the Recorder is enabled and running
+    - name: "Assert ot-recorder is enabled and running"
+      ansible.builtin.assert:
+        that:
+          - "recorder.status.UnitFileState == 'enabled'"
+          - "recorder.status.ActiveState == 'active'"
+        msg: "ot-recorder is not enabled and running"
+
+    - name: "Read the broker's password file"
+      ansible.builtin.slurp:
+        src: "/etc/mosquitto/owntracks.passwd"
+      register: "passwords"
+
+    # Given jane's password is "jane-secret"
+    # When the role writes the broker's password file
+    # Then her entry is a hash, which starts with a dollar sign
+    - name: "Assert MQTT passwords are hashed"
+      ansible.builtin.assert:
+        that:
+          - "'jane:$' in passwords.content | b64decode"
+        msg: "jane's password is not hashed"
+
+    - name: "Publish jane's location over MQTT"
+      ansible.builtin.command:
+        argv:
+          - "mosquitto_pub"
+          - "-u"
+          - "jane"
+          - "-P"
+          - "jane-secret"
+          - "-t"
+          - "owntracks/jane/phone"
+          - "-q"
+          - "1"
+          - "-r"
+          - "-m"
+          - "{{ location | to_json }}"
+      changed_when: false
+
+    - name: "Get jane's last location from the Recorder"
+      ansible.builtin.uri:
+        url: "{{ api }}/last?user=jane&device=phone"
+      register: "jane_phone"
+      until: "jane_phone.json | length > 0"
+      retries: 10
+      delay: 1
+
+    # Given jane is an MQTT user
+    # When her phone publishes a location to the broker
+    # Then the Recorder stores it
+    - name: "Assert the Recorder stores MQTT locations"
+      ansible.builtin.assert:
+        that:
+          - "jane_phone.json[0].tst == location.tst"
+        msg: "Expected tst {{ location.tst }}, got {{ jane_phone.json }}"
+
+    - name: "Publish as jane with a wrong password"
+      ansible.builtin.command:
+        argv:
+          - "mosquitto_pub"
+          - "-u"
+          - "jane"
+          - "-P"
+          - "wrong"
+          - "-t"
+          - "owntracks/jane/phone"
+          - "-m"
+          - "{{ location | to_json }}"
+      register: "wrong_password"
+      changed_when: false
+      failed_when: false
+
+    # Given jane's password is "jane-secret"
+    # When she connects with another password
+    # Then the broker refuses the connection
+    - name: "Assert a wrong password is refused"
+      ansible.builtin.assert:
+        that:
+          - "'not authorised' in wrong_password.stderr"
+        msg: "Expected a refusal, got {{ wrong_password.stderr }}"
+
+    - name: "Publish without a user"
+      ansible.builtin.command:
+        argv:
+          - "mosquitto_pub"
+          - "-t"
+          - "owntracks/jane/phone"
+          - "-m"
+          - "{{ location | to_json }}"
+      register: "anonymous"
+      changed_when: false
+      failed_when: false
+
+    # Given the broker requires a login
+    # When a client connects without one
+    # Then the broker refuses the connection
+    - name: "Assert anonymous clients are refused"
+      ansible.builtin.assert:
+        that:
+          - "'not authorised' in anonymous.stderr"
+        msg: "Expected a refusal, got {{ anonymous.stderr }}"
+
+    # The broker drops a denied publish without telling the client, so
+    # john's own location follows it to show when both were handled
+    - name: "Publish as john for jane's tablet, then for his own phone"
+      ansible.builtin.command:
+        argv:
+          - "mosquitto_pub"
+          - "-u"
+          - "john"
+          - "-P"
+          - "john-secret"
+          - "-t"
+          - "{{ item }}"
+          - "-q"
+          - "1"
+          - "-m"
+          - "{{ location | to_json }}"
+      loop:
+        - "owntracks/jane/tablet"
+        - "owntracks/john/phone"
+      changed_when: false
+
+    - name: "Wait for the Recorder to store john's own location"
+      ansible.builtin.uri:
+        url: "{{ api }}/last?user=john&device=phone"
+      register: "john_phone"
+      until: "john_phone.json | length > 0"
+      retries: 10
+      delay: 1
+
+    - name: "Get the last location of jane's tablet"
+      ansible.builtin.uri:
+        url: "{{ api }}/last?user=jane&device=tablet"
+      register: "jane_tablet"
+
+    # Given john may only publish under owntracks/john/
+    # When he publishes a location for jane's tablet
+    # Then the broker drops it and the Recorder never sees it
+    - name: "Assert users cannot publish for each other"
+      ansible.builtin.assert:
+        that:
+          - "jane_tablet.json | length == 0"
+        msg: "john published as jane: {{ jane_tablet.json }}"
+
+    - name: "Subscribe as john to jane's location"
+      ansible.builtin.command:
+        argv:
+          - "mosquitto_sub"
+          - "-u"
+          - "john"
+          - "-P"
+          - "john-secret"
+          - "-t"
+          - "owntracks/jane/phone"
+          # Exit after one message, or after five seconds
+          - "-C"
+          - "1"
+          - "-W"
+          - "5"
+      register: "john_sub"
+      changed_when: false
+      failed_when: false
+
+    # Given jane's location is retained on the broker
+    # When john subscribes to her topic
+    # Then he receives it, as users see each other as friends
+    - name: "Assert users can read each other's locations"
+      ansible.builtin.assert:
+        that:
+          - "(john_sub.stdout | from_json).tst == location.tst"
+        msg: "john did not receive jane's location: {{ john_sub.stderr }}"
+
+    - name: "Post sue's location over HTTP"
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:8083/pub"
+        method: "POST"
+        headers:
+          X-Limit-U: "sue"
+          X-Limit-D: "phone"
+        body_format: "json"
+        body: "{{ location }}"
+
+    - name: "Get sue's last location from the Recorder"
+      ansible.builtin.uri:
+        url: "{{ api }}/last?user=sue&device=phone"
+      register: "sue_phone"
+
+    # Given the reverse proxy passes the user name in X-Limit-U
+    # When an app in HTTP mode posts a location to /pub
+    # Then the Recorder stores it for that user
+    - name: "Assert the Recorder stores HTTP locations"
+      ansible.builtin.assert:
+        that:
+          - "sue_phone.json[0].tst == location.tst"
+        msg: "Expected tst {{ location.tst }}, got {{ sue_phone.json }}"

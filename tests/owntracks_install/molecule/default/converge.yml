@@ -1,0 +1,13 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "owntracks_install"
+      vars:
+        owntracks_install_recorder_password: "recorder-secret"
+        owntracks_install_users:
+          jane: "jane-secret"
+          john: "john-secret"
