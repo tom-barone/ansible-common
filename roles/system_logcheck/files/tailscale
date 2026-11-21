@@ -152,3 +152,4 @@
 .* .*tailscaled.*: trying bootstrapDNS\(".*", ".*"\) for "log\.tailscale\.com" \.\.\.$
 .* .*tailscaled.*: bootstrapDNS\(".*", ".*"\) for "log\.tailscale\.com" error: .*$
 .* .*tailscaled.*: bootstrapDNS\(".*", ".*"\) for "log\.tailscale\.com" = \[.*\]$
+.* .*tailscaled.*: setClientStatus: netmap expiry timer triggered after .*$
