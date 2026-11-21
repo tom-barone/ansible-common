@@ -56,3 +56,4 @@
 .* .*systemd.*: pve-cluster\.service: Main process exited, code=killed, status=9/KILL$
 .* .*systemd.*: pve-cluster\.service: Failed with result 'timeout'\.$
 .* .*pve-firewall.*: firewall update time \([0-9.]+ seconds\)$
+.* .*pve-notify-worker.*: PVE notification worker starting up$
