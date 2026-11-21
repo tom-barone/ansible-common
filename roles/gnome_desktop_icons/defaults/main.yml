@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+---
+# Names of the launchers in /usr/share/applications to put on every
+# user's desktop, without the .desktop suffix, e.g. "firefox-esr"
+gnome_desktop_icons_launchers: []

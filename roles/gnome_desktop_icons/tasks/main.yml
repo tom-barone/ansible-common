@@ -1,0 +1,76 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to show desktop icons in GNOME with the Desktop Icons NG
+# extension, and to put application launchers on every user's desktop.
+#
+# Desktop Icons NG only starts a launcher that its user has marked as
+# trusted, and that flag can only be set from the user's own session. So
+# a script copies the launchers and trusts them at every login.
+#
+# A user who has already switched an extension on or off has their own
+# list of enabled extensions, and has to enable this one by hand.
+
+- name: "Validate variable types"
+  ansible.builtin.assert:
+    that:
+      - "gnome_desktop_icons_launchers is sequence"
+      - "gnome_desktop_icons_launchers is not string"
+      # The names go into a path and onto an Exec line
+      - >-
+        gnome_desktop_icons_launchers
+        | reject('match', '^[A-Za-z0-9][A-Za-z0-9._-]*$')
+        | list | length == 0
+    msg: "launchers must be a list of desktop file names"
+
+- name: "Install Desktop Icons NG"
+  ansible.builtin.apt:
+    name:
+      # Depends on gnome-shell and nautilus, which bring in the gio, gvfs
+      # and xdg-user-dirs that the launcher script uses
+      - "gnome-shell-extension-desktop-icons-ng"
+      # Provides `dconf update` to compile the system settings below
+      - "dconf-cli"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Create dconf directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "/etc/dconf/profile"
+    - "/etc/dconf/db/local.d"
+
+- name: "Ensure dconf user profile includes the local database"
+  ansible.builtin.copy:
+    content: |
+      user-db:user
+      system-db:local
+    dest: "/etc/dconf/profile/user"
+    mode: "0644"
+  notify: "Update dconf"
+
+# This file owns the whole list, as dconf doesn't merge it with the list
+# in another keyfile
+- name: "Enable Desktop Icons NG for all users"
+  ansible.builtin.copy:
+    content: |
+      [org/gnome/shell]
+      enabled-extensions=['ding@rastersoft.com']
+    dest: "/etc/dconf/db/local.d/00-desktop-icons"
+    mode: "0644"
+  notify: "Update dconf"
+
+- name: "Deploy desktop launcher script"
+  ansible.builtin.copy:
+    src: "gnome-desktop-icons.sh"
+    dest: "/usr/local/bin/gnome-desktop-icons"
+    mode: "0755"
+
+- name: "Run the desktop launcher script at login"
+  ansible.builtin.template:
+    src: "autostart.desktop.j2"
+    dest: "/etc/xdg/autostart/gnome-desktop-icons.desktop"
+    mode: "0644"
