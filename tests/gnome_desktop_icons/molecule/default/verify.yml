@@ -1,0 +1,116 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    desktop: "/home/alice/Desktop"
+  tasks:
+    - name: "Check whether the extension package is installed"
+      ansible.builtin.command: >-
+        dpkg -s gnome-shell-extension-desktop-icons-ng
+      register: "package_status"
+      changed_when: false
+      failed_when: false
+
+    # Given the role was applied
+    # When we ask dpkg about the extension package
+    # Then it is installed
+    - name: "Assert the extension package is installed"
+      ansible.builtin.assert:
+        that:
+          - "package_status.rc == 0"
+        msg: "The Desktop Icons NG package is not installed"
+
+    - name: "Read the enabled extensions from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read /org/gnome/shell/enabled-extensions
+      register: "enabled_extensions"
+      changed_when: false
+
+    # Given the role was applied
+    # When we read the enabled extensions through the user dconf profile
+    # Then Desktop Icons NG is one of them
+    - name: "Assert Desktop Icons NG is enabled"
+      ansible.builtin.assert:
+        that:
+          - "'ding@rastersoft.com' in enabled_extensions.stdout"
+        msg: "Enabled extensions are {{ enabled_extensions.stdout }}"
+
+    - name: "Read the autostart entry"
+      ansible.builtin.slurp:
+        src: "/etc/xdg/autostart/gnome-desktop-icons.desktop"
+      register: "autostart"
+
+    # Given the role was applied with one launcher
+    # When we read the autostart entry
+    # Then it runs the launcher script with that launcher
+    - name: "Assert the launcher script runs at login with the launcher"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'Exec=/usr/local/bin/gnome-desktop-icons molecule-test'
+            in autostart.content | b64decode
+        msg: "The autostart entry doesn't run the launcher script"
+
+    # dbus-run-session stands in for the session bus of a login, and gio
+    # only shows the trust flag while that bus is running
+    - name: "Run the launcher script as a user logging in"
+      ansible.builtin.command: >-
+        dbus-run-session -- sh -c
+        '/usr/local/bin/gnome-desktop-icons not-installed molecule-test
+        && gio info -a "metadata::trusted,access::can-execute"
+        {{ desktop }}/molecule-test.desktop'
+      become: true
+      become_user: "alice"
+      environment:
+        HOME: "/home/alice"
+        # gvfs can't mount FUSE in the container
+        GVFS_DISABLE_FUSE: "1"
+      register: "login"
+      changed_when: true
+
+    # Given a launcher is installed and listed
+    # When a user logs in
+    # Then the launcher on their desktop is trusted
+    - name: "Assert the launcher is trusted"
+      ansible.builtin.assert:
+        that:
+          - "'metadata::trusted: true' in login.stdout"
+        msg: "gio said: {{ login.stdout }}"
+
+    # Given a launcher is installed and listed
+    # When a user logs in
+    # Then the launcher on their desktop is executable
+    - name: "Assert the launcher is executable"
+      ansible.builtin.assert:
+        that:
+          - "'access::can-execute: TRUE' in login.stdout"
+        msg: "gio said: {{ login.stdout }}"
+
+    - name: "Stat the launcher on the desktop"
+      ansible.builtin.stat:
+        path: "{{ desktop }}/molecule-test.desktop"
+      register: "launcher"
+
+    # Given a launcher is installed and listed
+    # When a user logs in
+    # Then the launcher on their desktop belongs to them
+    - name: "Assert the launcher belongs to the user"
+      ansible.builtin.assert:
+        that:
+          - "launcher.stat.pw_name == 'alice'"
+        msg: "The launcher belongs to {{ launcher.stat.pw_name }}"
+
+    - name: "Stat the launcher that isn't installed"
+      ansible.builtin.stat:
+        path: "{{ desktop }}/not-installed.desktop"
+      register: "missing_launcher"
+
+    # Given a listed launcher is not installed
+    # When a user logs in
+    # Then nothing is put on their desktop for it
+    - name: "Assert a launcher that isn't installed is skipped"
+      ansible.builtin.assert:
+        that:
+          - "not missing_launcher.stat.exists"
+        msg: "A launcher that isn't installed is on the desktop"

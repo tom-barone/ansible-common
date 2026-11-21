@@ -1,0 +1,36 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    # Provides dbus-run-session, which stands in for a login session
+    - name: "Install dbus-daemon"
+      ansible.builtin.apt:
+        name: "dbus-daemon"
+        state: "present"
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: "Create a desktop user"
+      ansible.builtin.user:
+        name: "alice"
+
+    - name: "Create the applications directory"
+      ansible.builtin.file:
+        path: "/usr/share/applications"
+        state: "directory"
+        mode: "0755"
+
+    - name: "Install an application launcher"
+      ansible.builtin.copy:
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=Molecule test
+          Exec=/bin/true
+        dest: "/usr/share/applications/molecule-test.desktop"
+        mode: "0644"
