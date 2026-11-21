@@ -65,3 +65,51 @@
         that:
           - "used_disk_refused"
         msg: "the role created a pool on a disk that wasn't blank"
+
+    - name: "Apply the role with another mountpoint"
+      ansible.builtin.include_role:
+        name: "zfs_pool"
+      vars:
+        zfs_pool_name: "tank"
+        zfs_pool_mountpoint: "/mnt/tank"
+        zfs_pool_disks:
+          - "/var/tmp/zfs-disk-0.img"
+          - "/var/tmp/zfs-disk-1.img"
+          - "/var/tmp/zfs-disk-2.img"
+          - "/var/tmp/zfs-disk-3.img"
+
+    # Given the pool is mounted under /media
+    # When the role runs with another mountpoint
+    # Then the pool is mounted there
+    - name: "Check the pool is mounted at the new mountpoint"
+      ansible.builtin.command: "mountpoint --quiet /mnt/tank"
+      changed_when: false
+
+    # Given the pool is mounted under /media
+    # When the role runs with another mountpoint
+    # Then nothing is mounted at the old one
+    - name: "Check nothing is mounted at the old mountpoint"
+      ansible.builtin.command: "mountpoint --quiet /media/tank"
+      register: "old_mountpoint"
+      changed_when: false
+      failed_when: "old_mountpoint.rc == 0"
+
+    - name: "Add an fstab entry that shows the pool in the file manager"
+      ansible.builtin.include_role:
+        name: "system_mount"
+      vars:
+        system_mount_path: "/mnt/tank"
+        system_mount_state: "present"
+        system_mount_src: "tank"
+        system_mount_fstype: "zfs"
+        system_mount_opts: "noauto,zfsutil,x-gvfs-show"
+
+    - name: "Reboot"
+      ansible.builtin.reboot: {}
+
+    # Given the pool has a noauto entry in fstab
+    # When the machine reboots
+    # Then ZFS mounts the pool itself
+    - name: "Check the pool is mounted after a reboot"
+      ansible.builtin.command: "mountpoint --quiet /mnt/tank"
+      changed_when: false

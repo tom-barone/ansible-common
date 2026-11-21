@@ -8,10 +8,17 @@
 #   - "/dev/disk/by-id/ata-YYYY"
 #   - "/dev/disk/by-id/ata-ZZZZ"
 
-# Type and mountpoint only apply when creating the pool
+# Only applies when creating the pool
 # One of "stripe", "mirror", "raidz1", "raidz2", "raidz3"
 zfs_pool_type: "raidz2"
-# /media/ makes it show up in the file manager, /mnt/ does not
+# An existing pool is moved here. /media/ makes it show up in the file
+# manager, /mnt/ does not. To show a pool that is somewhere else, give
+# it an fstab entry that ZFS keeps mounting itself, with system_mount:
+# system_mount_path: "/mnt/tank"
+# system_mount_state: "present"
+# system_mount_src: "tank"
+# system_mount_fstype: "zfs"
+# system_mount_opts: "noauto,zfsutil,x-gvfs-show"
 zfs_pool_mountpoint: "/media/{{ zfs_pool_name }}"
 # Import a pool last used by another system, e.g. after an OS reinstall
 # without running zpool export first
