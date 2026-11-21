@@ -8,3 +8,7 @@ system_harden_ssh_exclusive_access: false
 system_harden_ssh_permit_password_authentication: "no"
 # The default of 10:30:100 is a bit too low for a VPS getting slammed by bots.
 system_harden_ssh_max_startups: "100:30:200"
+# Users refused at login (sshd DenyUsers), e.g. a local account that only a
+# container should use. Declared here because this role writes the whole
+# sshd_config, so a line added by another play is dropped on the next run.
+system_harden_ssh_deny_users: []
