@@ -1,0 +1,18 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to set the system timezone
+#
+# Running services keep the old timezone until they restart.
+#
+# Tests to confirm working:
+#   $ timedatectl
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "system_timezone_name is defined"
+    msg: "Missing a required variable"
+
+- name: "Set the system timezone"
+  community.general.timezone:
+    name: "{{ system_timezone_name }}"

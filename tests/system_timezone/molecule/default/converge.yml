@@ -1,0 +1,10 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "system_timezone"
+      vars:
+        system_timezone_name: "Australia/Darwin"
