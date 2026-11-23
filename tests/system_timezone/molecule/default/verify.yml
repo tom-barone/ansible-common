@@ -1,0 +1,43 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read the local UTC offset"
+      ansible.builtin.command: "date +%z"
+      register: "utc_offset"
+      changed_when: false
+
+    # Given the system was on UTC
+    # When the role is applied with Australia/Darwin
+    # Then local time is nine and a half hours ahead of UTC
+    - name: "Assert local time is on the Darwin offset"
+      ansible.builtin.assert:
+        that:
+          - "utc_offset.stdout == '+0930'"
+        msg: "UTC offset is {{ utc_offset.stdout }}"
+
+    - name: "Set a timezone that doesn't exist"
+      block:
+        - name: "Apply the role with an unknown timezone"
+          ansible.builtin.include_role:
+            name: "system_timezone"
+          vars:
+            system_timezone_name: "Australia/Nowhere"
+
+        - name: "Record that the role succeeded"
+          ansible.builtin.set_fact:
+            unknown_timezone_refused: false
+      rescue:
+        - name: "Record that the role failed"
+          ansible.builtin.set_fact:
+            unknown_timezone_refused: true
+
+    # Given a timezone name with no zone file
+    # When the role is applied with it
+    # Then the role fails
+    - name: "Assert the role refuses an unknown timezone"
+      ansible.builtin.assert:
+        that:
+          - "unknown_timezone_refused"
+        msg: "the role accepted a timezone that doesn't exist"
