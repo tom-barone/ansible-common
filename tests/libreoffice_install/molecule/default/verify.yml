@@ -1,0 +1,65 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    # Given a Debian system without LibreOffice
+    # When the role is applied
+    # Then the libreoffice package is installed
+    - name: "Check libreoffice package is installed"
+      ansible.builtin.command: "dpkg -s libreoffice"
+      changed_when: false
+
+    # Given a Debian system without LibreOffice
+    # When the role is applied
+    # Then the GTK interface is installed
+    - name: "Check libreoffice-gtk3 package is installed"
+      ansible.builtin.command: "dpkg -s libreoffice-gtk3"
+      changed_when: false
+
+    # Given a Debian system without LibreOffice
+    # When the role is applied
+    # Then the GIO support is installed
+    - name: "Check libreoffice-gnome package is installed"
+      ansible.builtin.command: "dpkg -s libreoffice-gnome"
+      changed_when: false
+
+    # Given hunspell-en-au is the first listed dictionary
+    # When the role is applied
+    # Then the hunspell-en-au package is installed
+    - name: "Check hunspell-en-au package is installed"
+      ansible.builtin.command: "dpkg -s hunspell-en-au"
+      changed_when: false
+
+    # Given hunspell-en-gb is listed and is not a default dictionary
+    # When the role is applied
+    # Then the hunspell-en-gb package is installed
+    - name: "Check hunspell-en-gb package is installed"
+      ansible.builtin.command: "dpkg -s hunspell-en-gb"
+      changed_when: false
+
+    - name: "Write a text document"
+      ansible.builtin.copy:
+        content: "LibreOffice\n"
+        dest: "/tmp/libreoffice_install.txt"
+        mode: "0644"
+
+    - name: "Convert the text document to PDF"
+      ansible.builtin.command: >-
+        soffice --headless --convert-to pdf --outdir /tmp
+        /tmp/libreoffice_install.txt
+      changed_when: false
+
+    - name: "Stat the converted PDF"
+      ansible.builtin.stat:
+        path: "/tmp/libreoffice_install.pdf"
+      register: "libreoffice_pdf"
+
+    # Given a text document and no display
+    # When LibreOffice converts it to PDF
+    # Then the PDF is written
+    - name: "Assert the PDF was written"
+      ansible.builtin.assert:
+        that:
+          - "libreoffice_pdf.stat.exists"
+        msg: "LibreOffice did not write the PDF"

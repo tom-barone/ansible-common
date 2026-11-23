@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+---
+# hunspell packages to install, as LibreOffice ships no spelling dictionary
+libreoffice_install_dictionaries:
+  - "hunspell-en-au"
