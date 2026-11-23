@@ -1,0 +1,12 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "libreoffice_install"
+      vars:
+        libreoffice_install_dictionaries:
+          - "hunspell-en-au"
+          - "hunspell-en-gb"

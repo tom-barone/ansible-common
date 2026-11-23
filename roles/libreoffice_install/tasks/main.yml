@@ -1,0 +1,22 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to install the full LibreOffice suite with spelling
+# dictionaries. It uses the GTK interface, which runs natively on Wayland
+# and X11 under any desktop.
+#
+# Tests to confirm working:
+#   Help > About LibreOffice shows "VCL: gtk3"
+
+# libreoffice pulls in no interface toolkit, so without libreoffice-gtk3
+# it falls back to a plain X11 interface. libreoffice-gnome is GIO
+# support, which opens files on network shares from the file manager.
+- name: "Install LibreOffice"
+  ansible.builtin.apt:
+    name: >-
+      {{
+        ['libreoffice', 'libreoffice-gtk3', 'libreoffice-gnome']
+        + libreoffice_install_dictionaries
+      }}
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
