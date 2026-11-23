@@ -15,3 +15,7 @@
         # A percentage subset of a tiny test repo could select no pack
         # files at all, so read everything.
         immich_restic_backup_verify_read_data_subset: "100%"
+        # Dates in the past, so the timers never fire in the middle of
+        # the test.
+        immich_restic_backup_timer_schedule: "2000-01-01 00:00:00 UTC"
+        immich_restic_backup_verify_timer_schedule: "2000-01-02 00:00:00 UTC"

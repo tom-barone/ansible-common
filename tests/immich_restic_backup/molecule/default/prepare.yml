@@ -157,6 +157,11 @@
           AWS_ACCESS_KEY_ID: "test"
           AWS_SECRET_ACCESS_KEY: "testpassword"
         immich_restic_backup_restic_password: "testpassword"
+        # Dates in the past, so the timers never fire in the middle of
+        # the test. A backup taken after the users are wiped would
+        # become the snapshot that converge restores.
+        immich_restic_backup_timer_schedule: "2000-01-01 00:00:00 UTC"
+        immich_restic_backup_verify_timer_schedule: "2000-01-02 00:00:00 UTC"
 
     - name: "Insert marker user to restore"
       ansible.builtin.command:
