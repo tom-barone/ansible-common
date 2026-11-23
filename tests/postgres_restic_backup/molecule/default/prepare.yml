@@ -131,6 +131,11 @@
           AWS_ACCESS_KEY_ID: "test"
           AWS_SECRET_ACCESS_KEY: "testpassword"
         postgres_restic_backup_restic_password: "testpassword"
+        # Dates in the past, so the timers never fire in the middle of
+        # the test. A backup taken after the test database is dropped
+        # would become the snapshot that converge restores.
+        postgres_restic_backup_timer_schedule: "2000-01-01 00:00:00 UTC"
+        postgres_restic_backup_verify_timer_schedule: "2000-01-02 00:00:00 UTC"
 
     - name: "Create test database to restore"
       ansible.builtin.command:
