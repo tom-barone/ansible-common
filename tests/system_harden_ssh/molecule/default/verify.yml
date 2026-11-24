@@ -15,7 +15,20 @@
           - "'PermitRootLogin prohibit-password' in content"
           - "'PasswordAuthentication no' in content"
           - "'X11Forwarding no' in content"
+          - "'DenyUsers games nobody' in content"
         msg: "sshd_config missing expected configuration"
+
+    - name: "Read sshd's effective configuration"
+      ansible.builtin.command: "sshd -T"
+      register: "sshd_effective"
+      changed_when: false
+
+    - name: "Assert sshd refuses the denied users"
+      ansible.builtin.assert:
+        that:
+          - "'denyusers games' in sshd_effective.stdout_lines"
+          - "'denyusers nobody' in sshd_effective.stdout_lines"
+        msg: "sshd does not deny the users in system_harden_ssh_deny_users"
 
     - name: "Read authorized_keys"
       ansible.builtin.slurp:

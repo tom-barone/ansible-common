@@ -11,3 +11,4 @@
         system_harden_ssh_exclusive_access: true
         system_harden_ssh_permit_root_login: "prohibit-password"
         system_harden_ssh_permit_password_authentication: "no"
+        system_harden_ssh_deny_users: ["games", "nobody"]
