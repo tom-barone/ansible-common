@@ -1,0 +1,64 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Read the button layout from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read /org/gnome/desktop/wm/preferences/button-layout
+      register: "button_layout"
+      changed_when: false
+
+    # Given the role was applied with a string setting
+    # When we read it through the user dconf profile
+    # Then it has the value that was set
+    - name: "Assert the button layout is set"
+      ansible.builtin.assert:
+        that:
+          - >-
+            button_layout.stdout
+            == "'appmenu:minimize,maximize,close'"
+        msg: "Button layout is {{ button_layout.stdout }}"
+
+    - name: "Read the clock seconds from the user dconf profile"
+      ansible.builtin.command: >-
+        dconf read /org/gnome/desktop/interface/clock-show-seconds
+      register: "clock_seconds"
+      changed_when: false
+
+    # Given the role was applied with a boolean setting in a second schema
+    # When we read it through the user dconf profile
+    # Then it has the value that was set
+    - name: "Assert the clock seconds are set"
+      ansible.builtin.assert:
+        that:
+          - "clock_seconds.stdout == 'true'"
+        msg: "Clock seconds are {{ clock_seconds.stdout }}"
+
+    - name: "Set a value that isn't a string"
+      block:
+        - name: "Apply the role with a YAML boolean"
+          ansible.builtin.include_role:
+            name: "gnome_gsettings"
+          vars:
+            gnome_gsettings_settings:
+              - schema: "org.gnome.desktop.interface"
+                key: "clock-show-seconds"
+                value: true
+
+        - name: "Record that the role succeeded"
+          ansible.builtin.set_fact:
+            boolean_value_refused: false
+      rescue:
+        - name: "Record that the role failed"
+          ansible.builtin.set_fact:
+            boolean_value_refused: true
+
+    # Given a setting whose value is a YAML boolean
+    # When the role is applied with it
+    # Then the role fails
+    - name: "Assert the role refuses a value that isn't a string"
+      ansible.builtin.assert:
+        that:
+          - "boolean_value_refused"
+        msg: "the role accepted a value that isn't a string"

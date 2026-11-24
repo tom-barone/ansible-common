@@ -1,0 +1,13 @@
+# AI GENERATED - Tom Barone
+---
+# Defaults for every user. A user who has changed a setting themselves
+# keeps their own value.
+#
+# The value is written as `gsettings get <schema> <key>` prints it, so a
+# string carries its own single quotes. The schema must be stored at the
+# dconf path that matches its name, which the GNOME desktop schemas are.
+gnome_gsettings_settings:
+  # Minimize and maximize buttons beside close on every window
+  - schema: "org.gnome.desktop.wm.preferences"
+    key: "button-layout"
+    value: "'appmenu:minimize,maximize,close'"
