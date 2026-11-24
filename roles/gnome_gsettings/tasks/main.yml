@@ -1,0 +1,49 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to set GNOME settings as the default for every user
+#
+# Tests to confirm working:
+#   $ gsettings get org.gnome.desktop.wm.preferences button-layout
+
+- name: "Validate variable types"
+  ansible.builtin.assert:
+    that:
+      - "gnome_gsettings_settings is sequence"
+      - "gnome_gsettings_settings is not string"
+      # A YAML boolean would be written as True, which dconf can't read
+      - >-
+        gnome_gsettings_settings
+        | map(attribute='value') | reject('string') | list | length == 0
+    msg: "settings must be a list of schema, key and string value"
+
+- name: "Install dconf CLI"
+  ansible.builtin.apt:
+    name: "dconf-cli"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Create dconf directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  loop:
+    - "/etc/dconf/profile"
+    - "/etc/dconf/db/local.d"
+
+- name: "Ensure dconf user profile includes the local database"
+  ansible.builtin.copy:
+    content: |
+      user-db:user
+      system-db:local
+    dest: "/etc/dconf/profile/user"
+    mode: "0644"
+  notify: "Update dconf"
+
+- name: "Configure settings for all users"
+  ansible.builtin.template:
+    src: "gsettings.j2"
+    dest: "/etc/dconf/db/local.d/00-gsettings"
+    mode: "0644"
+  notify: "Update dconf"

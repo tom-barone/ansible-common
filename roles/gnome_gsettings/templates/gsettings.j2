@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+{% for setting in gnome_gsettings_settings %}
+[{{ setting.schema | replace('.', '/') }}]
+{{ setting.key }}={{ setting.value }}
+{% endfor %}

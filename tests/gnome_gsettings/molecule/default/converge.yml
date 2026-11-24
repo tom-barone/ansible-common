@@ -1,0 +1,16 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "gnome_gsettings"
+      vars:
+        gnome_gsettings_settings:
+          - schema: "org.gnome.desktop.wm.preferences"
+            key: "button-layout"
+            value: "'appmenu:minimize,maximize,close'"
+          - schema: "org.gnome.desktop.interface"
+            key: "clock-show-seconds"
+            value: "true"
