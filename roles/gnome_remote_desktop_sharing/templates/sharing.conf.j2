@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+[Service]
+# A failed run must not keep the daemon from starting. The "-" covers a
+# failure but not a start timeout, hence the timeout of its own.
+ExecStartPre=-/usr/bin/timeout 60 /usr/local/bin/gnome-remote-desktop-sharing {{ gnome_remote_desktop_sharing_port }} {{ 'disable' if gnome_remote_desktop_sharing_remote_control else 'enable' }}-view-only

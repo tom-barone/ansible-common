@@ -1,0 +1,116 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to share one user's GNOME desktop over RDP, with the
+# Desktop Sharing of GNOME Remote Desktop.
+#
+# GNOME keeps the username and password in the user's login keyring,
+# which only their own session can open. So a script sets everything up
+# each time the remote desktop daemon starts in their session, and a
+# change takes effect at their next login.
+#
+# The user must log in with a password. Autologin and fingerprint login
+# leave the keyring locked. So does a login password changed outside the
+# desktop, until the user unlocks the keyring with the old one.
+#
+# Sharing is on while the user is logged in to GNOME, which includes an
+# xrdp session of theirs. Switching Desktop Sharing off in GNOME
+# Settings keeps it off until this role is applied again.
+#
+# Tests to confirm working:
+#   $ grdctl status --show-credentials
+#   $ journalctl --user -u gnome-remote-desktop
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "gnome_remote_desktop_sharing_user is defined"
+      - "gnome_remote_desktop_sharing_username is defined"
+      - "gnome_remote_desktop_sharing_username | length > 0"
+      - "gnome_remote_desktop_sharing_password is defined"
+      - "gnome_remote_desktop_sharing_password | length > 0"
+    msg: "Missing a required variable"
+
+- name: "Validate variable types"
+  ansible.builtin.assert:
+    that:
+      - "gnome_remote_desktop_sharing_remote_control is boolean"
+      - "gnome_remote_desktop_sharing_port is integer"
+    msg: "remote_control must be a boolean and port an integer"
+
+- name: "Install GNOME Remote Desktop"
+  ansible.builtin.apt:
+    name:
+      - "gnome-remote-desktop"
+      # Holds the credentials, and its PAM module unlocks it at login
+      - "gnome-keyring"
+      - "libpam-gnome-keyring"
+      # Generates the TLS certificate the daemon won't serve without
+      - "openssl"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Deploy the sharing script"
+  ansible.builtin.copy:
+    src: "gnome-remote-desktop-sharing.sh"
+    dest: "/usr/local/bin/gnome-remote-desktop-sharing"
+    mode: "0755"
+
+- name: "Look up the user's home directory"
+  ansible.builtin.getent:
+    database: "passwd"
+    key: "{{ gnome_remote_desktop_sharing_user }}"
+
+- name: "Share the user's desktop"
+  vars:
+    # The home directory is the fifth passwd field after the name
+    gnome_remote_desktop_sharing_config: >-
+      {{ ansible_facts.getent_passwd[gnome_remote_desktop_sharing_user][4]
+      }}/.config
+  block:
+    - name: "Create the systemd user directories"
+      ansible.builtin.file:
+        path: >-
+          {{ gnome_remote_desktop_sharing_config }}/systemd/user/{{ item }}
+        state: "directory"
+        owner: "{{ gnome_remote_desktop_sharing_user }}"
+        group: "{{ gnome_remote_desktop_sharing_user }}"
+        mode: "0700"
+      loop:
+        - "gnome-remote-desktop.service.d"
+        - "gnome-session.target.wants"
+
+    - name: "Run the sharing script before the daemon starts"
+      ansible.builtin.template:
+        src: "sharing.conf.j2"
+        dest: >-
+          {{ gnome_remote_desktop_sharing_config
+          }}/systemd/user/gnome-remote-desktop.service.d/sharing.conf
+        owner: "{{ gnome_remote_desktop_sharing_user }}"
+        group: "{{ gnome_remote_desktop_sharing_user }}"
+        mode: "0644"
+
+    # The link `systemctl --user enable` makes, as Debian ships the
+    # daemon disabled. follow would hand the unit itself to the user.
+    - name: "Start the daemon with the user's GNOME session"
+      ansible.builtin.file:
+        src: "/usr/lib/systemd/user/gnome-remote-desktop.service"
+        dest: >-
+          {{ gnome_remote_desktop_sharing_config
+          }}/systemd/user/gnome-session.target.wants/gnome-remote-desktop.service
+        state: "link"
+        follow: false
+        owner: "{{ gnome_remote_desktop_sharing_user }}"
+        group: "{{ gnome_remote_desktop_sharing_user }}"
+
+    - name: "Store the credentials for the sharing script"
+      ansible.builtin.copy:
+        content: |
+          {{ gnome_remote_desktop_sharing_username }}
+          {{ gnome_remote_desktop_sharing_password }}
+        dest: >-
+          {{ gnome_remote_desktop_sharing_config }}/gnome-remote-desktop-sharing
+        owner: "{{ gnome_remote_desktop_sharing_user }}"
+        group: "{{ gnome_remote_desktop_sharing_user }}"
+        mode: "0600"
+      no_log: true

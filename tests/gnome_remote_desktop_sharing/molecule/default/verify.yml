@@ -1,0 +1,228 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  vars:
+    config: "/home/alice/.config"
+    certificate: >-
+      /home/alice/.local/share/gnome-remote-desktop/certificates/rdp-tls.crt
+  tasks:
+    - name: "Check whether GNOME Remote Desktop is installed"
+      ansible.builtin.command: "dpkg -s gnome-remote-desktop"
+      register: "package_status"
+      changed_when: false
+      failed_when: false
+
+    # Given the role was applied
+    # When we ask dpkg about the remote desktop package
+    # Then it is installed
+    - name: "Assert GNOME Remote Desktop is installed"
+      ansible.builtin.assert:
+        that:
+          - "package_status.rc == 0"
+        msg: "The gnome-remote-desktop package is not installed"
+
+    - name: "Stat the daemon in the user's GNOME session target"
+      ansible.builtin.stat:
+        path: >-
+          {{ config
+          }}/systemd/user/gnome-session.target.wants/gnome-remote-desktop.service
+      register: "wanted"
+
+    # Given the role was applied for a user
+    # When we look at what their GNOME session starts
+    # Then it starts the remote desktop daemon
+    - name: "Assert the daemon starts with the user's GNOME session"
+      ansible.builtin.assert:
+        that:
+          - >-
+            wanted.stat.lnk_source | default('')
+            == '/usr/lib/systemd/user/gnome-remote-desktop.service'
+        msg: "The daemon is not enabled for the user"
+
+    - name: "Read the daemon's drop-in"
+      ansible.builtin.slurp:
+        src: >-
+          {{ config
+          }}/systemd/user/gnome-remote-desktop.service.d/sharing.conf
+      register: "drop_in"
+
+    # Given the role was applied with the default port and remote control
+    # When we read the daemon's drop-in
+    # Then the sharing script runs with them before the daemon starts
+    - name: "Assert the sharing script runs before the daemon starts"
+      ansible.builtin.assert:
+        that:
+          - >-
+            'ExecStartPre=-/usr/bin/timeout 60
+            /usr/local/bin/gnome-remote-desktop-sharing
+            3390 disable-view-only' in drop_in.content | b64decode
+        msg: "The drop-in doesn't run the sharing script"
+
+    - name: "Stat the credentials"
+      ansible.builtin.stat:
+        path: "{{ config }}/gnome-remote-desktop-sharing"
+      register: "credentials"
+
+    # Given the role was applied for a user
+    # When we look at the stored credentials
+    # Then only that user can read them
+    - name: "Assert only the user can read the credentials"
+      ansible.builtin.assert:
+        that:
+          - "credentials.stat.pw_name == 'alice'"
+          - "credentials.stat.mode == '0600'"
+        msg: >-
+          The credentials belong to {{ credentials.stat.pw_name }}
+          with mode {{ credentials.stat.mode }}
+
+    - name: "Stat the user's config directory"
+      ansible.builtin.stat:
+        path: "{{ config }}"
+      register: "config_dir"
+
+    # Given a user with no config directory
+    # When the role is applied for them
+    # Then the config directory it creates belongs to them
+    - name: "Assert the config directory belongs to the user"
+      ansible.builtin.assert:
+        that:
+          - "config_dir.stat.pw_name == 'alice'"
+        msg: "The config directory belongs to {{ config_dir.stat.pw_name }}"
+
+    # dbus-run-session stands in for the session bus of a login, and
+    # unlocking the keyring for the password typed at that login. The
+    # keyring daemon is only found again through a runtime directory.
+    - name: "Log in as the user"
+      ansible.builtin.shell: &login
+        cmd: >-
+          export XDG_RUNTIME_DIR="$(mktemp -d)" &&
+          dbus-run-session -- sh -c 'gnome-keyring-daemon --unlock &&
+          /usr/local/bin/gnome-remote-desktop-sharing 3390 disable-view-only
+          && grdctl status --show-credentials'
+        stdin: "login-password"
+        stdin_add_newline: false
+      become: true
+      become_user: "alice"
+      environment:
+        HOME: "/home/alice"
+      register: "first_login"
+      changed_when: true
+
+    # Given the role was applied for a user
+    # When the user logs in
+    # Then their desktop is shared over RDP
+    - name: "Assert desktop sharing is enabled"
+      ansible.builtin.assert:
+        that:
+          - "'Status: enabled' in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    # Given the role was applied with the default port
+    # When the user logs in
+    # Then the daemon listens on port 3390
+    - name: "Assert the port is 3390"
+      ansible.builtin.assert:
+        that:
+          - "'Port: 3390' in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    # Given the role was applied with the default port
+    # When the user logs in
+    # Then the daemon won't move to another port
+    - name: "Assert the port is not negotiated"
+      ansible.builtin.assert:
+        that:
+          - "'Negotiate port: no' in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    # Given the role was applied with remote control
+    # When the user logs in
+    # Then a client can control the desktop
+    - name: "Assert the desktop can be controlled"
+      ansible.builtin.assert:
+        that:
+          - "'View-only: no' in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    # Given the role was applied with a username
+    # When the user logs in
+    # Then a client signs in with that username
+    - name: "Assert the username is set"
+      ansible.builtin.assert:
+        that:
+          - "'Username: support' in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    # Given the role was applied with a password
+    # When the user logs in
+    # Then a client signs in with that password
+    - name: "Assert the password is set"
+      ansible.builtin.assert:
+        that:
+          - "'Password: hunter2' in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    # Given the user had no TLS certificate
+    # When the user logs in
+    # Then the daemon is given one
+    - name: "Assert a TLS certificate is set"
+      ansible.builtin.assert:
+        that:
+          - "('TLS certificate: ' ~ certificate) in first_login.stdout"
+        msg: "grdctl said: {{ first_login.stdout }}"
+
+    - name: "Stat the TLS certificate after the first login"
+      ansible.builtin.stat:
+        path: "{{ certificate }}"
+      register: "first_certificate"
+
+    - name: "Log in as the user again"
+      ansible.builtin.shell: *login
+      become: true
+      become_user: "alice"
+      environment:
+        HOME: "/home/alice"
+      changed_when: true
+
+    - name: "Stat the TLS certificate after the second login"
+      ansible.builtin.stat:
+        path: "{{ certificate }}"
+      register: "second_certificate"
+
+    # Given the user already has a TLS certificate
+    # When the user logs in again
+    # Then the certificate is kept
+    - name: "Assert the TLS certificate is kept"
+      ansible.builtin.assert:
+        that:
+          - >-
+            second_certificate.stat.checksum
+            == first_certificate.stat.checksum
+        msg: "The TLS certificate was replaced"
+
+    - name: "Share a desktop without a password"
+      block:
+        - name: "Apply the role without a password"
+          ansible.builtin.include_role:
+            name: "gnome_remote_desktop_sharing"
+          vars:
+            gnome_remote_desktop_sharing_user: "alice"
+            gnome_remote_desktop_sharing_username: "support"
+
+        - name: "Record that the role succeeded"
+          ansible.builtin.set_fact:
+            missing_password_refused: false
+      rescue:
+        - name: "Record that the role failed"
+          ansible.builtin.set_fact:
+            missing_password_refused: true
+
+    # Given no password for the remote client
+    # When the role is applied
+    # Then the role fails
+    - name: "Assert the role refuses a missing password"
+      ansible.builtin.assert:
+        that:
+          - "missing_password_refused"
+        msg: "the role accepted a missing password"

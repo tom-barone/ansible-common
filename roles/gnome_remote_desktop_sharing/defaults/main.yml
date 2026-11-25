@@ -1,0 +1,15 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# gnome_remote_desktop_sharing_user: "alice"
+#   The desktop user whose screen is shared. They must log in with a
+#   password, as autologin leaves the keyring holding the credentials
+#   locked
+# gnome_remote_desktop_sharing_username: "support"
+# gnome_remote_desktop_sharing_password: "hunter2"
+#   What the remote client signs in with, not the user's own login
+
+# Let the remote client use the mouse and keyboard, not only watch
+gnome_remote_desktop_sharing_remote_control: true
+# 3389 is taken by xrdp and by GNOME's remote login
+gnome_remote_desktop_sharing_port: 3390
