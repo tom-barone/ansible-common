@@ -1,0 +1,12 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "gnome_remote_desktop_sharing"
+      vars:
+        gnome_remote_desktop_sharing_user: "alice"
+        gnome_remote_desktop_sharing_username: "support"
+        gnome_remote_desktop_sharing_password: "hunter2"

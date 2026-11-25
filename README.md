@@ -12,6 +12,7 @@ A non-comprehensive list of the more interesting roles:
 | `github_actions_self_hosted_runner_install` | Deploy a GitHub Actions self-hosted runner with local cache server. |
 | `gnome_desktop_icons` | Show desktop icons in GNOME with Desktop Icons NG, and put application launchers on every user's desktop. |
 | `gnome_power_management` | Configure GNOME automatic suspend for user sessions and the GDM login screen, masking the systemd sleep targets when it is disabled. |
+| `gnome_remote_desktop_sharing` | Share one user's GNOME desktop over RDP with GNOME Remote Desktop, with its own username and password. |
 | `immich_install` | Install the [Immich](https://immich.app/) photo and video manager via Docker. |
 | `immich_restic_backup` | Automated Immich backups (database dump and original media) to an S3 compatible backend with [Restic](https://restic.net/), including scheduled `restic check` verification and bootstrap restore. |
 | `llama_cpp_server` | Serve Hugging Face GGUF models with the [llama.cpp](https://github.com/ggml-org/llama.cpp) server in router mode, loading them on demand, as a systemd service on CUDA or CPU. |
