@@ -76,6 +76,30 @@
           - "'redirect-to-https' in _routes_content"
           - '''url: "http://10.0.0.20:8080"'' in _routes_content'
 
+    - name: "Check the TLS terminated TCP route"
+      vars:
+        _tcp: "{{ (_traefik_routes.content | b64decode | from_yaml).tcp }}"
+      block:
+        # Given a TLS terminated TCP route for mqtt.example.com
+        # When we read its router from the routes config
+        # Then it terminates TLS via letsencrypt
+        - name: "Assert the TCP route terminates TLS via letsencrypt"
+          ansible.builtin.assert:
+            that:
+              - >-
+                _tcp.routers['mqtt-example-com-tcp-tls-router'].tls
+                == {'certResolver': 'letsencrypt'}
+
+        # Given a TLS terminated TCP route to 10.0.0.30 port 1883
+        # When we read its service from the routes config
+        # Then it forwards to that address
+        - name: "Assert the TCP route forwards to the destination"
+          ansible.builtin.assert:
+            that:
+              - >-
+                _tcp.services['mqtt-example-com-tcp-tls-service'].loadBalancer
+                == {'servers': [{'address': '10.0.0.30:1883'}]}
+
     # Given traefik loaded the dynamic routes config
     # When we read the traefik journal
     # Then it contains no configuration building errors
@@ -112,3 +136,26 @@
           - "'certificatesResolvers' in _config_content"
           - "'email: test@example.com' in _config_content"
           - "'httpChallenge' in _config_content"
+
+    # Given only a TLS terminated TCP route is configured
+    # When we read the traefik config
+    # Then it still contains the ACME certificate resolver
+    - name: "Apply the role with only a TLS terminated TCP route"
+      ansible.builtin.include_role:
+        name: "traefik_install"
+      vars:
+        traefik_install_acme_email: "test@example.com"
+        traefik_install_tls_terminated_tcp_routes:
+          - domain: "mqtt.example.com"
+            destination: "10.0.0.30"
+            port: 1883
+
+    - name: "Read traefik config of the TCP route alone"
+      ansible.builtin.slurp:
+        src: "/etc/traefik/traefik.yml"
+      register: "_traefik_tcp_config"
+
+    - name: "Assert a TCP route alone gets the ACME resolver"
+      ansible.builtin.assert:
+        that:
+          - "'certificatesResolvers' in _traefik_tcp_config.content | b64decode"

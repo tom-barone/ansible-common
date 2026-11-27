@@ -1,5 +1,6 @@
 ---
-# Required vars when traefik_install_tls_terminated_routes is non-empty:
+# Required vars when traefik_install_tls_terminated_routes or
+# traefik_install_tls_terminated_tcp_routes is non-empty:
 # traefik_install_acme_email: "admin@example.com"
 #
 # TLS passthrough routes: HTTP (port 80) is forwarded to the destination,
@@ -17,6 +18,15 @@
 #   - domain: "api.example.com"
 #     destination: "192.168.1.20"
 #     port: 8080
+#
+# TLS terminated TCP routes: for protocols other than HTTP, such as MQTT.
+# Traefik terminates TLS on port 443 with a Let's Encrypt certificate, as
+# above, and forwards plain TCP to destination:port. The client must send
+# the domain as SNI.
+# traefik_install_tls_terminated_tcp_routes:
+#   - domain: "mqtt.example.com"
+#     destination: "192.168.1.30"
+#     port: 1883
 
 # Traefik version to install (no "v" prefix).
 traefik_install_version: "3.6.10"
@@ -29,3 +39,4 @@ traefik_install_binary_path: "/usr/local/bin/traefik"
 
 traefik_install_tls_passthrough_routes: []
 traefik_install_tls_terminated_routes: []
+traefik_install_tls_terminated_tcp_routes: []
