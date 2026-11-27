@@ -5,6 +5,5 @@ OTR_PORT={{ owntracks_install_mqtt_port }}
 OTR_USER="recorder"
 OTR_PASS="{{ owntracks_install_recorder_password }}"
 OTR_TOPICS="owntracks/#"
-# The API and the map pages have no login, so they stay on this host
-OTR_HTTPHOST="127.0.0.1"
+OTR_HTTPHOST="{{ owntracks_install_host }}"
 OTR_HTTPPORT=8083
