@@ -15,3 +15,8 @@ owntracks_install_users: {}
 
 # Plain MQTT, for a reverse proxy that terminates TLS
 owntracks_install_mqtt_port: 1883
+
+# Listen address of the Recorder's API and map pages, on port 8083. They
+# have no login, so only set "0.0.0.0" where something else limits who can
+# reach the port, such as Tailscale ACLs.
+owntracks_install_host: "127.0.0.1"

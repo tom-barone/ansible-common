@@ -7,8 +7,9 @@
 # The apps connect to the broker in MQTT mode. It listens on a plain port,
 # TLS is left to a reverse proxy.
 #
-# The Recorder's API and map pages have no login, so they only listen on
-# 127.0.0.1:8083. To open them from another machine:
+# The Recorder's API and map pages are on port 8083 and have no login, so
+# by default they only listen on 127.0.0.1. To open them from another
+# machine, tunnel in or see owntracks_install_host:
 #   $ ssh -L 8083:127.0.0.1:8083 <host>
 #
 # Tests to confirm working:
@@ -123,7 +124,7 @@
 # The Recorder's unit sleeps for a few seconds before it starts
 - name: "Wait for the Recorder to be ready"
   ansible.builtin.uri:
-    url: "http://127.0.0.1:8083/api/0/version"
+    url: "http://{{ owntracks_install_host }}:8083/api/0/version"
   register: "owntracks_install_version"
   until: "owntracks_install_version.status == 200"
   retries: 30

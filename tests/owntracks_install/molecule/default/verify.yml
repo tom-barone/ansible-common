@@ -4,6 +4,8 @@
   hosts: "all"
   vars:
     api: "http://127.0.0.1:8083/api/0"
+    network_api: >-
+      http://{{ ansible_facts['default_ipv4']['address'] }}:8083/api/0
     location:
       _type: "location"
       lat: 48.85
@@ -207,15 +209,37 @@
 
     - name: "Request the Recorder's API on the network address"
       ansible.builtin.uri:
-        url: "http://{{ ansible_facts['default_ipv4']['address'] }}:8083"
-      register: "network_api"
+        url: "{{ network_api }}/version"
+      register: "closed_api"
       failed_when: false
 
-    # Given the Recorder's API has no login
-    # When it is requested on the host's network address
-    # Then the connection is refused, as it only listens on 127.0.0.1
+    # Given owntracks_install_host is left at "127.0.0.1"
+    # When the Recorder's API is requested on the host's network address
+    # Then the connection is refused
     - name: "Assert the Recorder's API is closed to the network"
       ansible.builtin.assert:
         that:
-          - "'Connection refused' in network_api.msg"
-        msg: "Expected a refused connection, got {{ network_api.msg }}"
+          - "'Connection refused' in closed_api.msg"
+        msg: "Expected a refused connection, got {{ closed_api.msg }}"
+
+    - name: "Apply the role with the Recorder listening on all addresses"
+      ansible.builtin.include_role:
+        name: "owntracks_install"
+      vars:
+        owntracks_install_recorder_password: "recorder-secret"
+        owntracks_install_host: "0.0.0.0"
+
+    - name: "Request the Recorder's API on the network address again"
+      ansible.builtin.uri:
+        url: "{{ network_api }}/version"
+      register: "open_api"
+      failed_when: false
+
+    # Given owntracks_install_host is "0.0.0.0"
+    # When the Recorder's API is requested on the host's network address
+    # Then it answers
+    - name: "Assert the Recorder's API can be opened to the network"
+      ansible.builtin.assert:
+        that:
+          - "open_api.status == 200"
+        msg: "Expected status 200, got {{ open_api.msg }}"
