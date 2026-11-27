@@ -47,7 +47,7 @@ http:
           - url: "http://{{ route.destination }}:{{ route.port }}"
 {% endfor %}
 {% endif %}
-{% if traefik_install_tls_passthrough_routes %}
+{% if traefik_install_tls_passthrough_routes or traefik_install_tls_terminated_tcp_routes %}
 
 tcp:
   routers:
@@ -60,6 +60,15 @@ tcp:
       tls:
         passthrough: true
 {% endfor %}
+{% for route in traefik_install_tls_terminated_tcp_routes %}
+    {{ route.domain | replace('.', '-') }}-tcp-tls-router:
+      entryPoints:
+        - websecure
+      rule: "HostSNI(`{{ route.domain }}`)"
+      service: {{ route.domain | replace('.', '-') }}-tcp-tls-service
+      tls:
+        certResolver: letsencrypt
+{% endfor %}
 
   services:
 {% for route in traefik_install_tls_passthrough_routes %}
@@ -67,5 +76,11 @@ tcp:
       loadBalancer:
         servers:
           - address: "{{ route.destination }}:443"
+{% endfor %}
+{% for route in traefik_install_tls_terminated_tcp_routes %}
+    {{ route.domain | replace('.', '-') }}-tcp-tls-service:
+      loadBalancer:
+        servers:
+          - address: "{{ route.destination }}:{{ route.port }}"
 {% endfor %}
 {% endif %}

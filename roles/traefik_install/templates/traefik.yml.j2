@@ -13,7 +13,7 @@ providers:
   file:
     filename: {{ traefik_install_config_dir }}/routes.yml
     watch: false
-{% if traefik_install_tls_terminated_routes %}
+{% if traefik_install_tls_terminated_routes or traefik_install_tls_terminated_tcp_routes %}
 
 certificatesResolvers:
   letsencrypt:
