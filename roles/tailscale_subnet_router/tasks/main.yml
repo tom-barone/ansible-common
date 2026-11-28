@@ -1,4 +1,22 @@
 ---
+# Ansible role to advertise subnet routes from a machine on a tailnet, as
+# described in https://tailscale.com/docs/features/subnet-routers. The
+# machine must already be on the tailnet, see tailscale_install.
+#
+# The role advertises tailscale_subnet_router_routes, or the subnets the
+# machine is directly connected to when that list is empty. On a Docker
+# host these include the bridge networks, so set the list there.
+#
+# The routes are not used until they are approved, in the admin console
+# or with autoApprovers.routes in the tailnet policy file.
+#
+# The role can be combined with tailscale_exit_node_install on the same
+# machine.
+#
+# Tests to confirm working:
+#   $ sysctl net.ipv4.ip_forward net.ipv6.conf.all.forwarding
+#   $ tailscale get advertise-routes
+
 - name: "Validate variables"
   ansible.builtin.assert:
     that:
