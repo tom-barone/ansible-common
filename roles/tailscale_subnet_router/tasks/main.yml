@@ -19,33 +19,28 @@
     sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
     reload: true
 
-- name: "Auto-discover local subnets"
-  ansible.builtin.shell:
-    cmd: >-
-      set -o pipefail &&
-      ip route show proto kernel scope link
-      | grep -v 'tailscale'
-      | awk '{print $1}'
-      | paste -sd ',' -
-    executable: "/bin/bash"
-  register: "_tailscale_subnet_router_discovered"
+- name: "Discover local subnets"
+  ansible.builtin.command:
+    argv: ["ip", "-json", "route", "show", "proto", "kernel", "scope", "link"]
+  register: "tailscale_subnet_router_discovered"
   changed_when: false
+  check_mode: false
   when: "tailscale_subnet_router_routes | length == 0"
+
+- name: "Set desired routes fact"
+  ansible.builtin.set_fact:
+    tailscale_subnet_router_desired: >-
+      {{ tailscale_subnet_router_routes
+         or (tailscale_subnet_router_discovered.stdout | from_json
+             | rejectattr('dev', 'equalto', 'tailscale0')
+             | map(attribute='dst') | list) }}
 
 - name: "Fail if no routes discovered"
   ansible.builtin.fail:
     msg: >-
       No local subnets discovered.
       Set tailscale_subnet_router_routes manually.
-  when:
-    - "tailscale_subnet_router_routes | length == 0"
-    - "_tailscale_subnet_router_discovered.stdout | length == 0"
-
-- name: "Set desired routes fact"
-  ansible.builtin.set_fact:
-    tailscale_subnet_router_desired: >-
-      {{ tailscale_subnet_router_routes
-         or _tailscale_subnet_router_discovered.stdout.split(',') }}
+  when: "tailscale_subnet_router_desired | length == 0"
 
 - name: "Get currently configured Tailscale preferences"
   ansible.builtin.command: "tailscale debug prefs"
