@@ -1,0 +1,5 @@
+# AI GENERATED - Tom Barone
+.* .*ot-recorder.*: gcache_(json_)?get: mdb_txn_begin: \(-30783\) MDB_BAD_RSLOT: Invalid reuse of reader locktable slot$
+.* .*ot-recorder.*: Location out-of-order, skipping 'last' update$
+.* .*ot-recorder.*: http: GET /.*$
+.* .*ot-recorder.*: - [0-9:]+ owntracks/.* tid=.* loc=.*$
