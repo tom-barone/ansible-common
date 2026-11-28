@@ -1,4 +1,3 @@
-# AI GENERATED - Tom Barone
 .* .*ot-recorder.*: Location out-of-order, skipping 'last' update$
 .* .*ot-recorder.*: http: GET /.*$
 .* .*ot-recorder.*: - [0-9:]+ owntracks/.* tid=.* loc=.*$
