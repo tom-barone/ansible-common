@@ -1,6 +1,10 @@
 ---
 - name: "Verify"
   hosts: "all"
+  vars:
+    forwarding_sysctls:
+      - "net.ipv4.ip_forward"
+      - "net.ipv6.conf.all.forwarding"
   tasks:
     # Given Tailscale was installed in the prepare step
     # When we check for the tailscale binary
@@ -10,65 +14,35 @@
       changed_when: false
 
     # Given the subnet router role was applied
-    # When we check the IPv4 forwarding sysctl value
-    # Then it is set to 1
-    - name: "Check IPv4 forwarding is enabled"
-      ansible.builtin.command: "sysctl -n net.ipv4.ip_forward"
-      register: "ipv4_forward"
+    # When we check the forwarding sysctl values
+    # Then IPv4 and IPv6 forwarding are set to 1
+    - name: "Check IP forwarding is enabled"
+      ansible.builtin.command:
+        argv: ["sysctl", "-n", "{{ item }}"]
+      loop: "{{ forwarding_sysctls }}"
+      register: "forwarding"
       changed_when: false
 
-    - name: "Assert IPv4 forwarding is enabled"
+    - name: "Assert IP forwarding is enabled"
       ansible.builtin.assert:
         that:
-          - "ipv4_forward.stdout == '1'"
-        msg: "IPv4 forwarding is not enabled"
+          - "forwarding.results | map(attribute='stdout') | list == ['1', '1']"
+        msg: "IP forwarding is not enabled"
 
     # Given the subnet router role was applied
-    # When we check the IPv6 forwarding sysctl value
-    # Then it is set to 1
-    - name: "Check IPv6 forwarding is enabled"
-      ansible.builtin.command: "sysctl -n net.ipv6.conf.all.forwarding"
-      register: "ipv6_forward"
-      changed_when: false
-
-    - name: "Assert IPv6 forwarding is enabled"
-      ansible.builtin.assert:
-        that:
-          - "ipv6_forward.stdout == '1'"
-        msg: "IPv6 forwarding is not enabled"
-
-    # Given the subnet router role was applied
-    # When we check the sysctl config file
-    # Then it contains the expected settings
-    - name: "Check sysctl config file exists"
-      ansible.builtin.stat:
-        path: "/etc/sysctl.d/99-tailscale.conf"
-      register: "sysctl_conf"
-
-    - name: "Assert sysctl config file exists"
-      ansible.builtin.assert:
-        that:
-          - "sysctl_conf.stat.exists"
-        msg: "/etc/sysctl.d/99-tailscale.conf does not exist"
-
+    # When we read the sysctl config file
+    # Then it holds both settings, so they survive a reboot
     - name: "Read sysctl config file"
       ansible.builtin.slurp:
         src: "/etc/sysctl.d/99-tailscale.conf"
-      register: "sysctl_conf_content"
+      register: "sysctl_conf"
 
-    - name: "Assert sysctl config contains IPv4 forwarding"
+    - name: "Assert sysctl config contains the forwarding settings"
       ansible.builtin.assert:
         that:
-          - "'net.ipv4.ip_forward' in sysctl_conf_content.content | b64decode"
-        msg: "sysctl config missing net.ipv4.ip_forward"
-
-    - name: "Assert sysctl config contains IPv6 forwarding"
-      vars:
-        _content: "{{ sysctl_conf_content.content | b64decode }}"
-      ansible.builtin.assert:
-        that:
-          - "'net.ipv6.conf.all.forwarding' in _content"
-        msg: "sysctl config missing net.ipv6.conf.all.forwarding"
+          - "item in sysctl_conf.content | b64decode"
+        msg: "sysctl config missing {{ item }}"
+      loop: "{{ forwarding_sysctls }}"
 
     # Given tailscale_subnet_router_routes is left empty
     # When we check the routes the node advertises
