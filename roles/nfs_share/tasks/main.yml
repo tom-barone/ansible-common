@@ -1,0 +1,42 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to share a directory over NFS. Each invocation exports one
+# path to a list of clients.
+#
+# Tests to confirm working:
+#   $ systemctl status nfs-server
+#   $ exportfs -v
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "nfs_share_path is defined"
+      - "nfs_share_clients is defined"
+      - "nfs_share_clients is not string"
+      # A line without clients exports the path to everyone
+      - "nfs_share_clients | length > 0"
+    msg: "nfs_share_path and a list of nfs_share_clients must be defined"
+
+- name: "Install the NFS server"
+  ansible.builtin.apt:
+    name:
+      - "nfs-kernel-server"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Export the share"
+  ansible.builtin.blockinfile:
+    path: "/etc/exports"
+    marker: "# {mark} {{ nfs_share_path }}"
+    block: >-
+      {{ nfs_share_path }}
+      {{ nfs_share_clients | product(['(' ~ nfs_share_options ~ ')'])
+      | map('join') | join(' ') }}
+  notify: "Reload NFS exports"
+
+- name: "Enable and start the NFS server"
+  ansible.builtin.systemd:
+    name: "nfs-server"
+    enabled: true
+    state: "started"

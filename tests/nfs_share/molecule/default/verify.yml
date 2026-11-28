@@ -1,0 +1,65 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Mount the shares"
+      ansible.builtin.command:
+        argv:
+          - "mount"
+          - "--mkdir"
+          - "localhost:/srv/{{ item }}"
+          - "/mnt/{{ item }}"
+      loop:
+        - "share"
+        - "elsewhere"
+        - "readonly"
+      register: "mounts"
+      changed_when: false
+      failed_when: false
+
+    - name: "Write a file through each mounted share"
+      ansible.builtin.command:
+        argv:
+          - "touch"
+          - "/mnt/{{ item }}/hello.txt"
+      loop:
+        - "share"
+        - "readonly"
+      register: "writes"
+      changed_when: false
+      failed_when: false
+
+    - name: "Stat the file in the exported directory"
+      ansible.builtin.stat:
+        path: "/srv/share/hello.txt"
+      register: "written"
+
+    # Given a share exported read-write to this machine
+    # When a file is written through an NFS mount of the share
+    # Then the file is in the exported directory
+    - name: "Assert a client can write to the share"
+      ansible.builtin.assert:
+        that:
+          - "written.stat.exists"
+        msg: >-
+          mount: {{ mounts.results[0].stderr }},
+          write: {{ writes.results[0].stderr }}
+
+    # Given a share exported to a network this machine is not in
+    # When this machine mounts the share
+    # Then the mount is refused
+    - name: "Assert a client outside the list can't mount the share"
+      ansible.builtin.assert:
+        that:
+          - "'access denied' in mounts.results[1].stderr"
+        msg: "mount: {{ mounts.results[1].stderr }}"
+
+    # Given a share exported with read-only options
+    # When a file is written through an NFS mount of the share
+    # Then the write fails
+    - name: "Assert a client can't write to a read-only share"
+      ansible.builtin.assert:
+        that:
+          - "'Read-only file system' in writes.results[1].stderr"
+        msg: "write: {{ writes.results[1].stderr }}"

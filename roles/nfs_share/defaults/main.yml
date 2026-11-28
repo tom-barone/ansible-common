@@ -1,0 +1,14 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# nfs_share_path: "/mnt/hdd"
+# nfs_share_clients:
+#   Who may mount the share: hostnames, IP addresses or networks, see
+#   exports(5)
+#   - "192.168.1.0/24"
+#   - "laptop.example.com"
+
+# Export options, applied to every client. mp only exports the path while
+# a filesystem is mounted on it, so leave it out to share a directory that
+# is not a mount point.
+nfs_share_options: "rw,sync,no_subtree_check,mp"

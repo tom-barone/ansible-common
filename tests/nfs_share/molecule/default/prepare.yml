@@ -1,0 +1,45 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  vars:
+    paths:
+      - "/srv/share"
+      - "/srv/elsewhere"
+      - "/srv/readonly"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    # Stand in for disks, as the role only exports mount points by default
+    - name: "Create disk images"
+      community.general.filesize:
+        path: "{{ item }}.img"
+        size: "64M"
+      loop: "{{ paths }}"
+
+    - name: "Format disk images"
+      community.general.filesystem:
+        dev: "{{ item }}.img"
+        fstype: "ext4"
+      loop: "{{ paths }}"
+
+    - name: "Mount filesystems to share"
+      ansible.builtin.include_role:
+        name: "system_mount"
+      vars:
+        system_mount_path: "{{ item }}"
+        system_mount_state: "mounted"
+        system_mount_src: "{{ item }}.img"
+        system_mount_fstype: "ext4"
+        system_mount_opts: "loop"
+      loop: "{{ paths }}"
+
+    # NFS turns the root user of a client into nobody
+    - name: "Let nobody write to the filesystems"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: "nobody"
+        group: "nogroup"
+      loop: "{{ paths }}"
