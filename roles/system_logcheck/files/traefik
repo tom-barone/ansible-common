@@ -1,2 +1,3 @@
 .* .*traefik.*: .*ERR Cannot retrieve the ACME challenge for .* providerName=acme$
 .* .*traefik.*: .*ERR Unable to get token error="missing token" providerName=acme$
+.* .*traefik.*: .*ERR Error while handling TCP connection error=".*: read: connection reset by peer"$
