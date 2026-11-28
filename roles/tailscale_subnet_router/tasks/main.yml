@@ -42,26 +42,22 @@
       Set tailscale_subnet_router_routes manually.
   when: "tailscale_subnet_router_desired | length == 0"
 
-- name: "Get currently configured Tailscale preferences"
-  ansible.builtin.command: "tailscale debug prefs"
-  register: "_tailscale_subnet_router_prefs"
+# Prints the subnet routes only. The default routes of an exit node, which
+# Tailscale keeps in the same list, are left out.
+- name: "Get advertised routes"
+  ansible.builtin.command:
+    argv: ["tailscale", "get", "advertise-routes"]
+  register: "tailscale_subnet_router_advertised"
   changed_when: false
   check_mode: false
 
-- name: "Set current routes fact"
-  ansible.builtin.set_fact:
-    _tailscale_subnet_router_current: >-
-      {{ (_tailscale_subnet_router_prefs.stdout
-          | from_json).AdvertiseRoutes
-         | default([], true)
-         | sort | join(',') }}
-
-- name: "Update Tailscale advertised routes"
+- name: "Advertise routes"
   ansible.builtin.command:
-    cmd: >-
-      tailscale set
-      --advertise-routes={{ tailscale_subnet_router_desired | join(',') }}
+    argv:
+      - "tailscale"
+      - "set"
+      - "--advertise-routes={{ tailscale_subnet_router_desired | join(',') }}"
   when: >-
-    _tailscale_subnet_router_current
-    != tailscale_subnet_router_desired | sort | join(',')
+    tailscale_subnet_router_advertised.stdout.split(',') | select | list
+    | symmetric_difference(tailscale_subnet_router_desired) | length > 0
   changed_when: true
