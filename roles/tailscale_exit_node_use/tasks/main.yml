@@ -1,0 +1,57 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to send a machine's internet traffic through a Tailscale
+# exit node, as described in
+# https://tailscale.com/docs/features/exit-nodes/use. The machine must
+# already be on the tailnet, see tailscale_install. The exit node must be
+# advertised and approved, see tailscale_exit_node_install. A customised
+# tailnet policy must also give the machine access to autogroup:internet,
+# or Tailscale refuses the exit node.
+#
+# Reach the machine over Tailscale once this is applied. Replies to
+# connections on its other addresses can leave through the exit node, so
+# a session to a public address may drop. The machine also resolves DNS
+# through the exit node.
+#
+# Root on the machine can still pick another exit node, and the next run
+# of this role puts it back. Tailscale's "mandatory exit node", which
+# cannot be changed on the device, is the ExitNodeID system policy. An MDM
+# pushes it to phones and laptops.
+#
+# Tests to confirm working:
+#   $ tailscale get exit-node
+#   $ tailscale status | grep "exit node"
+#   $ ip route get 1.1.1.1   (leaves through tailscale0)
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "tailscale_exit_node_use_ip is defined"
+      - "tailscale_exit_node_use_ip | length > 0"
+    msg: "tailscale_exit_node_use_ip must be defined"
+
+- name: "Get Tailscale settings"
+  ansible.builtin.command:
+    argv: ["tailscale", "get", "--json"]
+  register: "tailscale_exit_node_use_settings"
+  changed_when: false
+  check_mode: false
+
+- name: "Use the exit node"
+  vars:
+    tailscale_exit_node_use_current: >-
+      {{ tailscale_exit_node_use_settings.stdout | from_json }}
+  ansible.builtin.command:
+    argv:
+      - "tailscale"
+      - "set"
+      - "--exit-node={{ tailscale_exit_node_use_ip }}"
+      - >-
+        --exit-node-allow-lan-access={{
+        tailscale_exit_node_use_allow_lan_access | bool | lower }}
+  when: >-
+    tailscale_exit_node_use_current['exit-node']
+    != tailscale_exit_node_use_ip
+    or tailscale_exit_node_use_current['exit-node-allow-lan-access']
+    != tailscale_exit_node_use_allow_lan_access | bool
+  changed_when: true
