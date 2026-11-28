@@ -1,0 +1,45 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to advertise a machine as a Tailscale exit node, as
+# described in https://tailscale.com/docs/features/exit-nodes. The machine
+# must already be on the tailnet, see tailscale_install.
+#
+# The exit node cannot be used until it is approved, in the admin console
+# or with autoApprovers.exitNode in the tailnet policy file.
+#
+# To send another machine's traffic through the exit node, apply
+# tailscale_exit_node_use on that machine. Tailscale's "mandatory exit
+# node" is also set on the machines that use the exit node, with the
+# ExitNodeID system policy. Nothing on the exit node itself can force it.
+#
+# The role can be combined with tailscale_subnet_router on the same
+# machine.
+#
+# Tests to confirm working:
+#   $ sysctl net.ipv4.ip_forward net.ipv6.conf.all.forwarding
+#   $ tailscale get advertise-exit-node
+#   $ tailscale exit-node list   (on another machine, once approved)
+
+- name: "Enable IP forwarding"
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: "1"
+    sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
+    state: "present"
+    reload: true
+  loop:
+    - "net.ipv4.ip_forward"
+    - "net.ipv6.conf.all.forwarding"
+
+- name: "Get exit node advertisement"
+  ansible.builtin.command:
+    argv: ["tailscale", "get", "advertise-exit-node"]
+  register: "tailscale_exit_node_install_advertised"
+  changed_when: false
+  check_mode: false
+
+- name: "Advertise as an exit node"
+  ansible.builtin.command:
+    argv: ["tailscale", "set", "--advertise-exit-node"]
+  when: "tailscale_exit_node_install_advertised.stdout != 'true'"
+  changed_when: true
