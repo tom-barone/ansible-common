@@ -1,0 +1,31 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "nfs_share"
+      vars:
+        nfs_share_path: "/srv/share"
+        nfs_share_clients:
+          - "127.0.0.0/8"
+          - "::1"
+
+    - name: "Apply role under test for clients on another network"
+      ansible.builtin.include_role:
+        name: "nfs_share"
+      vars:
+        nfs_share_path: "/srv/elsewhere"
+        nfs_share_clients:
+          - "192.0.2.0/24"
+
+    - name: "Apply role under test for a read-only share"
+      ansible.builtin.include_role:
+        name: "nfs_share"
+      vars:
+        nfs_share_path: "/srv/readonly"
+        nfs_share_clients:
+          - "127.0.0.0/8"
+          - "::1"
+        nfs_share_options: "ro,sync,no_subtree_check,mp"
