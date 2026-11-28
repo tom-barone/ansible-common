@@ -1,2 +1,4 @@
 Aug 24 20:43:10 traefik traefik[5731]: 2026-08-24T20:43:10Z ERR Cannot retrieve the ACME challenge for livekit.language-lads.com (token "about.php") providerName=acme
 Aug 28 09:25:51 server traefik[5731]: 2026-08-28T09:25:51Z ERR Unable to get token error="missing token" providerName=acme
+Nov 28 06:31:38 server traefik[973]: 2026-11-28T06:31:38Z ERR Error while handling TCP connection error="writeto tcp 192.168.50.72:44300->192.168.50.119:1883: read tcp 192.168.50.72:44300->192.168.50.119:1883: read: connection reset by peer"
+Nov 28 06:32:42 server traefik[973]: 2026-11-28T06:32:42Z ERR Error while handling TCP connection error="writeto tcp 192.168.50.72:54114->192.168.50.119:1883: read tcp 192.168.50.72:54114->192.168.50.119:1883: read: connection reset by peer"
