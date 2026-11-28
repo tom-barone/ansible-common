@@ -69,3 +69,22 @@
         that:
           - "'net.ipv6.conf.all.forwarding' in _content"
         msg: "sysctl config missing net.ipv6.conf.all.forwarding"
+
+    # Given tailscale_subnet_router_routes is left empty
+    # When we check the routes the node advertises
+    # Then it is the subnet the machine is directly connected to
+    - name: "Get advertised routes"
+      ansible.builtin.command:
+        argv: ["tailscale", "get", "advertise-routes"]
+      register: "advertised_routes"
+      changed_when: false
+
+    - name: "Assert the local subnet is advertised"
+      vars:
+        _local_subnet: >-
+          {{ ansible_facts['default_ipv4']['network'] }}/{{
+          ansible_facts['default_ipv4']['prefix'] }}
+      ansible.builtin.assert:
+        that:
+          - "advertised_routes.stdout == _local_subnet"
+        msg: "Expected {{ _local_subnet }}, got {{ advertised_routes.stdout }}"
