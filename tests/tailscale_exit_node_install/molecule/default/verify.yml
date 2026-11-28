@@ -1,0 +1,54 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Get the forwarding sysctls"
+      ansible.builtin.command:
+        argv: ["sysctl", "-n", "{{ item }}"]
+      loop:
+        - "net.ipv4.ip_forward"
+        - "net.ipv6.conf.all.forwarding"
+      register: "forwarding"
+      changed_when: false
+
+    # Given the role is applied
+    # When the kernel is asked whether it forwards packets
+    # Then it does, for IPv4 and IPv6
+    - name: "Assert IP forwarding is enabled"
+      ansible.builtin.assert:
+        that:
+          - "forwarding.results | map(attribute='stdout') | list == ['1', '1']"
+        msg: "IP forwarding is not enabled"
+
+    - name: "Get exit node advertisement"
+      ansible.builtin.command:
+        argv: ["tailscale", "get", "advertise-exit-node"]
+      register: "exit_node"
+      changed_when: false
+
+    # Given the role is applied
+    # When Tailscale is asked whether the node advertises an exit node
+    # Then it does
+    - name: "Assert the node advertises an exit node"
+      ansible.builtin.assert:
+        that:
+          - "exit_node.stdout == 'true'"
+        msg: "Expected true, got {{ exit_node.stdout }}"
+
+    - name: "Get advertised routes"
+      ansible.builtin.command:
+        argv: ["tailscale", "get", "advertise-routes"]
+      register: "routes"
+      changed_when: false
+
+    # Given tailscale_subnet_router is applied on the same machine
+    # When Tailscale is asked for the subnet routes the node advertises
+    # Then both subnets are advertised next to the exit node
+    - name: "Assert the subnet routes are advertised"
+      ansible.builtin.assert:
+        that:
+          - >-
+            routes.stdout.split(',') | sort
+            == ['192.0.2.0/24', '198.51.100.0/24']
+        msg: "Expected the two subnet routes, got {{ routes.stdout }}"

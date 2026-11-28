@@ -1,0 +1,19 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "tailscale_exit_node_install"
+
+    # A machine can be an exit node and a subnet router at once. With both
+    # roles applied, the idempotence run checks that neither reports a
+    # change because of what the other advertises.
+    - name: "Apply tailscale_subnet_router on the same machine"
+      ansible.builtin.include_role:
+        name: "tailscale_subnet_router"
+      vars:
+        tailscale_subnet_router_routes:
+          - "192.0.2.0/24"
+          - "198.51.100.0/24"
