@@ -1,3 +1,4 @@
 .* .*ot-recorder.*: Location out-of-order, skipping 'last' update$
 .* .*ot-recorder.*: http: GET /.*$
 .* .*ot-recorder.*: - [0-9:]+ owntracks/.* tid=.* loc=.*$
+.* .*ot-recorder.*: gcache_get: mdb_txn_begin: .* Invalid reuse of reader locktable slot.*$

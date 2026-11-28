@@ -31,3 +31,4 @@ Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/datatables/images/s
 Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/flags/__.png
 Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/defaultface.svg
 Nov 28 07:27:33 server ot-recorder[24150]: - 17:37:23 owntracks/person/phone               t=  tid=tb loc=-123.123,123.123 [__] Unknown (-123.123,123.123) (s000000)
+Nov 28 11:14:20 server ot-recorder[24150]: gcache_get: mdb_txn_begin: (-30783) MDB_BAD_RSLOT: Invalid reuse of reader locktable slot
