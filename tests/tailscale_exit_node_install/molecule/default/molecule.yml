@@ -4,6 +4,9 @@ driver:
   name: "docker"
 platforms:
   - name: "${TEST_NAME}"
+    # tailscale_install deletes any other device on the tailnet that has its
+    # hostname, so test runs at the same time must not share one
+    hostname: "${TEST_NAME}-${TEST_RUN_ID}"
     image: "${MOLECULE_DOCKER_IMAGE}"
     pre_build_image: true
     # Necessary for systemd to work properly
