@@ -1,0 +1,11 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# Tailscale IPv4 address of the exit node, as printed by `tailscale ip --4`
+# on that machine
+# tailscale_exit_node_use_ip: "100.64.0.1"
+
+# Keep reaching the machine's local network directly. Tailscale turns this
+# off by default, which also sends traffic for the local network to the
+# exit node and so cuts the machine off from it.
+tailscale_exit_node_use_allow_lan_access: true
