@@ -19,6 +19,7 @@ A non-comprehensive list of the more interesting roles:
 | `llama_cpp_server` | Serve Hugging Face GGUF models with the [llama.cpp](https://github.com/ggml-org/llama.cpp) server in router mode, loading them on demand, as a systemd service on CUDA or CPU. |
 | `monitoring_stack_install` | Install [Prometheus](https://prometheus.io/), [Loki](https://grafana.com/oss/loki/), [Grafana](https://grafana.com/), [Alloy](https://grafana.com/docs/alloy/latest/), [Node Exporter](https://github.com/prometheus/node_exporter), and [cAdvisor](https://github.com/google/cadvisor) via Docker with emailed alerts for disk and RAM usage. |
 | `network_manager_switch` | Turn NetworkManager's WiFi and WWAN radio switches on or off. |
+| `nfs_mount` | Mount an NFS share, with an fstab entry so it is mounted again after a reboot. |
 | `nfs_share` | Share a directory over NFS with a list of clients, given as hostnames, IP addresses or networks. |
 | `nvidia_drivers_install` | Install the NVIDIA compute driver (CUDA) with open kernel modules from NVIDIA's Debian repository, built by DKMS. |
 | `openclaw_install` | Install the [OpenClaw](https://github.com/openclaw/openclaw) AI gateway as a hardened, non-root systemd service with scoped sudo. |

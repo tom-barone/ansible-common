@@ -1,0 +1,45 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Prepare"
+  hosts: "all"
+  tasks:
+    - name: "Make apt resilient to transient CDN failures"
+      ansible.builtin.include_role:
+        name: "system_apt_retries"
+
+    # Stand in for a disk, as nfs_share only exports mount points by default
+    - name: "Create disk image"
+      community.general.filesize:
+        path: "/srv/share.img"
+        size: "64M"
+
+    - name: "Format disk image"
+      community.general.filesystem:
+        dev: "/srv/share.img"
+        fstype: "ext4"
+
+    - name: "Mount filesystem to share"
+      ansible.builtin.include_role:
+        name: "system_mount"
+      vars:
+        system_mount_path: "/srv/share"
+        system_mount_state: "mounted"
+        system_mount_src: "/srv/share.img"
+        system_mount_fstype: "ext4"
+        system_mount_opts: "loop"
+
+    # NFS turns the root user of a client into nobody
+    - name: "Let nobody write to the filesystem"
+      ansible.builtin.file:
+        path: "/srv/share"
+        owner: "nobody"
+        group: "nogroup"
+
+    - name: "Share the filesystem with this machine"
+      ansible.builtin.include_role:
+        name: "nfs_share"
+      vars:
+        nfs_share_path: "/srv/share"
+        nfs_share_clients:
+          - "127.0.0.0/8"
+          - "::1"

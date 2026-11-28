@@ -1,0 +1,9 @@
+# AI GENERATED - Tom Barone
+---
+# Required vars:
+# nfs_mount_src: "fileserver:/mnt/hdd"
+# nfs_mount_path: "/mnt/hdd"
+
+# Optional vars (no default):
+# Mount options, see nfs(5)
+# nfs_mount_opts: "nofail,x-systemd.automount"

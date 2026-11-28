@@ -1,0 +1,60 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Verify"
+  hosts: "all"
+  tasks:
+    - name: "Write a file through each mount"
+      ansible.builtin.command:
+        argv:
+          - "touch"
+          - "/mnt/{{ item }}/hello.txt"
+      loop:
+        - "share"
+        - "readonly"
+      register: "writes"
+      changed_when: false
+      failed_when: false
+
+    - name: "Stat the file in the exported directory"
+      ansible.builtin.stat:
+        path: "/srv/share/hello.txt"
+      register: "written"
+
+    # Given the role mounted a share
+    # When a file is written under the mount path
+    # Then the file is in the directory the server exports
+    - name: "Assert the share is mounted"
+      ansible.builtin.assert:
+        that:
+          - "written.stat.exists"
+        msg: "write: {{ writes.results[0].stderr }}"
+
+    # Given the role mounted a share with the ro option
+    # When a file is written under the mount path
+    # Then the write fails
+    - name: "Assert the mount options are applied"
+      ansible.builtin.assert:
+        that:
+          - "'Read-only file system' in writes.results[1].stderr"
+        msg: "write: {{ writes.results[1].stderr }}"
+
+    - name: "Look the mount path up in fstab"
+      ansible.builtin.command:
+        argv:
+          - "findmnt"
+          - "--fstab"
+          - "--noheadings"
+          - "--output=SOURCE"
+          - "/mnt/share"
+      register: "fstab"
+      changed_when: false
+      failed_when: false
+
+    # Given the role mounted a share
+    # When we look the mount path up in fstab
+    # Then the share is listed, so it is mounted again after a reboot
+    - name: "Assert the mount is in fstab"
+      ansible.builtin.assert:
+        that:
+          - "fstab.stdout == 'localhost:/srv/share'"
+        msg: "fstab source: {{ fstab.stdout }}"

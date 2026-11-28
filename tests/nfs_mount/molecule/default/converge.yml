@@ -1,0 +1,19 @@
+# AI GENERATED - Tom Barone
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    - name: "Apply role under test"
+      ansible.builtin.include_role:
+        name: "nfs_mount"
+      vars:
+        nfs_mount_src: "localhost:/srv/share"
+        nfs_mount_path: "/mnt/share"
+
+    - name: "Apply role under test with mount options"
+      ansible.builtin.include_role:
+        name: "nfs_mount"
+      vars:
+        nfs_mount_src: "localhost:/srv/share"
+        nfs_mount_path: "/mnt/readonly"
+        nfs_mount_opts: "ro"
