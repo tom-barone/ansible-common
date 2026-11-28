@@ -1,0 +1,35 @@
+Nov 28 08:07:14 server ot-recorder[24150]: gcache_get: mdb_txn_begin: (-30783) MDB_BAD_RSLOT: Invalid reuse of reader locktable slot
+Nov 28 08:07:14 server ot-recorder[24150]: Location out-of-order, skipping 'last' update
+Nov 28 07:23:04 server ot-recorder[24150]: http: GET /api/0/version
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /utils/debug.js
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /utils/network.js
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /utils/misc.js
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /utils/config.js
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /api/0/last
+Nov 28 07:26:03 server ot-recorder[24150]: gcache_json_get: mdb_txn_begin: (-30783) MDB_BAD_RSLOT: Invalid reuse of reader locktable slot
+Nov 28 07:26:03 server ot-recorder[24150]: http: GET /static/recorder.png
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /map/index.html
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /utils/map.css
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /static/apikey.js
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /utils/map.js
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /map/map_leaflet.js
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /utils/map_leaflet.js
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /static/leaflet/leaflet.css
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /static/leaflet/leaflet.js
+Nov 28 07:26:07 server ot-recorder[24150]: http: GET /api/0/locations
+Nov 28 07:26:11 server ot-recorder[24150]: http: GET /favicon.ico
+Nov 28 07:26:12 server ot-recorder[24150]: http: GET /last/index.html
+Nov 28 07:26:12 server ot-recorder[24150]: http: GET /last/map_leaflet.js
+Nov 28 07:26:12 server ot-recorder[24150]: http: GET /last/websock.js
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /table/index.html
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/datatables/css/jquery.dataTables.min.css
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/datatables/js/jquery.min.js
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /table/otable.css
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/datatables/js/jquery.dataTables.min.js
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /table/config.js
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/datatables/images/sort_both.png
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/datatables/images/sort_desc.png
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/flags/__.png
+Nov 28 07:26:14 server ot-recorder[24150]: http: GET /static/defaultface.svg
+Nov 28 07:27:33 server ot-recorder[24150]: - 17:37:23 owntracks/person/phone               t=  tid=tb loc=-123.123,123.123 [__] Unknown (-123.123,123.123) (s000000)
