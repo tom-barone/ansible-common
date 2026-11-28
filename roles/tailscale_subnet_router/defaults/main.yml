@@ -1,2 +1,6 @@
 ---
-tailscale_subnet_router_routes: ""
+# Subnets to advertise, in CIDR notation. When the list is empty, the role
+# advertises the subnets the machine is directly connected to.
+# tailscale_subnet_router_routes:
+#   - "192.168.1.0/24"
+tailscale_subnet_router_routes: []

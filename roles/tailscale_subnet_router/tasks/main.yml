@@ -1,4 +1,10 @@
 ---
+- name: "Validate variables"
+  ansible.builtin.assert:
+    that:
+      - "tailscale_subnet_router_routes is not string"
+    msg: "tailscale_subnet_router_routes must be a list of subnets"
+
 - name: "Enable IPv4 forwarding"
   ansible.posix.sysctl:
     name: "net.ipv4.ip_forward"
@@ -37,11 +43,9 @@
 
 - name: "Set desired routes fact"
   ansible.builtin.set_fact:
-    _tailscale_subnet_router_routes: >-
-      {{ (tailscale_subnet_router_routes
-          if tailscale_subnet_router_routes | length > 0
-          else _tailscale_subnet_router_discovered.stdout)
-         .split(',') | map('trim') | reject('match', '^$') | sort | join(',') }}
+    tailscale_subnet_router_desired: >-
+      {{ tailscale_subnet_router_routes
+         or _tailscale_subnet_router_discovered.stdout.split(',') }}
 
 - name: "Get currently configured Tailscale preferences"
   ansible.builtin.command: "tailscale debug prefs"
@@ -61,8 +65,8 @@
   ansible.builtin.command:
     cmd: >-
       tailscale set
-      --advertise-routes={{ _tailscale_subnet_router_routes }}
+      --advertise-routes={{ tailscale_subnet_router_desired | join(',') }}
   when: >-
     _tailscale_subnet_router_current
-    != _tailscale_subnet_router_routes
+    != tailscale_subnet_router_desired | sort | join(',')
   changed_when: true

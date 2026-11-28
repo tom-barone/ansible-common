@@ -88,3 +88,28 @@
         that:
           - "advertised_routes.stdout == _local_subnet"
         msg: "Expected {{ _local_subnet }}, got {{ advertised_routes.stdout }}"
+
+    # Given tailscale_subnet_router_routes lists two subnets
+    # When the role is applied and we check the routes the node advertises
+    # Then it is those two subnets, in place of the local one
+    - name: "Apply the role with explicit routes"
+      ansible.builtin.include_role:
+        name: "tailscale_subnet_router"
+      vars:
+        tailscale_subnet_router_routes:
+          - "198.51.100.0/24"
+          - "192.0.2.0/24"
+
+    - name: "Get advertised routes again"
+      ansible.builtin.command:
+        argv: ["tailscale", "get", "advertise-routes"]
+      register: "explicit_routes"
+      changed_when: false
+
+    - name: "Assert the explicit routes are advertised"
+      ansible.builtin.assert:
+        that:
+          - >-
+            explicit_routes.stdout.split(',') | sort
+            == ['192.0.2.0/24', '198.51.100.0/24']
+        msg: "Expected the explicit routes, got {{ explicit_routes.stdout }}"
