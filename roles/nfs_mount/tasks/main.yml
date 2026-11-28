@@ -1,0 +1,32 @@
+# AI GENERATED - Tom Barone
+---
+# Ansible role to mount an NFS share, with an fstab entry so it is mounted
+# again after a reboot.
+#
+# Tests to confirm working:
+#   $ findmnt /mnt/hdd
+
+- name: "Validate required variables"
+  ansible.builtin.assert:
+    that:
+      - "nfs_mount_src is defined"
+      - "nfs_mount_path is defined"
+    msg: "nfs_mount_src and nfs_mount_path must be defined"
+
+- name: "Install the NFS client"
+  ansible.builtin.apt:
+    name:
+      - "nfs-common"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Apply system_mount role"
+  ansible.builtin.include_role:
+    name: "system_mount"
+  vars:
+    system_mount_path: "{{ nfs_mount_path }}"
+    system_mount_state: "mounted"
+    system_mount_src: "{{ nfs_mount_src }}"
+    system_mount_fstype: "nfs"
+    system_mount_opts: "{{ nfs_mount_opts | default(omit) }}"
