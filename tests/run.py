@@ -20,6 +20,8 @@ ENV = {
     "CACHE_DIR": str(CACHE_DIR),
     "ANSIBLE_PRIVATE_KEY_FILE": str(SSH_KEY),
     "TEST_SSH_PUBLIC_KEY": SSH_KEY.with_suffix(".pub").read_text().strip(),
+    # Tells apart test runs that share an outside service, such as a tailnet
+    "TEST_RUN_ID": os.urandom(4).hex(),
 }
 
 
